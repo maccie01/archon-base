@@ -5,8 +5,8 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { AlertCircle, Loader2 } from "lucide-react";
+import type { ActiveOperation } from "../../progress/types";
 import { Button } from "../../ui/primitives";
-import type { ActiveOperation } from "../progress/types";
 import type { KnowledgeItem } from "../types";
 import { KnowledgeCard } from "./KnowledgeCard";
 import { KnowledgeTable } from "./KnowledgeTable";
@@ -18,6 +18,7 @@ interface KnowledgeListProps {
   error: Error | null;
   onRetry: () => void;
   onViewDocument: (sourceId: string) => void;
+  onViewCodeExamples?: (sourceId: string) => void;
   onDeleteSuccess: () => void;
   activeOperations?: ActiveOperation[];
   onRefreshStarted?: (progressId: string) => void;
@@ -54,6 +55,7 @@ export const KnowledgeList: React.FC<KnowledgeListProps> = ({
   error,
   onRetry,
   onViewDocument,
+  onViewCodeExamples,
   onDeleteSuccess,
   activeOperations = [],
   onRefreshStarted,
@@ -105,7 +107,7 @@ export const KnowledgeList: React.FC<KnowledgeListProps> = ({
         className="flex items-center justify-center py-12"
       >
         <div className="text-center max-w-md" role="alert">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-red-500/10 mb-4">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-red-500/10 dark:bg-red-500/10 mb-4">
             <AlertCircle className="w-6 h-6 text-red-400" />
           </div>
           <h3 className="text-lg font-semibold mb-2">Failed to Load Knowledge Base</h3>
@@ -128,7 +130,7 @@ export const KnowledgeList: React.FC<KnowledgeListProps> = ({
         className="flex items-center justify-center py-12"
       >
         <div className="text-center max-w-md">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-cyan-500/10 mb-4">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-cyan-500/10 dark:bg-cyan-500/10 mb-4">
             <AlertCircle className="w-6 h-6 text-cyan-400" />
           </div>
           <h3 className="text-lg font-semibold mb-2">No Knowledge Items</h3>
@@ -168,6 +170,7 @@ export const KnowledgeList: React.FC<KnowledgeListProps> = ({
               <KnowledgeCard
                 item={item}
                 onViewDocument={() => onViewDocument(item.source_id)}
+                onViewCodeExamples={onViewCodeExamples ? () => onViewCodeExamples(item.source_id) : undefined}
                 onDeleteSuccess={onDeleteSuccess}
                 activeOperation={activeOperation}
                 onRefreshStarted={onRefreshStarted}

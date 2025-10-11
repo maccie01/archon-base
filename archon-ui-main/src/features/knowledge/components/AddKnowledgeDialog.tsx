@@ -5,13 +5,16 @@
 
 import { Globe, Loader2, Upload } from "lucide-react";
 import { useId, useState } from "react";
-import { useToast } from "../../ui/hooks/useToast";
+import { useToast } from "@/features/shared/hooks/useToast";
 import { Button, Input, Label } from "../../ui/primitives";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../../ui/primitives/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../ui/primitives/select";
+import { cn, glassCard } from "../../ui/primitives/styles";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/primitives/tabs";
 import { useCrawlUrl, useUploadDocument } from "../hooks";
 import type { CrawlRequest, UploadMetadata } from "../types";
+import { KnowledgeTypeSelector } from "./KnowledgeTypeSelector";
+import { LevelSelector } from "./LevelSelector";
+import { TagInput } from "./TagInput";
 
 interface AddKnowledgeDialogProps {
   open: boolean;
@@ -33,32 +36,27 @@ export const AddKnowledgeDialog: React.FC<AddKnowledgeDialogProps> = ({
 
   // Generate unique IDs for form elements
   const urlId = useId();
-  const typeId = useId();
-  const depthId = useId();
-  const tagsId = useId();
   const fileId = useId();
-  const uploadTypeId = useId();
-  const uploadTagsId = useId();
 
   // Crawl form state
   const [crawlUrl, setCrawlUrl] = useState("");
   const [crawlType, setCrawlType] = useState<"technical" | "business">("technical");
   const [maxDepth, setMaxDepth] = useState("2");
-  const [tags, setTags] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
 
   // Upload form state
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadType, setUploadType] = useState<"technical" | "business">("technical");
-  const [uploadTags, setUploadTags] = useState("");
+  const [uploadTags, setUploadTags] = useState<string[]>([]);
 
   const resetForm = () => {
     setCrawlUrl("");
     setCrawlType("technical");
     setMaxDepth("2");
-    setTags("");
+    setTags([]);
     setSelectedFile(null);
     setUploadType("technical");
-    setUploadTags("");
+    setUploadTags([]);
   };
 
   const handleCrawl = async () => {
@@ -72,7 +70,7 @@ export const AddKnowledgeDialog: React.FC<AddKnowledgeDialogProps> = ({
         url: crawlUrl,
         knowledge_type: crawlType,
         max_depth: parseInt(maxDepth, 10),
-        tags: tags ? tags.split(",").map((t) => t.trim()) : undefined,
+        tags: tags.length > 0 ? tags : undefined,
       };
 
       const response = await crawlMutation.mutateAsync(request);
@@ -102,7 +100,7 @@ export const AddKnowledgeDialog: React.FC<AddKnowledgeDialogProps> = ({
     try {
       const metadata: UploadMetadata = {
         knowledge_type: uploadType,
-        tags: uploadTags ? uploadTags.split(",").map((t) => t.trim()) : undefined,
+        tags: uploadTags.length > 0 ? uploadTags : undefined,
       };
 
       const response = await uploadMutation.mutateAsync({ file: selectedFile, metadata });
@@ -136,76 +134,70 @@ export const AddKnowledgeDialog: React.FC<AddKnowledgeDialogProps> = ({
         </DialogHeader>
 
         <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "crawl" | "upload")}>
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="crawl" className="data-[state=active]:bg-cyan-500/20">
-              <Globe className="w-4 h-4 mr-2" />
-              Crawl Website
-            </TabsTrigger>
-            <TabsTrigger value="upload" className="data-[state=active]:bg-cyan-500/20">
-              <Upload className="w-4 h-4 mr-2" />
-              Upload Document
-            </TabsTrigger>
-          </TabsList>
+          <div className="flex justify-center">
+            <TabsList>
+              <TabsTrigger value="crawl" color="blue">
+                <Globe className="w-4 h-4 mr-2" />
+                Crawl Website
+              </TabsTrigger>
+              <TabsTrigger value="upload" color="purple">
+                <Upload className="w-4 h-4 mr-2" />
+                Upload Document
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
           {/* Crawl Tab */}
-          <TabsContent value="crawl" className="space-y-4 mt-4">
-            <div className="space-y-2">
-              <Label htmlFor={urlId}>Website URL</Label>
-              <Input
-                id={urlId}
-                type="url"
-                placeholder="https://example.com"
-                value={crawlUrl}
-                onChange={(e) => setCrawlUrl(e.target.value)}
-                disabled={isProcessing}
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor={typeId}>Knowledge Type</Label>
-                <Select value={crawlType} onValueChange={(v) => setCrawlType(v as "technical" | "business")}>
-                  <SelectTrigger id={typeId}>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="technical">Technical</SelectItem>
-                    <SelectItem value="business">Business</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor={depthId}>Max Depth</Label>
-                <Select value={maxDepth} onValueChange={setMaxDepth}>
-                  <SelectTrigger id={depthId}>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="1">1 level</SelectItem>
-                    <SelectItem value="2">2 levels</SelectItem>
-                    <SelectItem value="3">3 levels</SelectItem>
-                    <SelectItem value="5">5 levels</SelectItem>
-                  </SelectContent>
-                </Select>
+          <TabsContent value="crawl" className="space-y-6 mt-6">
+            {/* Enhanced URL Input Section */}
+            <div className="space-y-3">
+              <Label htmlFor={urlId} className="text-sm font-medium text-gray-900 dark:text-white/90">
+                Website URL
+              </Label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Globe className="h-5 w-5" style={{ color: "#0891b2" }} />
+                </div>
+                <Input
+                  id={urlId}
+                  type="url"
+                  placeholder="https://docs.example.com or https://github.com/..."
+                  value={crawlUrl}
+                  onChange={(e) => setCrawlUrl(e.target.value)}
+                  disabled={isProcessing}
+                  className={cn(
+                    "pl-10 h-12",
+                    glassCard.blur.md,
+                    glassCard.transparency.medium,
+                    "border-gray-300/60 dark:border-gray-600/60 focus:border-cyan-400/70",
+                  )}
+                />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor={tagsId}>Tags (comma-separated)</Label>
-              <Input
-                id={tagsId}
-                placeholder="documentation, api, guide"
-                value={tags}
-                onChange={(e) => setTags(e.target.value)}
-                disabled={isProcessing}
-              />
+            <div className="space-y-6">
+              <KnowledgeTypeSelector value={crawlType} onValueChange={setCrawlType} disabled={isProcessing} />
+
+              <LevelSelector value={maxDepth} onValueChange={setMaxDepth} disabled={isProcessing} />
             </div>
+
+            <TagInput
+              tags={tags}
+              onTagsChange={setTags}
+              disabled={isProcessing}
+              placeholder="Add tags like 'api', 'documentation', 'guide'..."
+            />
 
             <Button
               onClick={handleCrawl}
               disabled={isProcessing || !crawlUrl}
-              className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700"
+              className={[
+                "w-full bg-gradient-to-r from-cyan-500 to-cyan-600",
+                "hover:from-cyan-600 hover:to-cyan-700",
+                "backdrop-blur-md border border-cyan-400/50",
+                "shadow-[0_0_20px_rgba(6,182,212,0.25)] hover:shadow-[0_0_30px_rgba(6,182,212,0.35)]",
+                "transition-all duration-200",
+              ].join(" ")}
             >
               {crawlMutation.isPending ? (
                 <>
@@ -222,54 +214,77 @@ export const AddKnowledgeDialog: React.FC<AddKnowledgeDialogProps> = ({
           </TabsContent>
 
           {/* Upload Tab */}
-          <TabsContent value="upload" className="space-y-4 mt-4">
-            <div className="space-y-2">
-              <Label htmlFor={fileId}>Document File</Label>
-              <div className="flex items-center gap-2">
-                <Input
+          <TabsContent value="upload" className="space-y-6 mt-6">
+            {/* Enhanced File Input Section */}
+            <div className="space-y-3">
+              <Label htmlFor={fileId} className="text-sm font-medium text-gray-900 dark:text-white/90">
+                Document File
+              </Label>
+
+              {/* Custom File Upload Area */}
+              <div className="relative">
+                <input
                   id={fileId}
                   type="file"
-                  accept=".txt,.md,.pdf,.doc,.docx"
+                  accept=".txt,.md,.pdf,.doc,.docx,.html,.htm"
                   onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
                   disabled={isProcessing}
-                  className="flex-1"
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed z-10"
                 />
+                <div
+                  className={cn(
+                    "relative h-20 rounded-xl border-2 border-dashed transition-all duration-200",
+                    "flex flex-col items-center justify-center gap-2 text-center p-4",
+                    glassCard.blur.md,
+                    selectedFile ? glassCard.tints.purple.light : glassCard.transparency.medium,
+                    selectedFile ? "border-purple-400/70" : "border-gray-300/60 dark:border-gray-600/60",
+                    !selectedFile && "hover:border-purple-400/50",
+                    isProcessing && "opacity-50 cursor-not-allowed",
+                  )}
+                >
+                  <Upload
+                    className={cn("w-6 h-6", selectedFile ? "text-purple-500" : "text-gray-400 dark:text-gray-500")}
+                  />
+                  <div className="text-sm">
+                    {selectedFile ? (
+                      <div className="space-y-1">
+                        <p className="font-medium text-purple-700 dark:text-purple-400">{selectedFile.name}</p>
+                        <p className="text-xs text-purple-600 dark:text-purple-400">
+                          {Math.round(selectedFile.size / 1024)} KB
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="space-y-1">
+                        <p className="font-medium text-gray-700 dark:text-gray-300">Click to browse or drag & drop</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          PDF, DOC, DOCX, TXT, MD files supported
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
-              {selectedFile && (
-                <p className="text-sm text-gray-400">
-                  Selected: {selectedFile.name} ({Math.round(selectedFile.size / 1024)} KB)
-                </p>
-              )}
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor={uploadTypeId}>Knowledge Type</Label>
-              <Select value={uploadType} onValueChange={(v) => setUploadType(v as "technical" | "business")}>
-                <SelectTrigger id={uploadTypeId}>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="technical">Technical</SelectItem>
-                  <SelectItem value="business">Business</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            <KnowledgeTypeSelector value={uploadType} onValueChange={setUploadType} disabled={isProcessing} />
 
-            <div className="space-y-2">
-              <Label htmlFor={uploadTagsId}>Tags (comma-separated)</Label>
-              <Input
-                id={uploadTagsId}
-                placeholder="documentation, manual, reference"
-                value={uploadTags}
-                onChange={(e) => setUploadTags(e.target.value)}
-                disabled={isProcessing}
-              />
-            </div>
+            <TagInput
+              tags={uploadTags}
+              onTagsChange={setUploadTags}
+              disabled={isProcessing}
+              placeholder="Add tags like 'manual', 'reference', 'guide'..."
+            />
 
             <Button
               onClick={handleUpload}
               disabled={isProcessing || !selectedFile}
-              className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700"
+              className={[
+                "w-full bg-gradient-to-r from-purple-500 to-purple-600",
+                "hover:from-purple-600 hover:to-purple-700",
+                "backdrop-blur-md border border-purple-400/50",
+                "shadow-[0_0_20px_rgba(147,51,234,0.25)] hover:shadow-[0_0_30px_rgba(147,51,234,0.35)]",
+                "transition-all duration-200",
+              ].join(" ")}
             >
               {uploadMutation.isPending ? (
                 <>

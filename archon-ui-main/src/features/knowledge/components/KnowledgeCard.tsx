@@ -1,22 +1,28 @@
 /**
- * Enhanced Knowledge Card Component
- * Individual knowledge item card with excellent UX and inline progress
+ * Knowledge Card component
+ * Displays a knowledge item with inline progress and status UI
  * Following the pattern from ProjectCard
  */
 
 import { format } from "date-fns";
 import { motion } from "framer-motion";
-import { Briefcase, Clock, Code, ExternalLink, File, FileText, Globe, Terminal } from "lucide-react";
+import { Clock, Code, ExternalLink, File, FileText, Globe } from "lucide-react";
 import { useState } from "react";
+import { isOptimistic } from "@/features/shared/utils/optimistic";
+import { KnowledgeCardProgress } from "../../progress/components/KnowledgeCardProgress";
+import type { ActiveOperation } from "../../progress/types";
 import { StatPill } from "../../ui/primitives";
+import { DataCard, DataCardContent, DataCardFooter, DataCardHeader } from "../../ui/primitives/data-card";
+import { OptimisticIndicator } from "../../ui/primitives/OptimisticIndicator";
 import { cn } from "../../ui/primitives/styles";
 import { SimpleTooltip } from "../../ui/primitives/tooltip";
 import { useDeleteKnowledgeItem, useRefreshKnowledgeItem } from "../hooks";
-import { KnowledgeCardProgress } from "../progress/components/KnowledgeCardProgress";
-import type { ActiveOperation } from "../progress/types";
 import type { KnowledgeItem } from "../types";
 import { extractDomain } from "../utils/knowledge-utils";
 import { KnowledgeCardActions } from "./KnowledgeCardActions";
+import { KnowledgeCardTags } from "./KnowledgeCardTags";
+import { KnowledgeCardTitle } from "./KnowledgeCardTitle";
+import { KnowledgeCardType } from "./KnowledgeCardType";
 
 interface KnowledgeCardProps {
   item: KnowledgeItem;
@@ -40,6 +46,9 @@ export const KnowledgeCard: React.FC<KnowledgeCardProps> = ({
   const [isHovered, setIsHovered] = useState(false);
   const deleteMutation = useDeleteKnowledgeItem();
   const refreshMutation = useRefreshKnowledgeItem();
+
+  // Check if item is optimistic
+  const optimistic = isOptimistic(item);
 
   // Determine card styling based on type and status
   // Check if it's a real URL (not a file:// URL)
@@ -71,37 +80,16 @@ export const KnowledgeCard: React.FC<KnowledgeCardProps> = ({
     }
   };
 
-  const getCardGradient = () => {
-    if (activeOperation) {
-      return "from-cyan-100/60 via-cyan-50/30 to-white/70 dark:from-cyan-900/30 dark:via-cyan-900/15 dark:to-black/40";
-    }
-    if (hasError) {
-      return "from-red-100/50 via-red-50/25 to-white/60 dark:from-red-900/20 dark:via-red-900/10 dark:to-black/30";
-    }
-    if (isProcessing) {
-      return "from-yellow-100/50 via-yellow-50/25 to-white/60 dark:from-yellow-900/20 dark:via-yellow-900/10 dark:to-black/30";
-    }
-    if (isTechnical) {
-      return isUrl
-        ? "from-cyan-100/50 via-cyan-50/25 to-white/60 dark:from-cyan-900/20 dark:via-cyan-900/10 dark:to-black/30"
-        : "from-purple-100/50 via-purple-50/25 to-white/60 dark:from-purple-900/20 dark:via-purple-900/10 dark:to-black/30";
-    }
-    return isUrl
-      ? "from-blue-100/50 via-blue-50/25 to-white/60 dark:from-blue-900/20 dark:via-blue-900/10 dark:to-black/30"
-      : "from-pink-100/50 via-pink-50/25 to-white/60 dark:from-pink-900/20 dark:via-pink-900/10 dark:to-black/30";
+  // Determine edge color for DataCard primitive
+  const getEdgeColor = (): "cyan" | "purple" | "blue" | "pink" | "red" | "orange" => {
+    if (activeOperation) return "cyan";
+    if (hasError) return "red";
+    if (isProcessing) return "orange";
+    if (isTechnical) return isUrl ? "cyan" : "purple";
+    return isUrl ? "blue" : "pink";
   };
 
-  const getBorderColor = () => {
-    if (activeOperation) return "border-cyan-600/40 dark:border-cyan-500/50";
-    if (hasError) return "border-red-600/30 dark:border-red-500/30";
-    if (isProcessing) return "border-yellow-600/30 dark:border-yellow-500/30";
-    if (isTechnical) {
-      return isUrl ? "border-cyan-600/30 dark:border-cyan-500/30" : "border-purple-600/30 dark:border-purple-500/30";
-    }
-    return isUrl ? "border-blue-600/30 dark:border-blue-500/30" : "border-pink-600/30 dark:border-pink-500/30";
-  };
-
-  // Accent color used for the top glow bar
+  // Accent color name for title component
   const getAccentColorName = () => {
     if (activeOperation) return "cyan" as const;
     if (hasError) return "red" as const;
@@ -110,39 +98,15 @@ export const KnowledgeCard: React.FC<KnowledgeCardProps> = ({
     return isUrl ? ("blue" as const) : ("pink" as const);
   };
 
-  const accent = (() => {
-    const name = getAccentColorName();
-    switch (name) {
-      case "cyan":
-        return { bar: "bg-cyan-500", smear: "from-cyan-500/25" };
-      case "purple":
-        return { bar: "bg-purple-500", smear: "from-purple-500/25" };
-      case "blue":
-        return { bar: "bg-blue-500", smear: "from-blue-500/25" };
-      case "pink":
-        return { bar: "bg-pink-500", smear: "from-pink-500/25" };
-      case "red":
-        return { bar: "bg-red-500", smear: "from-red-500/25" };
-      case "yellow":
-        return { bar: "bg-yellow-400", smear: "from-yellow-400/25" };
-      default:
-        return { bar: "bg-cyan-500", smear: "from-cyan-500/25" };
-    }
-  })();
-
   const getSourceIcon = () => {
     if (isUrl) return <Globe className="w-5 h-5" />;
     return <File className="w-5 h-5" />;
   };
 
-  const getTypeLabel = () => {
-    if (isTechnical) return "Technical";
-    return "Business";
-  };
-
   return (
+    // biome-ignore lint/a11y/useSemanticElements: Card contains nested interactive elements (buttons, links) - using div to avoid invalid HTML nesting
     <motion.div
-      className="relative group cursor-pointer"
+      className={cn("relative group cursor-pointer", optimistic && "opacity-80")}
       role="button"
       tabIndex={0}
       onMouseEnter={() => setIsHovered(true)}
@@ -157,32 +121,17 @@ export const KnowledgeCard: React.FC<KnowledgeCardProps> = ({
       whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.2 }}
     >
-      <div
+      <DataCard
+        edgePosition="top"
+        edgeColor={getEdgeColor()}
+        blur="md"
         className={cn(
-          "relative overflow-hidden transition-all duration-300 rounded-xl",
-          "bg-gradient-to-b backdrop-blur-md border",
-          getCardGradient(),
-          getBorderColor(),
+          "transition-shadow",
           isHovered && "shadow-[0_0_30px_rgba(6,182,212,0.2)]",
-          "min-h-[240px] flex flex-col",
+          optimistic && "ring-1 ring-cyan-400/30",
         )}
       >
-        {/* Top accent glow tied to type (does not change size) */}
-        <div className="pointer-events-none absolute inset-x-0 top-0">
-          {/* Hairline highlight */}
-          <div className={cn("mx-1 mt-0.5 h-[2px] rounded-full", accent.bar)} />
-          {/* Soft glow smear fading downward */}
-          <div className={cn("-mt-1 h-8 w-full bg-gradient-to-b to-transparent blur-md", accent.smear)} />
-        </div>
-        {/* Glow effect on hover */}
-        {isHovered && (
-          <div className="absolute inset-0 opacity-20 pointer-events-none">
-            <div className="absolute -inset-[100px] bg-[radial-gradient(circle,rgba(6,182,212,0.4)_0%,transparent_70%)] blur-3xl" />
-          </div>
-        )}
-
-        {/* Header with Type Badge */}
-        <div className="relative p-4 pb-2">
+        <DataCardHeader>
           <div className="flex items-start justify-between gap-2 mb-2">
             {/* Type and Source Badge */}
             <div className="flex items-center gap-2">
@@ -199,19 +148,7 @@ export const KnowledgeCard: React.FC<KnowledgeCardProps> = ({
                   <span>{isUrl ? "Web Page" : "Document"}</span>
                 </div>
               </SimpleTooltip>
-              <SimpleTooltip content={isTechnical ? "Technical documentation" : "Business/general content"}>
-                <div
-                  className={cn(
-                    "flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium",
-                    isTechnical
-                      ? "bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400"
-                      : "bg-pink-100 text-pink-700 dark:bg-pink-500/10 dark:text-pink-400",
-                  )}
-                >
-                  {isTechnical ? <Terminal className="w-3.5 h-3.5" /> : <Briefcase className="w-3.5 h-3.5" />}
-                  <span>{getTypeLabel()}</span>
-                </div>
-              </SimpleTooltip>
+              <KnowledgeCardType sourceId={item.source_id} knowledgeType={item.knowledge_type} />
             </div>
 
             {/* Actions */}
@@ -237,7 +174,15 @@ export const KnowledgeCard: React.FC<KnowledgeCardProps> = ({
           </div>
 
           {/* Title */}
-          <h3 className="text-base font-semibold text-gray-900 dark:text-white/90 line-clamp-2 mb-2">{item.title}</h3>
+          <div className="mb-2">
+            <KnowledgeCardTitle
+              sourceId={item.source_id}
+              title={item.title}
+              description={item.metadata?.description}
+              accentColor={getAccentColorName()}
+            />
+            <OptimisticIndicator isOptimistic={optimistic} className="mt-2" />
+          </div>
 
           {/* URL/Source */}
           {item.url &&
@@ -247,7 +192,10 @@ export const KnowledgeCard: React.FC<KnowledgeCardProps> = ({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-1 text-xs text-gray-600 dark:text-gray-400 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors mt-2"
+                className={[
+                  "inline-flex items-center gap-1 text-xs mt-2",
+                  "text-gray-600 dark:text-gray-400 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors",
+                ].join(" ")}
               >
                 <ExternalLink className="w-3 h-3" />
                 <span className="truncate">{extractDomain(item.url)}</span>
@@ -258,16 +206,28 @@ export const KnowledgeCard: React.FC<KnowledgeCardProps> = ({
                 <span className="truncate">{item.url.replace("file://", "")}</span>
               </div>
             ))}
-        </div>
 
-        {/* Spacer to push footer to bottom */}
-        <div className="flex-1" />
+          {/* Tags */}
+          <div
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.stopPropagation();
+              }
+            }}
+            role="none"
+            className="mt-2"
+          >
+            <KnowledgeCardTags sourceId={item.source_id} tags={item.metadata?.tags || []} />
+          </div>
+        </DataCardHeader>
 
-        {/* Progress tracking for active operations - using simplified component */}
-        {activeOperation && <KnowledgeCardProgress operation={activeOperation} />}
+        <DataCardContent>
+          {/* Progress tracking for active operations - using simplified component */}
+          {activeOperation && <KnowledgeCardProgress operation={activeOperation} />}
+        </DataCardContent>
 
-        {/* Fixed Footer with Stats */}
-        <div className="px-4 py-3 bg-gray-100/50 dark:bg-black/30 border-t border-gray-200/50 dark:border-white/10">
+        <DataCardFooter>
           <div className="flex items-center justify-between text-xs">
             {/* Left: date */}
             <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
@@ -285,8 +245,16 @@ export const KnowledgeCard: React.FC<KnowledgeCardProps> = ({
             </div>
             {/* Right: pills */}
             <div className="flex items-center gap-2">
-              <SimpleTooltip content={`${documentCount} document${documentCount !== 1 ? "s" : ""} indexed`}>
-                <div>
+              <SimpleTooltip
+                content={`${documentCount} document${documentCount !== 1 ? "s" : ""} indexed - Click to view`}
+              >
+                <div
+                  className="cursor-pointer hover:scale-105 transition-transform"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onViewDocument();
+                  }}
+                >
                   <StatPill
                     color="orange"
                     value={documentCount}
@@ -297,9 +265,17 @@ export const KnowledgeCard: React.FC<KnowledgeCardProps> = ({
                 </div>
               </SimpleTooltip>
               <SimpleTooltip
-                content={`${codeExamplesCount} code example${codeExamplesCount !== 1 ? "s" : ""} extracted`}
+                content={`${codeExamplesCount} code example${codeExamplesCount !== 1 ? "s" : ""} extracted - ${onViewCodeExamples ? "Click to view" : "No examples available"}`}
               >
-                <div>
+                <div
+                  className={cn("transition-transform", onViewCodeExamples && "cursor-pointer hover:scale-105")}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (onViewCodeExamples) {
+                      onViewCodeExamples();
+                    }
+                  }}
+                >
                   <StatPill
                     color="blue"
                     value={codeExamplesCount}
@@ -311,8 +287,8 @@ export const KnowledgeCard: React.FC<KnowledgeCardProps> = ({
               </SimpleTooltip>
             </div>
           </div>
-        </div>
-      </div>
+        </DataCardFooter>
+      </DataCard>
     </motion.div>
   );
 };

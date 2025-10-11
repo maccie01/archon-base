@@ -4,14 +4,14 @@
  */
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useToast } from "../../ui/hooks/useToast";
+import { useToast } from "@/features/shared/hooks/useToast";
+import { CrawlingProgress } from "../../progress/components/CrawlingProgress";
+import type { ActiveOperation } from "../../progress/types";
 import { AddKnowledgeDialog } from "../components/AddKnowledgeDialog";
 import { KnowledgeHeader } from "../components/KnowledgeHeader";
 import { KnowledgeList } from "../components/KnowledgeList";
 import { useKnowledgeSummaries } from "../hooks/useKnowledgeQueries";
 import { KnowledgeInspector } from "../inspector/components/KnowledgeInspector";
-import { CrawlingProgress } from "../progress/components/CrawlingProgress";
-import type { ActiveOperation } from "../progress/types";
 import type { KnowledgeItem, KnowledgeItemsFilter } from "../types";
 
 export const KnowledgeView = () => {
@@ -23,6 +23,7 @@ export const KnowledgeView = () => {
   // Dialog state
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [inspectorItem, setInspectorItem] = useState<KnowledgeItem | null>(null);
+  const [inspectorInitialTab, setInspectorInitialTab] = useState<"documents" | "code">("documents");
 
   // Build filter object for API - memoize to prevent recreating on every render
   const filter = useMemo<KnowledgeItemsFilter>(() => {
@@ -72,7 +73,7 @@ export const KnowledgeView = () => {
       // Check if it was an error or success
       if (op.status === "error" || op.status === "failed") {
         // Show error message with details
-        const errorMessage = op.message || op.error || "Operation failed";
+        const errorMessage = op.message || "Operation failed";
         showToast(`❌ ${errorMessage}`, "error", 7000);
       } else if (op.status === "completed") {
         // Show success message
@@ -96,9 +97,19 @@ export const KnowledgeView = () => {
   };
 
   const handleViewDocument = (sourceId: string) => {
-    // Find the item and open inspector instead of document browser
+    // Find the item and open inspector to documents tab
     const item = knowledgeItems.find((k) => k.source_id === sourceId);
     if (item) {
+      setInspectorInitialTab("documents");
+      setInspectorItem(item);
+    }
+  };
+
+  const handleViewCodeExamples = (sourceId: string) => {
+    // Open the inspector to code examples tab
+    const item = knowledgeItems.find((k) => k.source_id === sourceId);
+    if (item) {
+      setInspectorInitialTab("code");
       setInspectorItem(item);
     }
   };
@@ -130,7 +141,7 @@ export const KnowledgeView = () => {
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-white/90">Active Operations ({activeOperations.length})</h3>
               <div className="flex items-center gap-2 text-sm text-gray-400">
-                <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse" />
+                <div className="w-2 h-2 bg-cyan-400 dark:bg-cyan-400 rounded-full animate-pulse" />
                 Live Updates
               </div>
             </div>
@@ -146,6 +157,7 @@ export const KnowledgeView = () => {
           error={error}
           onRetry={refetch}
           onViewDocument={handleViewDocument}
+          onViewCodeExamples={handleViewCodeExamples}
           onDeleteSuccess={handleDeleteSuccess}
           activeOperations={activeOperations}
           onRefreshStarted={(progressId) => {
@@ -177,6 +189,7 @@ export const KnowledgeView = () => {
           onOpenChange={(open) => {
             if (!open) setInspectorItem(null);
           }}
+          initialTab={inspectorInitialTab}
         />
       )}
     </div>
