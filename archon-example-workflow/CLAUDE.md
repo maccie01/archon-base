@@ -11,6 +11,21 @@
 
 - None right now - need to make new ones for new features.
 
+# Available Workflows
+
+This project includes specialized workflows for systematic development and quality assurance:
+
+## Planning & Implementation
+- `/create-plan` - Transform requirements into implementation plans
+- `/execute-plan` - Execute plans with task tracking and validation
+
+## Quality Assurance
+- `/review-code` - Pragmatic code quality review (7 dimensions)
+- `/security-review` - OWASP-based vulnerability scanning
+- `/design-review` - UI/UX review with WCAG 2.1 AA compliance
+
+Use these workflows at appropriate stages of development.
+
 # Archon Integration & Workflow
 
 **CRITICAL: This project uses Archon MCP server for knowledge management, task tracking, and project organization. ALWAYS start with Archon MCP server task management.**
@@ -91,3 +106,49 @@ find_tasks(filter_by="project", filter_value="proj-123")
 - Keep queries SHORT (2-5 keywords) for better search results
 - Higher `task_order` = higher priority (0-100)
 - Tasks should be 30 min - 4 hours of work
+
+## Quality Assurance Workflows
+
+### When to Use Review Workflows
+
+**Code Review** (`/review-code`):
+- After implementing any feature (before commit)
+- Before creating pull requests
+- When refactoring existing code
+- For all code changes to main branch
+
+**Security Review** (`/security-review`):
+- When handling user input or authentication
+- For API endpoints and data handling
+- When working with sensitive data
+- Before production deployments
+
+**Design Review** (`/design-review`):
+- After implementing UI components
+- Before finalizing user-facing features
+- For accessibility compliance (WCAG 2.1 AA)
+- When updating styles or layouts
+
+### Review Workflow Integration
+
+All review workflows integrate with Archon:
+1. **Search knowledge base** for project-specific standards
+2. **Use specialized agents** (code-reviewer, security-auditor, design-reviewer)
+3. **Generate structured reports** with severity levels
+4. **Optionally create tasks** for findings in Archon
+
+Example full cycle:
+```bash
+# 1. Plan and implement
+/create-plan requirements/feature.md
+/execute-plan PRPs/feature.md
+
+# 2. Quality assurance
+/review-code           # Code quality check
+/security-review       # Security audit
+/design-review         # UI/UX review (if applicable)
+
+# 3. Address findings and commit
+# Fix critical/high priority issues
+git commit -m "Implement feature with QA checks"
+```
