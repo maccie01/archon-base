@@ -1,7 +1,7 @@
 # Archon Knowledge Base
 
 **Created**: 2025-10-13
-**Last Updated**: 2025-10-13
+**Last Updated**: 2025-10-14
 **Status**: Organized and ready for completion
 
 ---
@@ -27,12 +27,24 @@ knowledgebase/
 │       ├── 04-frontend/              # React UI (24 components)
 │       ├── 05-backend/               # 23 modules
 │       ├── 06-configuration/         # 11 env vars, dependencies
-│       └── 07-standards/             # CRITICAL: Coding standards (TO CREATE)
+│       └── 07-standards/             # CRITICAL: Coding standards (COMPLETE)
 │
-└── research_prompts.md/              # Research task organization
-    ├── prompts/                      # Task agent prompts (TO CREATE)
-    ├── answers/                      # Completed research results
-    └── readme.md                     # Research workflow guide
+├── research_prompts/                 # Research task organization (renamed from research_prompts.md/)
+│   ├── prompts/                      # Task agent prompts
+│   ├── answers/                      # Completed research results
+│   └── readme.md                     # Research workflow guide
+│
+├── knowledge-organization/           # Meta-documentation and organization materials
+│   ├── README.md                     # Organization guide and navigation
+│   ├── INDEX.md                      # Quick file reference
+│   ├── SUMMARY.md                    # Executive summary
+│   ├── FILE_MAPPING.md               # Integration file mappings
+│   ├── QUICK_START.md                # Quick start guide
+│   ├── COMPLETION_TODOS.md           # Detailed TODO list
+│   ├── archive/                      # Historical documentation (8 files)
+│   └── scripts/                      # Automation utilities (2 scripts)
+│
+└── .backups/                         # Backup directory (git-ignored)
 ```
 
 ---
@@ -284,14 +296,35 @@ knowledgebase/
 
 ---
 
-## Research Organization
+## Organization & Meta-Documentation
 
-All research tasks are organized in `research_prompts.md/`:
+### Knowledge Organization Directory
+
+The `knowledge-organization/` directory contains all meta-documentation about the knowledge base:
+
+- **README.md**: Comprehensive guide to the organization directory
+- **INDEX.md**: Quick reference index of all organizational files
+- **SUMMARY.md**: Executive summary of organization effort and current status
+- **FILE_MAPPING.md**: Detailed source-to-target file mappings for integration
+- **QUICK_START.md**: Quick start guide for executing research tasks
+- **COMPLETION_TODOS.md**: Detailed TODO list with 26 tasks and effort estimates
+- **archive/**: Historical documentation from completed integration phases
+- **scripts/**: Automation utilities for KB management (integrate.sh, cleanup_html.py)
+
+See `knowledge-organization/README.md` for complete navigation guide.
+
+### Research Organization
+
+All research tasks are organized in `research_prompts/` (renamed from `research_prompts.md/`):
 - `prompts/` - Detailed prompts for task agents
 - `answers/` - Completed research results
 - Track completion status per task
 
-See `research_prompts.md/readme.md` for workflow details.
+See `research_prompts/readme.md` for workflow details.
+
+### Backup Directory
+
+The `.backups/` directory (git-ignored) stores automated backups during integration processes. Backups are timestamped and compressed for safety.
 
 ---
 
@@ -302,9 +335,21 @@ See `research_prompts.md/readme.md` for workflow details.
 
 ---
 
-## Research Prompts Created
+## Directory Changes & Updates
 
-**Location**: `research_prompts.md/`
+### Recent Organizational Changes (2025-10-14)
+
+1. **Created knowledge-organization/ directory**: Meta-documentation hub with comprehensive guides
+2. **Renamed research_prompts.md/ → research_prompts/**: Cleaner directory naming convention
+3. **Added .backups/ directory**: Git-ignored backup storage for integration safety
+4. **Created comprehensive documentation**:
+   - knowledge-organization/README.md - Navigation and overview guide
+   - knowledge-organization/INDEX.md - Quick file reference index
+   - Moved organizational files into dedicated directory for better structure
+
+### Research Prompts
+
+**Location**: `research_prompts/` (renamed from `research_prompts.md/`)
 
 **Structure**:
 - `README.md` - Research organization guide ✅
@@ -321,3 +366,11 @@ See `research_prompts.md/readme.md` for workflow details.
 - `answers/` - Completed research results (empty)
 
 **Next Action**: Create remaining 23 research prompts, then execute with task agents
+
+### Finding Information
+
+- **For KB organization details**: See `knowledge-organization/README.md`
+- **For quick file reference**: See `knowledge-organization/INDEX.md`
+- **For current status**: See `knowledge-organization/SUMMARY.md`
+- **For integration mapping**: See `knowledge-organization/FILE_MAPPING.md`
+- **For getting started**: See `knowledge-organization/QUICK_START.md`

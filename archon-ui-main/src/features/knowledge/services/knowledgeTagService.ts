@@ -19,30 +19,44 @@ export const knowledgeTagService = {
     }
     const queryString = params.toString();
     const endpoint = `${API_BASE}${queryString ? `?${queryString}` : ""}`;
-    return callAPIWithETag<KnowledgeTag[]>(endpoint);
+    const response = await callAPIWithETag<{ success: boolean; tags: KnowledgeTag[]; count: number }>(endpoint);
+    return response.tags;
   },
 
   /**
    * Get a specific tag by name
    */
   async getTagByName(tagName: string): Promise<KnowledgeTag> {
-    return callAPIWithETag<KnowledgeTag>(`${API_BASE}/${tagName}`);
+    const response = await callAPIWithETag<{ success: boolean; tag: KnowledgeTag }>(`${API_BASE}/${tagName}`);
+    return response.tag;
   },
 
   /**
    * Get tags grouped by category
    */
   async getTagsByCategory(): Promise<Record<string, string[]>> {
-    return callAPIWithETag<Record<string, string[]>>(`${API_BASE}/categories/grouped`);
+    const response = await callAPIWithETag<{
+      success: boolean;
+      categories: Record<string, string[]>;
+      category_counts: Record<string, number>;
+      total_tags: number;
+    }>(`${API_BASE}/categories/grouped`);
+    return response.categories;
   },
 
   /**
    * Get suggested tags based on URL and content
    */
   async suggestTags(data: SuggestTagsRequest): Promise<string[]> {
-    return callAPIWithETag<string[]>(`${API_BASE}/suggest`, {
+    const response = await callAPIWithETag<{
+      success: boolean;
+      suggested_tags: string[];
+      count: number;
+      source: { url: string; title: string };
+    }>(`${API_BASE}/suggest`, {
       method: "POST",
       body: JSON.stringify(data),
     });
+    return response.suggested_tags;
   },
 };
