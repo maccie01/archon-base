@@ -4,14 +4,25 @@
 
 set -e
 
-ARCHON_DIR="/Users/janschubert/tools/archon"
+ARCHON_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 COMPOSE_FILE="$ARCHON_DIR/docker-compose.yml"
 
 cd "$ARCHON_DIR"
 
+open_url() {
+  local url="$1"
+  if command -v xdg-open >/dev/null 2>&1; then
+    xdg-open "$url" >/dev/null 2>&1 || echo "$url"
+  elif command -v open >/dev/null 2>&1; then
+    open "$url" >/dev/null 2>&1 || echo "$url"
+  else
+    echo "$url"
+  fi
+}
+
 # Helper functions
 is_supabase_running() {
-  npx supabase status 2>&1 | grep -q "supabase local development setup is running"
+  npx -y supabase@latest status 2>&1 | grep -q "supabase local development setup is running"
 }
 
 is_archon_running() {
@@ -23,7 +34,7 @@ start_supabase() {
     echo "✓ Supabase is already running"
   else
     echo "Starting Supabase..."
-    npx supabase start
+    npx -y supabase@latest start
     echo "✅ Supabase started"
   fi
 }
@@ -31,7 +42,7 @@ start_supabase() {
 stop_supabase() {
   if is_supabase_running; then
     echo "Stopping Supabase..."
-    npx supabase stop
+    npx -y supabase@latest stop
     echo "✅ Supabase stopped"
   else
     echo "✓ Supabase is not running"
@@ -134,7 +145,7 @@ case "$1" in
   status|ps)
     echo "=== Supabase Status ==="
     if is_supabase_running; then
-      npx supabase status
+      npx -y supabase@latest status
     else
       echo "❌ Supabase is not running"
       echo "   Start with: archon start"
@@ -174,12 +185,12 @@ case "$1" in
       stop_supabase
     elif [ "$1" = "status" ]; then
       if is_supabase_running; then
-        npx supabase status
+        npx -y supabase@latest status
       else
         echo "❌ Supabase is not running"
       fi
     else
-      npx supabase "$@"
+      npx -y supabase@latest "$@"
     fi
     ;;
 
@@ -190,7 +201,7 @@ case "$1" in
       echo ""
     fi
     echo "Opening Supabase Studio..."
-    open "http://127.0.0.1:54323" 2>/dev/null || echo "Supabase Studio: http://127.0.0.1:54323"
+    open_url "http://127.0.0.1:54323"
     ;;
 
   ui)
@@ -199,7 +210,7 @@ case "$1" in
       exit 1
     fi
     echo "Opening Archon UI..."
-    open "http://localhost:3737" 2>/dev/null || echo "Archon UI: http://localhost:3737"
+    open_url "http://localhost:3737"
     ;;
 
   clean)

@@ -5,6 +5,26 @@
 
 ---
 
+## Initial Setup
+
+If this is your first time setting up Archon, run the automated setup script:
+
+```bash
+bash scripts/setup.sh
+```
+
+This will:
+- Install prerequisites (Docker, Node, jq)
+- Initialize and start Supabase
+- Start Ollama with required models
+- Generate your `.env` values
+
+Then copy the displayed values to your `.env` file and start Archon.
+
+For detailed server setup instructions, see **SERVER_SETUP.md**.
+
+---
+
 ## Essential Commands
 
 ```bash
@@ -272,6 +292,7 @@ archon help
 
 **Detailed Guides:**
 - **USAGE_GUIDE.md**: Complete usage documentation
+- **SERVER_SETUP.md**: Server setup for Ubuntu with local Supabase + Ollama
 - **SETUP_VALIDATION_REPORT.md**: Full setup validation
 - **DATABASE_REVIEW.md**: Database schema details
 
