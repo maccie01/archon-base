@@ -67,7 +67,7 @@ export const DataCard = React.forwardRef<HTMLDivElement, DataCardProps>(
           {/* Content wrapper with flex layout */}
           <div
             className={cn(
-              "flex flex-col min-h-[240px]",
+              "flex flex-col min-h-[240px] pointer-events-none",
               glassCard.blur[blur],
               glassCard.tints[edgeColor]?.light || glassCard.transparency[transparency],
             )}
@@ -107,7 +107,7 @@ DataCard.displayName = "DataCard";
 export const DataCardHeader = React.forwardRef<HTMLDivElement, DataCardHeaderProps>(
   ({ className, children, ...props }, ref) => {
     return (
-      <div ref={ref} className={cn("relative p-4 pb-2", className)} {...props}>
+      <div ref={ref} className={cn("relative p-4 pb-2 pointer-events-auto", className)} {...props}>
         {children}
       </div>
     );
@@ -120,7 +120,7 @@ DataCardHeader.displayName = "DataCardHeader";
 export const DataCardContent = React.forwardRef<HTMLDivElement, DataCardContentProps>(
   ({ className, children, ...props }, ref) => {
     return (
-      <div ref={ref} className={cn("flex-1 px-4", className)} {...props}>
+      <div ref={ref} className={cn("flex-1 px-4 pointer-events-auto", className)} {...props}>
         {children}
       </div>
     );
@@ -136,7 +136,7 @@ export const DataCardFooter = React.forwardRef<HTMLDivElement, DataCardFooterPro
       <div
         ref={ref}
         className={cn(
-          "px-4 py-3 bg-gray-100/50 dark:bg-black/30 border-t border-gray-200/50 dark:border-white/10",
+          "px-4 py-3 bg-gray-100/50 dark:bg-black/30 border-t border-gray-200/50 dark:border-white/10 pointer-events-auto",
           className,
         )}
         {...props}
