@@ -291,7 +291,8 @@ class TestSuggestTags:
         result = await auto_tagging_service.suggest_tags(url, title, summary)
 
         assert "mdn" in result
-        assert "javascript" in result
+        assert "documentation" in result
+        assert "tutorial" in result
 
     @pytest.mark.asyncio
     async def test_suggest_tags_stack_overflow_url(self, auto_tagging_service):

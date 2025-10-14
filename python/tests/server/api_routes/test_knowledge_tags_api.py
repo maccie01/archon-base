@@ -7,7 +7,7 @@ Created: 2025-10-14
 """
 
 import pytest
-from httpx import AsyncClient
+from httpx import AsyncClient, ASGITransport
 from unittest.mock import AsyncMock, patch
 from uuid import uuid4
 
@@ -59,7 +59,8 @@ class TestGetAllTags:
         ]
         mock_tag_service.get_all_tags.return_value = mock_tags
 
-        async with AsyncClient(app=app, base_url="http://test") as client:
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://test") as client:
             response = await client.get("/api/knowledge/tags")
 
         assert response.status_code == 200
@@ -81,7 +82,8 @@ class TestGetAllTags:
         ]
         mock_tag_service.get_all_tags.return_value = mock_tags
 
-        async with AsyncClient(app=app, base_url="http://test") as client:
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://test") as client:
             response = await client.get("/api/knowledge/tags?category=framework")
 
         assert response.status_code == 200
@@ -93,7 +95,8 @@ class TestGetAllTags:
         """Should return empty list when no tags exist."""
         mock_tag_service.get_all_tags.return_value = []
 
-        async with AsyncClient(app=app, base_url="http://test") as client:
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://test") as client:
             response = await client.get("/api/knowledge/tags")
 
         assert response.status_code == 200
@@ -104,17 +107,18 @@ class TestGetAllTags:
         """Should return 500 on service error."""
         mock_tag_service.get_all_tags.side_effect = Exception("Database error")
 
-        async with AsyncClient(app=app, base_url="http://test") as client:
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://test") as client:
             response = await client.get("/api/knowledge/tags")
 
         assert response.status_code == 500
         data = response.json()
-        assert "Database error" in data["detail"]
+        assert data["detail"]["error"] == "Database error"
 
 
 @pytest.mark.asyncio
 class TestGetTagsByCategory:
-    """Tests for GET /api/knowledge/tags/by-category endpoint."""
+    """Tests for GET /api/knowledge/tags/categories/grouped endpoint."""
 
     async def test_get_tags_by_category_success(self, mock_tag_service):
         """Should return tags grouped by category."""
@@ -147,34 +151,43 @@ class TestGetTagsByCategory:
         }
         mock_tag_service.get_tags_by_category.return_value = mock_tags_by_category
 
-        async with AsyncClient(app=app, base_url="http://test") as client:
-            response = await client.get("/api/knowledge/tags/by-category")
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://test") as client:
+            response = await client.get("/api/knowledge/tags/categories/grouped")
 
         assert response.status_code == 200
         data = response.json()
         assert data["success"] is True
-        assert data["tags_by_category"] == mock_tags_by_category
+        assert data["categories"] == mock_tags_by_category
+        assert data["category_counts"] == {"framework": 2, "language": 1}
+        assert data["total_tags"] == 3
         mock_tag_service.get_tags_by_category.assert_called_once()
 
     async def test_get_tags_by_category_empty(self, mock_tag_service):
         """Should return empty dict when no tags exist."""
         mock_tag_service.get_tags_by_category.return_value = {}
 
-        async with AsyncClient(app=app, base_url="http://test") as client:
-            response = await client.get("/api/knowledge/tags/by-category")
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://test") as client:
+            response = await client.get("/api/knowledge/tags/categories/grouped")
 
         assert response.status_code == 200
         data = response.json()
-        assert data["tags_by_category"] == {}
+        assert data["categories"] == {}
+        assert data["category_counts"] == {}
+        assert data["total_tags"] == 0
 
     async def test_get_tags_by_category_service_error(self, mock_tag_service):
         """Should return 500 on service error."""
         mock_tag_service.get_tags_by_category.side_effect = Exception("Database error")
 
-        async with AsyncClient(app=app, base_url="http://test") as client:
-            response = await client.get("/api/knowledge/tags/by-category")
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://test") as client:
+            response = await client.get("/api/knowledge/tags/categories/grouped")
 
         assert response.status_code == 500
+        data = response.json()
+        assert data["detail"]["error"] == "Database error"
 
 
 @pytest.mark.asyncio
@@ -191,7 +204,8 @@ class TestSuggestTags:
             "summary": "How to install React and set up testing",
         }
 
-        async with AsyncClient(app=app, base_url="http://test") as client:
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://test") as client:
             response = await client.post("/api/knowledge/tags/suggest", json=payload)
 
         assert response.status_code == 200
@@ -214,7 +228,8 @@ class TestSuggestTags:
             "summary": "Some random content",
         }
 
-        async with AsyncClient(app=app, base_url="http://test") as client:
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://test") as client:
             response = await client.post("/api/knowledge/tags/suggest", json=payload)
 
         assert response.status_code == 200
@@ -231,7 +246,8 @@ class TestSuggestTags:
             "summary": "",
         }
 
-        async with AsyncClient(app=app, base_url="http://test") as client:
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://test") as client:
             response = await client.post("/api/knowledge/tags/suggest", json=payload)
 
         assert response.status_code == 200
@@ -245,7 +261,8 @@ class TestSuggestTags:
             "summary": "Some summary",
         }
 
-        async with AsyncClient(app=app, base_url="http://test") as client:
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://test") as client:
             response = await client.post("/api/knowledge/tags/suggest", json=payload)
 
         assert response.status_code == 422
@@ -260,7 +277,8 @@ class TestSuggestTags:
             "summary": "How to install React",
         }
 
-        async with AsyncClient(app=app, base_url="http://test") as client:
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://test") as client:
             response = await client.post("/api/knowledge/tags/suggest", json=payload)
 
         assert response.status_code == 500
@@ -281,7 +299,8 @@ class TestSuggestTags:
             "summary": "Learn how to test React components with proper authentication",
         }
 
-        async with AsyncClient(app=app, base_url="http://test") as client:
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://test") as client:
             response = await client.post("/api/knowledge/tags/suggest", json=payload)
 
         assert response.status_code == 200

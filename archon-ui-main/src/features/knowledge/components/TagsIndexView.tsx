@@ -5,7 +5,7 @@
 
 import { useMemo, useState } from "react";
 import { Tag, ChevronDown, ChevronRight } from "lucide-react";
-import { Badge } from "../../ui/primitives";
+import { Badge } from "@/components/ui/Badge";
 import { cn, glassCard } from "../../ui/primitives/styles";
 import { useKnowledgeTags, useTagsByCategory } from "../hooks/useKnowledgeTags";
 

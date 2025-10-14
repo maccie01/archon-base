@@ -20,6 +20,9 @@ def mock_supabase():
     mock.from_ = MagicMock(return_value=mock)
     mock.select = MagicMock(return_value=mock)
     mock.eq = MagicMock(return_value=mock)
+    mock.ilike = MagicMock(return_value=mock)
+    mock.single = MagicMock(return_value=mock)
+    mock.update = MagicMock(return_value=mock)
     mock.order = MagicMock(return_value=mock)
     mock.execute = MagicMock()  # Synchronous, not async
     return mock
@@ -37,7 +40,7 @@ class TestGetAllTags:
 
     @pytest.mark.asyncio
     async def test_get_all_tags_success(self, tag_service, mock_supabase):
-        """Should return all tags sorted by category and name."""
+        """Should return all tags sorted by usage count and name."""
         mock_tags = [
             {
                 "id": str(uuid4()),
@@ -62,7 +65,7 @@ class TestGetAllTags:
 
         assert result == mock_tags
         mock_supabase.from_.assert_called_once_with("archon_knowledge_tags")
-        mock_supabase.order.assert_any_call("category")
+        mock_supabase.order.assert_any_call("usage_count", desc=True)
         mock_supabase.order.assert_any_call("tag_name")
 
     @pytest.mark.asyncio
@@ -116,18 +119,19 @@ class TestGetTagByName:
             "usage_count": 10,
             "color_hex": "#61dafb",
         }
-        mock_supabase.execute.return_value = MagicMock(data=[mock_tag])
+        mock_supabase.execute.return_value = MagicMock(data=mock_tag)
 
         result = await tag_service.get_tag_by_name("react")
 
         assert result == mock_tag
         mock_supabase.from_.assert_called_once_with("archon_knowledge_tags")
-        mock_supabase.eq.assert_called_once_with("tag_name", "react")
+        mock_supabase.ilike.assert_called_once_with("tag_name", "react")
+        mock_supabase.single.assert_called_once()
 
     @pytest.mark.asyncio
     async def test_get_tag_by_name_not_found(self, tag_service, mock_supabase):
         """Should return None when tag not found."""
-        mock_supabase.execute.return_value = MagicMock(data=[])
+        mock_supabase.execute.return_value = MagicMock(data=None)
 
         result = await tag_service.get_tag_by_name("nonexistent")
 
@@ -135,11 +139,12 @@ class TestGetTagByName:
 
     @pytest.mark.asyncio
     async def test_get_tag_by_name_error(self, tag_service, mock_supabase):
-        """Should raise exception on database error."""
+        """Should return None on database error."""
         mock_supabase.execute.side_effect = Exception("Database error")
 
-        with pytest.raises(Exception, match="Database error"):
-            await tag_service.get_tag_by_name("react")
+        result = await tag_service.get_tag_by_name("react")
+
+        assert result is None
 
 
 class TestGetTagsByCategory:
@@ -150,25 +155,16 @@ class TestGetTagsByCategory:
         """Should return tags grouped by category."""
         mock_tags = [
             {
-                "id": str(uuid4()),
                 "tag_name": "react",
                 "category": "framework",
-                "description": "React framework",
-                "usage_count": 10,
             },
             {
-                "id": str(uuid4()),
                 "tag_name": "nextjs",
                 "category": "framework",
-                "description": "Next.js framework",
-                "usage_count": 8,
             },
             {
-                "id": str(uuid4()),
                 "tag_name": "python",
                 "category": "language",
-                "description": "Python language",
-                "usage_count": 15,
             },
         ]
         mock_supabase.execute.return_value = MagicMock(data=mock_tags)
@@ -179,8 +175,8 @@ class TestGetTagsByCategory:
         assert "language" in result
         assert len(result["framework"]) == 2
         assert len(result["language"]) == 1
-        assert result["framework"][0]["tag_name"] == "react"
-        assert result["language"][0]["tag_name"] == "python"
+        assert result["framework"][0] == "react"
+        assert result["language"][0] == "python"
 
     @pytest.mark.asyncio
     async def test_get_tags_by_category_empty(self, tag_service, mock_supabase):

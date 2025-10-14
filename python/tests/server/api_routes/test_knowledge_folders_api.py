@@ -7,11 +7,8 @@ Created: 2025-10-14
 """
 
 import pytest
-from httpx import AsyncClient
 from unittest.mock import AsyncMock, patch
 from uuid import uuid4
-
-from src.server.main import app
 
 
 @pytest.fixture
@@ -27,11 +24,10 @@ def mock_folder_service():
         yield service_instance
 
 
-@pytest.mark.asyncio
 class TestListProjectFolders:
-    """Tests for GET /api/knowledge/folders endpoint."""
+    """Tests for GET /api/knowledge/folders/projects/{project_id}/list endpoint."""
 
-    async def test_list_folders_success(self, mock_folder_service):
+    def test_list_folders_success(self, client, mock_folder_service):
         """Should return list of folders for a project."""
         project_id = str(uuid4())
         mock_folders = [
@@ -56,40 +52,45 @@ class TestListProjectFolders:
         ]
         mock_folder_service.list_project_folders.return_value = mock_folders
 
-        async with AsyncClient(app=app, base_url="http://test") as client:
-            response = await client.get(f"/api/knowledge/folders?project_id={project_id}")
+        response = client.get(f"/api/knowledge/folders/projects/{project_id}/list")
 
         assert response.status_code == 200
         data = response.json()
         assert data["success"] is True
         assert data["folders"] == mock_folders
+        assert data["project_id"] == project_id
+        assert data["count"] == 2
         mock_folder_service.list_project_folders.assert_called_once_with(project_id)
 
-    async def test_list_folders_missing_project_id(self, mock_folder_service):
-        """Should return 422 when project_id is missing."""
-        async with AsyncClient(app=app, base_url="http://test") as client:
-            response = await client.get("/api/knowledge/folders")
+    def test_list_folders_empty(self, client, mock_folder_service):
+        """Should return empty list when no folders exist."""
+        project_id = str(uuid4())
+        mock_folder_service.list_project_folders.return_value = []
 
-        assert response.status_code == 422
+        response = client.get(f"/api/knowledge/folders/projects/{project_id}/list")
 
-    async def test_list_folders_service_error(self, mock_folder_service):
+        assert response.status_code == 200
+        data = response.json()
+        assert data["success"] is True
+        assert data["folders"] == []
+        assert data["count"] == 0
+
+    def test_list_folders_service_error(self, client, mock_folder_service):
         """Should return 500 on service error."""
         project_id = str(uuid4())
         mock_folder_service.list_project_folders.side_effect = Exception("Database error")
 
-        async with AsyncClient(app=app, base_url="http://test") as client:
-            response = await client.get(f"/api/knowledge/folders?project_id={project_id}")
+        response = client.get(f"/api/knowledge/folders/projects/{project_id}/list")
 
         assert response.status_code == 500
         data = response.json()
-        assert "Database error" in data["detail"]
+        assert "Database error" in data["detail"]["error"]
 
 
-@pytest.mark.asyncio
 class TestGetFolder:
     """Tests for GET /api/knowledge/folders/{folder_id} endpoint."""
 
-    async def test_get_folder_success(self, mock_folder_service):
+    def test_get_folder_success(self, client, mock_folder_service):
         """Should return folder by ID."""
         folder_id = str(uuid4())
         mock_folder = {
@@ -103,8 +104,7 @@ class TestGetFolder:
         }
         mock_folder_service.get_folder.return_value = mock_folder
 
-        async with AsyncClient(app=app, base_url="http://test") as client:
-            response = await client.get(f"/api/knowledge/folders/{folder_id}")
+        response = client.get(f"/api/knowledge/folders/{folder_id}")
 
         assert response.status_code == 200
         data = response.json()
@@ -112,34 +112,32 @@ class TestGetFolder:
         assert data["folder"] == mock_folder
         mock_folder_service.get_folder.assert_called_once_with(folder_id)
 
-    async def test_get_folder_not_found(self, mock_folder_service):
+    def test_get_folder_not_found(self, client, mock_folder_service):
         """Should return 404 when folder not found."""
         folder_id = str(uuid4())
         mock_folder_service.get_folder.return_value = {}
 
-        async with AsyncClient(app=app, base_url="http://test") as client:
-            response = await client.get(f"/api/knowledge/folders/{folder_id}")
+        response = client.get(f"/api/knowledge/folders/{folder_id}")
 
         assert response.status_code == 404
         data = response.json()
-        assert data["detail"] == "Folder not found"
+        assert "Folder" in data["detail"]["error"]
+        assert "not found" in data["detail"]["error"]
 
-    async def test_get_folder_service_error(self, mock_folder_service):
+    def test_get_folder_service_error(self, client, mock_folder_service):
         """Should return 500 on service error."""
         folder_id = str(uuid4())
         mock_folder_service.get_folder.side_effect = Exception("Database error")
 
-        async with AsyncClient(app=app, base_url="http://test") as client:
-            response = await client.get(f"/api/knowledge/folders/{folder_id}")
+        response = client.get(f"/api/knowledge/folders/{folder_id}")
 
         assert response.status_code == 500
 
 
-@pytest.mark.asyncio
 class TestCreateFolder:
     """Tests for POST /api/knowledge/folders endpoint."""
 
-    async def test_create_folder_success(self, mock_folder_service):
+    def test_create_folder_success(self, client, mock_folder_service):
         """Should create folder with all fields."""
         project_id = str(uuid4())
         folder_id = str(uuid4())
@@ -162,8 +160,7 @@ class TestCreateFolder:
             "icon_name": "lock",
         }
 
-        async with AsyncClient(app=app, base_url="http://test") as client:
-            response = await client.post("/api/knowledge/folders", json=payload)
+        response = client.post("/api/knowledge/folders", json=payload)
 
         assert response.status_code == 201
         data = response.json()
@@ -171,7 +168,7 @@ class TestCreateFolder:
         assert data["folder"] == mock_folder
         mock_folder_service.create_folder.assert_called_once()
 
-    async def test_create_folder_with_defaults(self, mock_folder_service):
+    def test_create_folder_with_defaults(self, client, mock_folder_service):
         """Should create folder with default values."""
         project_id = str(uuid4())
         folder_id = str(uuid4())
@@ -191,26 +188,24 @@ class TestCreateFolder:
             "folder_name": "API",
         }
 
-        async with AsyncClient(app=app, base_url="http://test") as client:
-            response = await client.post("/api/knowledge/folders", json=payload)
+        response = client.post("/api/knowledge/folders", json=payload)
 
         assert response.status_code == 201
         data = response.json()
         assert data["success"] is True
         assert data["folder"]["folder_name"] == "API"
 
-    async def test_create_folder_missing_required_fields(self, mock_folder_service):
+    def test_create_folder_missing_required_fields(self, client, mock_folder_service):
         """Should return 422 when required fields are missing."""
         payload = {
             "folder_name": "Authentication",
         }
 
-        async with AsyncClient(app=app, base_url="http://test") as client:
-            response = await client.post("/api/knowledge/folders", json=payload)
+        response = client.post("/api/knowledge/folders", json=payload)
 
         assert response.status_code == 422
 
-    async def test_create_folder_service_error(self, mock_folder_service):
+    def test_create_folder_service_error(self, client, mock_folder_service):
         """Should return 500 on service error."""
         mock_folder_service.create_folder.side_effect = Exception("Database error")
 
@@ -219,17 +214,15 @@ class TestCreateFolder:
             "folder_name": "Authentication",
         }
 
-        async with AsyncClient(app=app, base_url="http://test") as client:
-            response = await client.post("/api/knowledge/folders", json=payload)
+        response = client.post("/api/knowledge/folders", json=payload)
 
         assert response.status_code == 500
 
 
-@pytest.mark.asyncio
 class TestUpdateFolder:
     """Tests for PUT /api/knowledge/folders/{folder_id} endpoint."""
 
-    async def test_update_folder_success(self, mock_folder_service):
+    def test_update_folder_success(self, client, mock_folder_service):
         """Should update folder fields."""
         folder_id = str(uuid4())
         updated_folder = {
@@ -246,8 +239,7 @@ class TestUpdateFolder:
             "color_hex": "#10b981",
         }
 
-        async with AsyncClient(app=app, base_url="http://test") as client:
-            response = await client.put(f"/api/knowledge/folders/{folder_id}", json=payload)
+        response = client.put(f"/api/knowledge/folders/{folder_id}", json=payload)
 
         assert response.status_code == 200
         data = response.json()
@@ -255,7 +247,7 @@ class TestUpdateFolder:
         assert data["folder"] == updated_folder
         mock_folder_service.update_folder.assert_called_once()
 
-    async def test_update_folder_partial(self, mock_folder_service):
+    def test_update_folder_partial(self, client, mock_folder_service):
         """Should update only provided fields."""
         folder_id = str(uuid4())
         updated_folder = {
@@ -268,12 +260,11 @@ class TestUpdateFolder:
             "folder_name": "New Name",
         }
 
-        async with AsyncClient(app=app, base_url="http://test") as client:
-            response = await client.put(f"/api/knowledge/folders/{folder_id}", json=payload)
+        response = client.put(f"/api/knowledge/folders/{folder_id}", json=payload)
 
         assert response.status_code == 200
 
-    async def test_update_folder_not_found(self, mock_folder_service):
+    def test_update_folder_not_found(self, client, mock_folder_service):
         """Should return 404 when folder not found."""
         folder_id = str(uuid4())
         mock_folder_service.update_folder.return_value = {}
@@ -282,12 +273,11 @@ class TestUpdateFolder:
             "folder_name": "New Name",
         }
 
-        async with AsyncClient(app=app, base_url="http://test") as client:
-            response = await client.put(f"/api/knowledge/folders/{folder_id}", json=payload)
+        response = client.put(f"/api/knowledge/folders/{folder_id}", json=payload)
 
         assert response.status_code == 404
 
-    async def test_update_folder_service_error(self, mock_folder_service):
+    def test_update_folder_service_error(self, client, mock_folder_service):
         """Should return 500 on service error."""
         folder_id = str(uuid4())
         mock_folder_service.update_folder.side_effect = Exception("Database error")
@@ -296,47 +286,43 @@ class TestUpdateFolder:
             "folder_name": "New Name",
         }
 
-        async with AsyncClient(app=app, base_url="http://test") as client:
-            response = await client.put(f"/api/knowledge/folders/{folder_id}", json=payload)
+        response = client.put(f"/api/knowledge/folders/{folder_id}", json=payload)
 
         assert response.status_code == 500
 
 
-@pytest.mark.asyncio
 class TestDeleteFolder:
     """Tests for DELETE /api/knowledge/folders/{folder_id} endpoint."""
 
-    async def test_delete_folder_success(self, mock_folder_service):
+    def test_delete_folder_success(self, client, mock_folder_service):
         """Should delete folder successfully."""
         folder_id = str(uuid4())
         mock_folder_service.delete_folder.return_value = True
 
-        async with AsyncClient(app=app, base_url="http://test") as client:
-            response = await client.delete(f"/api/knowledge/folders/{folder_id}")
+        response = client.delete(f"/api/knowledge/folders/{folder_id}")
 
         assert response.status_code == 200
         data = response.json()
         assert data["success"] is True
         mock_folder_service.delete_folder.assert_called_once_with(folder_id)
 
-    async def test_delete_folder_not_found(self, mock_folder_service):
+    def test_delete_folder_not_found(self, client, mock_folder_service):
         """Should return 404 when folder not found."""
         folder_id = str(uuid4())
         mock_folder_service.delete_folder.return_value = False
 
-        async with AsyncClient(app=app, base_url="http://test") as client:
-            response = await client.delete(f"/api/knowledge/folders/{folder_id}")
+        response = client.delete(f"/api/knowledge/folders/{folder_id}")
 
         assert response.status_code == 404
         data = response.json()
-        assert data["detail"] == "Folder not found"
+        assert "Folder" in data["detail"]["error"]
+        assert "not found" in data["detail"]["error"]
 
-    async def test_delete_folder_service_error(self, mock_folder_service):
+    def test_delete_folder_service_error(self, client, mock_folder_service):
         """Should return 500 on service error."""
         folder_id = str(uuid4())
         mock_folder_service.delete_folder.side_effect = Exception("Database error")
 
-        async with AsyncClient(app=app, base_url="http://test") as client:
-            response = await client.delete(f"/api/knowledge/folders/{folder_id}")
+        response = client.delete(f"/api/knowledge/folders/{folder_id}")
 
         assert response.status_code == 500

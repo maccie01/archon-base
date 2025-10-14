@@ -9,7 +9,6 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "../../ui/primitives/ta
 import { GlobalKnowledgeView } from "./GlobalKnowledgeView";
 import { ProjectKnowledgeView } from "./ProjectKnowledgeView";
 import { TagsIndexView } from "./TagsIndexView";
-import type { KnowledgeItem } from "../types";
 
 interface KnowledgeTabsProps {
   searchQuery?: string;
