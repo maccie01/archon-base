@@ -519,7 +519,8 @@ class CredentialService:
     def _get_provider_base_url(self, provider: str, rag_settings: dict) -> str | None:
         """Get base URL for provider."""
         if provider == "ollama":
-            return rag_settings.get("LLM_BASE_URL", "http://host.docker.internal:11434/v1")
+            # Use Docker bridge network IP for production deployments
+            return rag_settings.get("LLM_BASE_URL", "http://172.18.0.1:11434/v1")
         elif provider == "google":
             return "https://generativelanguage.googleapis.com/v1beta/openai/"
         elif provider == "openrouter":

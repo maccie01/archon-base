@@ -377,8 +377,18 @@ export const RAGSettings = ({
         }
 
         const data = await response.json();
-        const instanceStatus = data.instance_status?.[normalizedUrl];
-        setOllamaServerStatus(instanceStatus?.is_healthy ? 'online' : 'offline');
+
+        // More robust parsing - check summary first, then individual instances
+        const summary = data.summary;
+        const hasHealthyInstances = summary?.healthy_instances > 0;
+
+        // Also check individual instance status as fallback
+        const instanceStatuses = data.instance_status || {};
+        const instanceKeys = Object.keys(instanceStatuses);
+        const anyInstanceHealthy = instanceKeys.some(key => instanceStatuses[key]?.is_healthy === true);
+
+        const isOnline = hasHealthyInstances || anyInstanceHealthy;
+        setOllamaServerStatus(isOnline ? 'online' : 'offline');
       } catch (error) {
         if (!cancelled) {
           setOllamaServerStatus('offline');

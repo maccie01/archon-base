@@ -23,7 +23,8 @@ _provider_cache: dict[str, tuple[Any, float]] = {}
 _CACHE_TTL_SECONDS = 300  # 5 minutes
 
 # Default Ollama instance URL (configurable via environment/settings)
-DEFAULT_OLLAMA_URL = "http://host.docker.internal:11434"
+# Use Docker bridge network IP for production deployments
+DEFAULT_OLLAMA_URL = "http://172.18.0.1:11434"
 
 # Model pattern detection for dynamic capabilities (no hardcoded model names)
 CHAT_MODEL_PATTERNS = ["llama", "qwen", "mistral", "codellama", "phi", "gemma", "vicuna", "orca"]
