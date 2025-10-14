@@ -655,7 +655,7 @@ def register_rag_tools(mcp: FastMCP):
 
             async with httpx.AsyncClient(timeout=timeout) as client:
                 response = await client.get(
-                    urljoin(api_url, f"/api/projects/{project_id}/folders")
+                    urljoin(api_url, f"/api/knowledge/folders/projects/{project_id}/list")
                 )
 
                 if response.status_code == 200:

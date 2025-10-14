@@ -244,7 +244,10 @@ export const AddKnowledgeDialog: React.FC<AddKnowledgeDialogProps> = ({
               </Label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Globe className="h-5 w-5" style={{ color: "#0891b2" }} />
+                  <Globe
+                    className="h-5 w-5 text-[var(--icon-color)]"
+                    style={{ "--icon-color": "#0891b2" } as React.CSSProperties}
+                  />
                 </div>
                 <Input
                   id={urlId}

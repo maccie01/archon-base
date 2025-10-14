@@ -87,7 +87,7 @@ class KnowledgeTagService:
             result = (
                 self.supabase.from_("archon_knowledge_tags")
                 .select("*")
-                .eq("tag_name", normalized_name)
+                .ilike("tag_name", normalized_name)
                 .single()
                 .execute()
             )
@@ -186,7 +186,7 @@ class KnowledgeTagService:
             result = (
                 self.supabase.from_("archon_knowledge_tags")
                 .update({"usage_count": new_count})
-                .eq("tag_name", normalized_name)
+                .ilike("tag_name", normalized_name)
                 .execute()
             )
 
@@ -241,7 +241,7 @@ class KnowledgeTagService:
             result = (
                 self.supabase.from_("archon_knowledge_tags")
                 .update({"usage_count": new_count})
-                .eq("tag_name", normalized_name)
+                .ilike("tag_name", normalized_name)
                 .execute()
             )
 

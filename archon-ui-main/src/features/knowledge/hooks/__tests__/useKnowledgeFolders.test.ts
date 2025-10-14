@@ -6,13 +6,22 @@
  * Created: 2025-10-14
  */
 
+import React from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useProjectFolders, useCreateFolder, useUpdateFolder, useDeleteFolder } from "../useKnowledgeFolders";
-import * as knowledgeFolderService from "../../services/knowledgeFolderService";
+import { knowledgeFolderService } from "../../services/knowledgeFolderService";
 
-vi.mock("../../services/knowledgeFolderService");
+vi.mock("../../services/knowledgeFolderService", () => ({
+  knowledgeFolderService: {
+    listProjectFolders: vi.fn(),
+    getFolder: vi.fn(),
+    createFolder: vi.fn(),
+    updateFolder: vi.fn(),
+    deleteFolder: vi.fn(),
+  },
+}));
 
 vi.mock("@/features/shared/config/queryPatterns", () => ({
   DISABLED_QUERY_KEY: ["disabled"],
@@ -26,6 +35,12 @@ vi.mock("@/features/shared/config/queryPatterns", () => ({
   },
 }));
 
+vi.mock("@/features/shared/hooks/useToast", () => ({
+  useToast: () => ({
+    showToast: vi.fn(),
+  }),
+}));
+
 function createTestQueryClient() {
   return new QueryClient({
     defaultOptions: {
@@ -36,9 +51,8 @@ function createTestQueryClient() {
 }
 
 function createWrapper(queryClient: QueryClient) {
-  return ({ children }: { children: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
+  return ({ children }: { children: React.ReactNode }) =>
+    React.createElement(QueryClientProvider, { client: queryClient }, children);
 }
 
 describe("useProjectFolders", () => {
@@ -61,7 +75,7 @@ describe("useProjectFolders", () => {
       },
     ];
 
-    vi.spyOn(knowledgeFolderService, "listProjectFolders").mockResolvedValue(mockFolders);
+    vi.mocked(knowledgeFolderService.listProjectFolders).mockResolvedValue(mockFolders);
 
     const queryClient = createTestQueryClient();
     const { result } = renderHook(() => useProjectFolders("project-1"), {
@@ -86,7 +100,7 @@ describe("useProjectFolders", () => {
   });
 
   it("should handle errors", async () => {
-    vi.spyOn(knowledgeFolderService, "listProjectFolders").mockRejectedValue(
+    vi.mocked(knowledgeFolderService.listProjectFolders).mockRejectedValue(
       new Error("Failed to fetch folders")
     );
 
@@ -119,7 +133,7 @@ describe("useCreateFolder", () => {
       updated_at: "2025-10-14T00:00:00Z",
     };
 
-    vi.spyOn(knowledgeFolderService, "createFolder").mockResolvedValue(newFolder);
+    vi.mocked(knowledgeFolderService.createFolder).mockResolvedValue(newFolder);
 
     const queryClient = createTestQueryClient();
     const { result } = renderHook(() => useCreateFolder(), {
@@ -147,7 +161,7 @@ describe("useCreateFolder", () => {
   });
 
   it("should handle creation errors", async () => {
-    vi.spyOn(knowledgeFolderService, "createFolder").mockRejectedValue(
+    vi.mocked(knowledgeFolderService.createFolder).mockRejectedValue(
       new Error("Failed to create folder")
     );
 
@@ -185,7 +199,7 @@ describe("useUpdateFolder", () => {
       updated_at: "2025-10-14T01:00:00Z",
     };
 
-    vi.spyOn(knowledgeFolderService, "updateFolder").mockResolvedValue(updatedFolder);
+    vi.mocked(knowledgeFolderService.updateFolder).mockResolvedValue(updatedFolder);
 
     const queryClient = createTestQueryClient();
     const { result } = renderHook(() => useUpdateFolder(), {
@@ -193,25 +207,29 @@ describe("useUpdateFolder", () => {
     });
 
     result.current.mutate({
-      folder_id: "folder-1",
-      folder_name: "Updated Name",
-      description: "Updated description",
-      color_hex: "#10b981",
+      folderId: "folder-1",
+      data: {
+        folder_name: "Updated Name",
+        description: "Updated description",
+        color_hex: "#10b981",
+      },
     });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
     expect(result.current.data).toEqual(updatedFolder);
-    expect(knowledgeFolderService.updateFolder).toHaveBeenCalledWith({
-      folder_id: "folder-1",
-      folder_name: "Updated Name",
-      description: "Updated description",
-      color_hex: "#10b981",
-    });
+    expect(knowledgeFolderService.updateFolder).toHaveBeenCalledWith(
+      "folder-1",
+      {
+        folder_name: "Updated Name",
+        description: "Updated description",
+        color_hex: "#10b981",
+      }
+    );
   });
 
   it("should handle update errors", async () => {
-    vi.spyOn(knowledgeFolderService, "updateFolder").mockRejectedValue(
+    vi.mocked(knowledgeFolderService.updateFolder).mockRejectedValue(
       new Error("Failed to update folder")
     );
 
@@ -221,8 +239,10 @@ describe("useUpdateFolder", () => {
     });
 
     result.current.mutate({
-      folder_id: "folder-1",
-      folder_name: "Updated Name",
+      folderId: "folder-1",
+      data: {
+        folder_name: "Updated Name",
+      },
     });
 
     await waitFor(() => expect(result.current.isError).toBe(true));
@@ -237,7 +257,7 @@ describe("useDeleteFolder", () => {
   });
 
   it("should delete a folder", async () => {
-    vi.spyOn(knowledgeFolderService, "deleteFolder").mockResolvedValue(undefined);
+    vi.mocked(knowledgeFolderService.deleteFolder).mockResolvedValue({ success: true, message: "Deleted" });
 
     const queryClient = createTestQueryClient();
     const { result } = renderHook(() => useDeleteFolder(), {
@@ -252,7 +272,7 @@ describe("useDeleteFolder", () => {
   });
 
   it("should handle deletion errors", async () => {
-    vi.spyOn(knowledgeFolderService, "deleteFolder").mockRejectedValue(
+    vi.mocked(knowledgeFolderService.deleteFolder).mockRejectedValue(
       new Error("Failed to delete folder")
     );
 

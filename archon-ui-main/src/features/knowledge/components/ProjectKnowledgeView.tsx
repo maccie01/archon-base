@@ -157,9 +157,15 @@ export const ProjectKnowledgeView: React.FC<ProjectKnowledgeViewProps> = ({
                 >
                   <div className="flex items-center gap-3">
                     {isExpanded ? (
-                      <FolderOpen className="w-5 h-5" style={{ color: folder.color_hex }} />
+                      <FolderOpen
+                        className="w-5 h-5 text-[var(--folder-color)]"
+                        style={{ "--folder-color": folder.color_hex } as React.CSSProperties}
+                      />
                     ) : (
-                      <Folder className="w-5 h-5" style={{ color: folder.color_hex }} />
+                      <Folder
+                        className="w-5 h-5 text-[var(--folder-color)]"
+                        style={{ "--folder-color": folder.color_hex } as React.CSSProperties}
+                      />
                     )}
                     <div className="text-left">
                       <h3 className="font-semibold text-gray-900 dark:text-white/90">{folder.folder_name}</h3>
