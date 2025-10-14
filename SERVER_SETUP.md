@@ -121,9 +121,9 @@ bash /opt/archon-base/archon-cli.sh restart <service>
 
 ### Arch Linux notes
 
-- Docker: `sudo pacman -Syu docker` und Service aktivieren: `sudo systemctl enable --now docker`.
-- Supabase CLI: per Projekt via `npx supabase` verwenden (keine Systeminstallation nötig).
-- Gleiches Vorgehen: `scripts/setup.sh`, `npx supabase start`, Ollama compose, `.env` generieren, Archon starten.
+- Docker: `sudo pacman -Syu docker` and enable service: `sudo systemctl enable --now docker`.
+- Supabase CLI: use via `npx supabase` per project (no system-wide installation needed).
+- Same workflow: `scripts/setup.sh`, `npx supabase start`, Ollama compose, generate `.env`, start Archon.
 
 ### macOS notes (local development)
 

@@ -2,20 +2,12 @@
 
 set -euo pipefail
 
-# Cross-platform setup for local prerequisites
-# - Ubuntu/Arch/macOS detection
-# - Installs Docker, Docker Compose plugin (if needed)
-# - Adds current user to docker group (Linux) using sudo
-# - Validates Node/npm/npx availability for running Supabase via npx
-# - Does NOT start Archon containers; only prepares environment
-
 echo "==> Archon local setup (Docker + prerequisites)"
 
 require_cmd() {
   command -v "$1" >/dev/null 2>&1
 }
 
-# Determine privilege escalation tool (sudo/doas) or none if running as root
 SUDO=""
 set_sudo_prefix() {
   if [[ "${EUID:-$(id -u)}" -eq 0 ]]; then
@@ -30,7 +22,8 @@ set_sudo_prefix() {
     SUDO="doas"
     return
   fi
-  echo "Neither sudo nor doas found. Run this script as root or install sudo/doas." >&2
+  echo "Error: Privilege escalation required but neither sudo nor doas found." >&2
+  echo "Solution: Run as root or install sudo/doas and retry." >&2
   exit 1
 }
 
@@ -60,7 +53,8 @@ echo "Detected OS: $OS"
 
 ensure_sudo() {
   if ! require_cmd sudo; then
-    echo "sudo is required. Please install/configure sudo and re-run." >&2
+    echo "Error: sudo not found." >&2
+    echo "Solution: Install sudo or run as root." >&2
     exit 1
   fi
 }
@@ -85,37 +79,36 @@ $(. /etc/os-release && echo $VERSION_CODENAME) stable" | \
     elif [[ "$OS" == "arch" ]]; then
       echo "Installing Docker (Arch)"
       sudo pacman --noconfirm -Sy docker
-      # docker compose plugin on Arch is part of docker-compose v2 in community; fallback to docker-compose if needed
       if ! require_cmd docker; then
-        echo "Docker installation failed on Arch." >&2
+        echo "Error: Docker installation failed on Arch." >&2
+        echo "Context: pacman install completed but docker command not found." >&2
         exit 1
       fi
     else
-      echo "Please install Docker manually for OS: $OS" >&2
+      echo "Error: Unsupported OS for automatic Docker installation: $OS" >&2
+      echo "Solution: Install Docker manually from https://docs.docker.com/engine/install/" >&2
       exit 1
     fi
   fi
 
-  # Enable/start Docker service on Linux
   if [[ -f /bin/systemctl || -f /usr/bin/systemctl ]]; then
     sudo systemctl enable docker || true
     sudo systemctl start docker || true
   fi
 
-  # Add current user to docker group
   if getent group docker >/dev/null 2>&1; then
     if id -nG "$USER" | tr ' ' '\n' | grep -qx docker; then
       echo "User $USER already in docker group"
     else
       echo "Adding $USER to docker group (requires re-login)"
       sudo usermod -aG docker "$USER" || true
-      echo "Please log out and log back in for group changes to take effect."
+      echo "ACTION REQUIRED: Log out and log back in for docker group changes to take effect."
     fi
   else
     echo "Creating docker group and adding $USER"
     sudo groupadd docker || true
     sudo usermod -aG docker "$USER" || true
-    echo "Please log out and log back in for group changes to take effect."
+    echo "ACTION REQUIRED: Log out and log back in for docker group changes to take effect."
   fi
 }
 
@@ -124,11 +117,13 @@ install_docker_macos() {
     echo "Docker already installed"
   else
     if require_cmd brew; then
-      echo "Installing Docker (macOS via Homebrew Cask)"
+      echo "Installing Docker (macOS via Homebrew)"
       brew install --cask docker
-      echo "Launch Docker Desktop manually to finish setup."
+      echo "ACTION REQUIRED: Launch Docker Desktop manually to complete setup."
     else
-      echo "Homebrew not found. Install Docker Desktop from: https://www.docker.com/products/docker-desktop" >&2
+      echo "Error: Homebrew not found on macOS." >&2
+      echo "Solution: Install Docker Desktop from https://www.docker.com/products/docker-desktop" >&2
+      echo "Or install Homebrew from https://brew.sh then retry." >&2
     fi
   fi
 }
@@ -141,12 +136,14 @@ ensure_docker() {
   fi
 
   if ! require_cmd docker; then
-    echo "Docker not available after installation." >&2
+    echo "Error: Docker command not available after installation attempt." >&2
+    echo "Solution: Verify Docker is installed correctly and in PATH." >&2
     exit 1
   fi
 
   if ! docker version >/dev/null 2>&1; then
-    echo "Docker daemon not running. Please start Docker and retry." >&2
+    echo "Error: Docker daemon not running." >&2
+    echo "Solution: Start Docker Desktop (macOS) or 'sudo systemctl start docker' (Linux)." >&2
     exit 1
   fi
 }
@@ -156,7 +153,7 @@ ensure_docker_compose() {
     echo "Docker Compose v2 detected"
     return
   fi
-  echo "Docker Compose v2 plugin not found. Installing (Linux only)."
+  echo "Docker Compose v2 not found, attempting installation"
   if [[ "$OS" == "ubuntu" ]]; then
     ensure_sudo
     sudo apt-get update -y
@@ -165,21 +162,25 @@ ensure_docker_compose() {
     ensure_sudo
     sudo pacman --noconfirm -Sy docker-compose
   else
-    echo "Please install Docker Compose manually for OS: $OS" >&2
+    echo "Error: Docker Compose v2 not found on OS: $OS" >&2
+    echo "Solution: Install docker-compose-plugin manually for your OS." >&2
   fi
 }
 
 ensure_node_tools() {
   if ! require_cmd node; then
-    echo "Node.js ist erforderlich. Bitte Node.js 18+ installieren und erneut ausführen." >&2
+    echo "Error: Node.js not found." >&2
+    echo "Solution: Install Node.js 18+ from https://nodejs.org/ and retry." >&2
     exit 1
   fi
   if ! require_cmd npm; then
-    echo "npm ist erforderlich. Bitte npm installieren (kommt normalerweise mit Node.js)." >&2
+    echo "Error: npm not found." >&2
+    echo "Solution: npm usually comes with Node.js. Reinstall Node.js or install npm separately." >&2
     exit 1
   fi
   if ! require_cmd npx; then
-    echo "npx ist erforderlich. Bitte npm/npx installieren (kommt normalerweise mit Node.js)." >&2
+    echo "Error: npx not found." >&2
+    echo "Solution: npx comes with npm 5.2+. Update npm or install npx separately." >&2
     exit 1
   fi
 }
@@ -201,13 +202,13 @@ ensure_jq() {
       if require_cmd brew; then
         brew install jq
       else
-        echo "Install Homebrew first: https://brew.sh" >&2
+        echo "Error: Homebrew required to install jq on macOS." >&2
+        echo "Solution: Install Homebrew from https://brew.sh then retry." >&2
       fi
       ;;
   esac
 }
 
-# Execute prerequisite checks
 ensure_docker
 ensure_docker_compose
 ensure_node_tools
@@ -217,28 +218,24 @@ echo ""
 echo "==> Prerequisites installed."
 echo ""
 
-# Get script directory for relative paths
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
-# Step 1: Initialize Supabase if needed
 echo "==> Step 1/5: Initializing Supabase..."
 if [[ ! -d "$PROJECT_ROOT/supabase" ]]; then
-  echo "Initializing Supabase (first run)..."
+  echo "Initializing Supabase (first run)"
   cd "$PROJECT_ROOT"
   npx -y supabase@latest init
 else
-  echo "Supabase already initialized (supabase/ directory exists)"
+  echo "Supabase already initialized"
 fi
 
-# Step 2: Start Supabase
 echo ""
 echo "==> Step 2/5: Starting Supabase..."
 cd "$PROJECT_ROOT"
 npx -y supabase@latest start
-echo "Supabase started successfully"
+echo "Supabase started"
 
-# Step 3: Start Ollama
 echo ""
 echo "==> Step 3/5: Starting Ollama container..."
 if docker ps --format '{{.Names}}' | grep -q '^ollama$'; then
@@ -249,12 +246,11 @@ else
   sleep 3
 fi
 
-# Step 4: Preload Ollama models
 echo ""
-echo "==> Step 4/5: Preloading Ollama models (this may take several minutes)..."
+echo "==> Step 4/5: Preloading Ollama models..."
+echo "Note: This may take several minutes depending on bandwidth."
 bash "$SCRIPT_DIR/ollama_preload.sh"
 
-# Step 5: Generate and display .env values
 echo ""
 echo "==> Step 5/5: Generating .env values..."
 echo ""
@@ -263,7 +259,6 @@ echo "                     COPY THESE VALUES TO YOUR .env FILE"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
-# Get Supabase values
 SUPA_JSON=$(npx -y supabase@latest status --json 2>/dev/null || echo '{}')
 URL=$(echo "$SUPA_JSON" | jq -r '.apiUrl // empty')
 SERVICE_KEY=$(echo "$SUPA_JSON" | jq -r '.serviceRoleKey // empty')
@@ -276,7 +271,7 @@ echo ""
 echo "SUPABASE_URL=$URL"
 echo "SUPABASE_SERVICE_KEY=$SERVICE_KEY"
 echo ""
-echo "# Optional LLM configuration (defaults are shown, can be changed in Settings UI):"
+echo "# Optional LLM configuration (defaults shown, configurable in Settings UI):"
 echo "# LLM_PROVIDER=ollama"
 echo "# LLM_BASE_URL=http://host.docker.internal:11434/v1"
 echo "# MODEL_CHOICE=qwen2.5-coder:7b"
@@ -286,8 +281,9 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo ""
 
 if [[ -z "$URL" || -z "$SERVICE_KEY" ]]; then
-  echo "⚠️  Warning: Could not retrieve SUPABASE_URL or SUPABASE_SERVICE_KEY." >&2
-  echo "    Supabase may not be running correctly. Check: npx supabase status" >&2
+  echo "Error: Could not retrieve SUPABASE_URL or SUPABASE_SERVICE_KEY." >&2
+  echo "Context: Supabase may not be running or status command failed." >&2
+  echo "Solution: Run 'npx supabase status' to verify Supabase is running." >&2
   echo ""
 fi
 
