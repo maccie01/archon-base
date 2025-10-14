@@ -1,76 +1,83 @@
 /* Tab active states - Manual CSS overrides */
 /* These rules MUST be in a separate file to prevent Tailwind from stripping them */
+/* Using direct HSL values instead of CSS variables to ensure they work */
 
+/* Blue pastel: 213 94% 68% */
 [data-state="active"].data-active\:bg-blue-pastel\/30 {
-  background-color: hsl(var(--color-blue-pastel) / 0.3) !important;
+  background-color: hsl(213 94% 68% / 0.3) !important;
 }
 
 [data-state="active"].data-active\:text-blue-pastel-dark {
-  color: hsl(var(--color-blue-pastel-dark)) !important;
+  color: hsl(213 94% 35%) !important;
 }
 
 [data-state="active"].data-active\:border-blue-pastel\/50 {
-  border-color: hsl(var(--color-blue-pastel) / 0.5) !important;
+  border-color: hsl(213 94% 68% / 0.5) !important;
 }
 
+/* Purple pastel: 250 60% 75% */
 [data-state="active"].data-active\:bg-purple-pastel\/30 {
-  background-color: hsl(var(--color-purple-pastel) / 0.3) !important;
+  background-color: hsl(250 60% 75% / 0.3) !important;
 }
 
 [data-state="active"].data-active\:text-purple-pastel-dark {
-  color: hsl(var(--color-purple-pastel-dark)) !important;
+  color: hsl(250 60% 35%) !important;
 }
 
 [data-state="active"].data-active\:border-purple-pastel\/50 {
-  border-color: hsl(var(--color-purple-pastel) / 0.5) !important;
+  border-color: hsl(250 60% 75% / 0.5) !important;
 }
 
+/* Pink pastel: 330 60% 80% */
 [data-state="active"].data-active\:bg-pink-pastel\/30 {
-  background-color: hsl(var(--color-pink-pastel) / 0.3) !important;
+  background-color: hsl(330 60% 80% / 0.3) !important;
 }
 
 [data-state="active"].data-active\:text-pink-pastel-dark {
-  color: hsl(var(--color-pink-pastel-dark)) !important;
+  color: hsl(330 60% 35%) !important;
 }
 
 [data-state="active"].data-active\:border-pink-pastel\/50 {
-  border-color: hsl(var(--color-pink-pastel) / 0.5) !important;
+  border-color: hsl(330 60% 80% / 0.5) !important;
 }
 
+/* Orange pastel: 25 95% 70% */
 [data-state="active"].data-active\:bg-orange-pastel\/30 {
-  background-color: hsl(var(--color-orange-pastel) / 0.3) !important;
+  background-color: hsl(25 95% 70% / 0.3) !important;
 }
 
 [data-state="active"].data-active\:text-orange-pastel-dark {
-  color: hsl(var(--color-orange-pastel-dark)) !important;
+  color: hsl(25 95% 35%) !important;
 }
 
 [data-state="active"].data-active\:border-orange-pastel\/50 {
-  border-color: hsl(var(--color-orange-pastel) / 0.5) !important;
+  border-color: hsl(25 95% 70% / 0.5) !important;
 }
 
+/* Teal pastel: 180 55% 70% */
 [data-state="active"].data-active\:bg-teal-pastel\/30 {
-  background-color: hsl(var(--color-teal-pastel) / 0.3) !important;
+  background-color: hsl(180 55% 70% / 0.3) !important;
 }
 
 [data-state="active"].data-active\:text-teal-pastel-dark {
-  color: hsl(var(--color-teal-pastel-dark)) !important;
+  color: hsl(180 55% 35%) !important;
 }
 
 [data-state="active"].data-active\:border-teal-pastel\/50 {
-  border-color: hsl(var(--color-teal-pastel) / 0.5) !important;
+  border-color: hsl(180 55% 70% / 0.5) !important;
 }
 
+/* Green pastel: 142 52% 70% */
 [data-state="active"].data-active\:bg-green-pastel\/30 {
-  background-color: hsl(var(--color-green-pastel) / 0.3) !important;
+  background-color: hsl(142 52% 70% / 0.3) !important;
 }
 
 [data-state="active"].data-active\:text-green-pastel-dark {
-  color: hsl(var(--color-green-pastel-dark)) !important;
+  color: hsl(142 52% 35%) !important;
 }
 
 [data-state="active"].data-active\:border-green-pastel\/50 {
-  border-color: hsl(var(--color-green-pastel) / 0.5) !important;
+  border-color: hsl(142 52% 70% / 0.5) !important;
 }
 
 [data-state="active"].data-active\:border {
