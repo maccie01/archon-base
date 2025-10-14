@@ -290,12 +290,12 @@ async def get_knowledge_items_summary(
 ):
     """
     Get lightweight summaries of knowledge items.
-    
+
     Returns minimal data optimized for frequent polling:
     - Only counts, no actual document/code content
     - Basic metadata for display
     - Efficient batch queries
-    
+
     Use this endpoint for card displays and frequent polling.
     """
     try:
@@ -311,6 +311,33 @@ async def get_knowledge_items_summary(
     except Exception as e:
         safe_logfire_error(
             f"Failed to get knowledge summaries | error={str(e)} | page={page} | per_page={per_page}"
+        )
+        raise HTTPException(status_code=500, detail={"error": str(e)})
+
+
+@router.get("/knowledge-items/{source_id}")
+async def get_knowledge_item(source_id: str):
+    """Get a specific knowledge item by source_id."""
+    try:
+        safe_logfire_info(f"Fetching knowledge item | source_id={source_id}")
+
+        # Use KnowledgeItemService to get the item
+        service = KnowledgeItemService(get_supabase_client())
+        item = await service.get_item(source_id)
+
+        if not item:
+            raise HTTPException(
+                status_code=404,
+                detail={"error": f"Knowledge item {source_id} not found"}
+            )
+
+        return item
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        safe_logfire_error(
+            f"Failed to get knowledge item | error={str(e)} | source_id={source_id}"
         )
         raise HTTPException(status_code=500, detail={"error": str(e)})
 
