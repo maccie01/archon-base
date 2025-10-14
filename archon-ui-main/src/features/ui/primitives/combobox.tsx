@@ -194,7 +194,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, ComboBoxProps>(
               "hover:bg-gray-200/50 dark:hover:bg-gray-700/50",
               "border border-gray-300/50 dark:border-gray-600/50",
               "transition-all duration-200",
-              "focus:outline-none focus:ring-1 focus:ring-cyan-400",
+              "focus:outline-none focus:ring-2 focus:ring-accent",
               !displayValue && "text-gray-500 dark:text-gray-400",
               (disabled || isLoading) && "opacity-50 cursor-not-allowed",
               className,
@@ -223,7 +223,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, ComboBoxProps>(
               "backdrop-blur-xl",
               "border border-gray-200 dark:border-gray-700",
               "rounded-lg shadow-xl",
-              "shadow-cyan-500/10 dark:shadow-cyan-400/10",
+              "shadow-sm ring-1 ring-accent/20",
               "z-50",
               "data-[state=open]:animate-in data-[state=closed]:animate-out",
               "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
@@ -272,7 +272,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, ComboBoxProps>(
                   "rounded",
                   "text-gray-900 dark:text-white",
                   "placeholder-gray-500 dark:placeholder-gray-400",
-                  "focus:outline-none focus:ring-1 focus:ring-cyan-400",
+                  "focus:outline-none focus:ring-2 focus:ring-accent",
                   "transition-all duration-200",
                 )}
               />
@@ -321,14 +321,14 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, ComboBoxProps>(
                             "text-gray-900 dark:text-white",
                             "hover:bg-gray-100/80 dark:hover:bg-white/10",
                             "focus:outline-none focus:bg-gray-100/80 dark:focus:bg-white/10",
-                            isSelected && "bg-cyan-50/50 dark:bg-cyan-900/20",
+                            isSelected && "bg-accent/10 ring-1 ring-accent/20",
                             isHighlighted && !isSelected && "bg-gray-100/60 dark:bg-white/5",
                           )}
                         >
                           <Check
                             className={cn(
                               "mr-1.5 h-3 w-3 shrink-0",
-                              isSelected ? "opacity-100 text-cyan-600 dark:text-cyan-400" : "opacity-0",
+                              isSelected ? "opacity-100 text-accent" : "opacity-0",
                             )}
                             aria-hidden="true"
                           />
@@ -349,12 +349,12 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, ComboBoxProps>(
                         className={cn(
                           "relative flex w-full items-center px-2 py-1.5",
                           "text-xs text-left",
-                          "bg-cyan-50/30 dark:bg-cyan-900/10",
-                          "text-cyan-600 dark:text-cyan-400",
+                          "bg-accent/10",
+                          "text-accent",
                           "border-t border-gray-200/50 dark:border-gray-700/50",
-                          "hover:bg-cyan-100/50 dark:hover:bg-cyan-800/30",
+                          "hover:bg-accent/20",
                           "transition-colors duration-200",
-                          highlightedIndex === filteredOptions.length && "bg-cyan-100/50 dark:bg-cyan-800/30",
+                          highlightedIndex === filteredOptions.length && "bg-accent/20",
                         )}
                       >
                         <span className="ml-4">Add "{search}"</span>

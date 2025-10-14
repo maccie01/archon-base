@@ -29,6 +29,8 @@ class KnowledgeItemService:
         per_page: int = 20,
         knowledge_type: str | None = None,
         search: str | None = None,
+        project_id: str | None = None,
+        scope: str = "all",
     ) -> dict[str, Any]:
         """
         List knowledge items with pagination and filtering.
@@ -38,6 +40,11 @@ class KnowledgeItemService:
             per_page: Items per page
             knowledge_type: Filter by knowledge type
             search: Search term for filtering
+            project_id: Filter by project ID (used with scope="project")
+            scope: Knowledge scope filter
+                - "all": Return all knowledge (no scope filter)
+                - "global": Return only global knowledge sources
+                - "project": Return only project-specific knowledge (requires project_id)
 
         Returns:
             Dict containing items, pagination info, and total count
@@ -45,6 +52,14 @@ class KnowledgeItemService:
         try:
             # Build the query with filters at database level for better performance
             query = self.supabase.from_("archon_sources").select("*")
+
+            # Apply scope filter
+            if scope == "global":
+                query = query.eq("knowledge_scope", "global")
+            elif scope == "project":
+                query = query.eq("knowledge_scope", "project")
+                if project_id:
+                    query = query.eq("project_id", project_id)
 
             # Apply knowledge type filter at database level if provided
             if knowledge_type:
@@ -62,6 +77,14 @@ class KnowledgeItemService:
             count_query = self.supabase.from_("archon_sources").select(
                 "*", count="exact", head=True
             )
+
+            # Apply same scope filter to count query
+            if scope == "global":
+                count_query = count_query.eq("knowledge_scope", "global")
+            elif scope == "project":
+                count_query = count_query.eq("knowledge_scope", "project")
+                if project_id:
+                    count_query = count_query.eq("project_id", project_id)
 
             # Apply same filters to count query
             if knowledge_type:

@@ -19,11 +19,11 @@ const TYPES = [
     label: "Technical",
     description: "Code, APIs, dev docs",
     icon: Terminal,
-    edgeColor: "cyan" as const,
+    edgeColor: "teal" as const,
     colors: {
-      icon: "text-cyan-700 dark:text-cyan-400",
-      label: "text-cyan-700 dark:text-cyan-400",
-      description: "text-cyan-600 dark:text-cyan-400",
+      icon: "text-teal-700 dark:text-teal-400",
+      label: "text-teal-700 dark:text-teal-400",
+      description: "text-teal-600 dark:text-teal-400",
     },
   },
   {
@@ -84,7 +84,6 @@ export const KnowledgeTypeSelector: React.FC<KnowledgeTypeSelectorProps> = ({
                         "absolute inset-x-0 top-0 h-[2px] pointer-events-none z-10",
                         glassCard.edgeLit.position.top,
                         glassCard.edgeLit.color[type.edgeColor].line,
-                        glassCard.edgeLit.color[type.edgeColor].glow,
                       )}
                     />
                     <div

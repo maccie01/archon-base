@@ -83,7 +83,7 @@ export const InspectorHeader: React.FC<InspectorHeaderProps> = ({
                 href={item.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-cyan-400 hover:text-cyan-300 truncate max-w-xs"
+                className="text-xs text-teal-400 hover:text-teal-300 truncate max-w-xs"
               >
                 {item.url}
               </a>
@@ -100,7 +100,7 @@ export const InspectorHeader: React.FC<InspectorHeaderProps> = ({
           className={cn(
             "pb-2 px-1 text-sm font-medium border-b-2 transition-colors",
             viewMode === "documents"
-              ? "text-cyan-400 border-cyan-400"
+              ? "text-teal-400 border-teal-400"
               : "text-gray-500 border-transparent hover:text-gray-300",
           )}
         >
@@ -112,7 +112,7 @@ export const InspectorHeader: React.FC<InspectorHeaderProps> = ({
           className={cn(
             "pb-2 px-1 text-sm font-medium border-b-2 transition-colors",
             viewMode === "code"
-              ? "text-cyan-400 border-cyan-400"
+              ? "text-teal-400 border-teal-400"
               : "text-gray-500 border-transparent hover:text-gray-300",
           )}
         >

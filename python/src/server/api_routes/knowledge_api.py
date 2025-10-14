@@ -151,6 +151,9 @@ class KnowledgeItemRequest(BaseModel):
     update_frequency: int = 7
     max_depth: int = 2  # Maximum crawl depth (1-5)
     extract_code_examples: bool = True  # Whether to extract code examples
+    scope: str = "global"  # "global" or "project"
+    project_id: str | None = None  # Required when scope="project"
+    folder_id: str | None = None  # Optional folder for organization
 
     class Config:
         schema_extra = {
@@ -161,6 +164,9 @@ class KnowledgeItemRequest(BaseModel):
                 "update_frequency": 7,
                 "max_depth": 2,
                 "extract_code_examples": True,
+                "scope": "global",
+                "project_id": None,
+                "folder_id": None,
             }
         }
 
@@ -237,20 +243,43 @@ async def get_knowledge_sources():
 
 @router.get("/knowledge-items")
 async def get_knowledge_items(
-    page: int = 1, per_page: int = 20, knowledge_type: str | None = None, search: str | None = None
+    page: int = 1,
+    per_page: int = 20,
+    knowledge_type: str | None = None,
+    search: str | None = None,
+    project_id: str | None = None,
+    scope: str = "all"
 ):
-    """Get knowledge items with pagination and filtering."""
+    """
+    Get knowledge items with pagination and filtering.
+
+    Args:
+        page: Page number (1-based)
+        per_page: Items per page
+        knowledge_type: Filter by knowledge type
+        search: Search term for filtering
+        project_id: Filter by project ID (used with scope="project")
+        scope: Knowledge scope filter
+            - "all": All knowledge (default)
+            - "global": Only global knowledge sources
+            - "project": Only project-specific knowledge
+    """
     try:
-        # Use KnowledgeItemService
+        # Use KnowledgeItemService with scope parameters
         service = KnowledgeItemService(get_supabase_client())
         result = await service.list_items(
-            page=page, per_page=per_page, knowledge_type=knowledge_type, search=search
+            page=page,
+            per_page=per_page,
+            knowledge_type=knowledge_type,
+            search=search,
+            project_id=project_id,
+            scope=scope
         )
         return result
 
     except Exception as e:
         safe_logfire_error(
-            f"Failed to get knowledge items | error={str(e)} | page={page} | per_page={per_page}"
+            f"Failed to get knowledge items | error={str(e)} | page={page} | per_page={per_page} | scope={scope}"
         )
         raise HTTPException(status_code=500, detail={"error": str(e)})
 

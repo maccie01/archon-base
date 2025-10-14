@@ -90,7 +90,7 @@ export const ContentViewer: React.FC<ContentViewerProps> = ({ selectedItem, onCo
           {/* Icon - Fixed size, no shrink */}
           <div className="flex-shrink-0">
             {selectedItem.type === "document" ? (
-              <FileText className="w-5 h-5 text-cyan-400" />
+              <FileText className="w-5 h-5 text-teal-400" />
             ) : (
               <Code className="w-5 h-5 text-green-400" />
             )}
@@ -166,7 +166,7 @@ export const ContentViewer: React.FC<ContentViewerProps> = ({ selectedItem, onCo
       {/* Content Body */}
       <div className="flex-1 overflow-y-auto min-h-0 p-6 scrollbar-thin">
         {selectedItem.type === "document" ? (
-          <div className="prose prose-invert prose-sm max-w-none prose-headings:text-cyan-400 prose-a:text-cyan-400 prose-code:text-purple-400 prose-strong:text-white prose-pre:bg-black/30 prose-pre:border prose-pre:border-white/10">
+          <div className="prose prose-invert prose-sm max-w-none prose-headings:text-teal-400 prose-a:text-teal-400 prose-code:text-purple-400 prose-strong:text-white prose-pre:bg-black/30 prose-pre:border prose-pre:border-white/10">
             <ReactMarkdown
               components={{
                 p: ({ children }) => <p className="mb-4 leading-relaxed">{children}</p>,
@@ -194,7 +194,7 @@ export const ContentViewer: React.FC<ContentViewerProps> = ({ selectedItem, onCo
               <div className="relative">
                 <pre
                   className={[
-                    "bg-black/30 dark:bg-black/30 border border-cyan-500/10 rounded-lg p-4",
+                    "bg-black/30 dark:bg-black/30 border border-teal-500/10 rounded-lg p-4",
                     "overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent",
                   ].join(" ")}
                 >
@@ -218,7 +218,7 @@ export const ContentViewer: React.FC<ContentViewerProps> = ({ selectedItem, onCo
             {selectedItem.metadata?.relevance_score != null && (
               <span>
                 Relevance:{" "}
-                <span className="text-cyan-400">{(selectedItem.metadata.relevance_score * 100).toFixed(0)}%</span>
+                <span className="text-teal-400">{(selectedItem.metadata.relevance_score * 100).toFixed(0)}%</span>
               </span>
             )}
             {selectedItem.type === "document" &&
@@ -229,7 +229,7 @@ export const ContentViewer: React.FC<ContentViewerProps> = ({ selectedItem, onCo
                   href={selectedItem.metadata.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-cyan-400 hover:text-cyan-300 transition-colors underline"
+                  className="text-teal-400 hover:text-teal-300 transition-colors underline"
                 >
                   View Source
                 </a>

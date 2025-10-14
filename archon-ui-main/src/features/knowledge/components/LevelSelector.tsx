@@ -113,8 +113,8 @@ export const LevelSelector: React.FC<LevelSelectorProps> = ({ value, onValueChan
                     "flex flex-col items-center justify-center gap-1",
                     glassCard.base,
                     "focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:ring-offset-2",
-                    isSelected ? glassCard.edgeColors.cyan.border : "border border-gray-300/50 dark:border-gray-700/50",
-                    isSelected ? glassCard.tints.cyan.light : glassCard.transparency.light,
+                    isSelected ? glassCard.edgeColors.teal.border : "border border-gray-300/50 dark:border-gray-700/50",
+                    isSelected ? glassCard.tints.teal.light : glassCard.transparency.light,
                     !disabled && !isSelected && "hover:border-cyan-400/50",
                     disabled && "opacity-50 cursor-not-allowed",
                   )}
@@ -126,14 +126,14 @@ export const LevelSelector: React.FC<LevelSelectorProps> = ({ value, onValueChan
                         className={cn(
                           "absolute inset-x-0 top-0 h-[2px] pointer-events-none z-10",
                           glassCard.edgeLit.position.top,
-                          glassCard.edgeLit.color.cyan.line,
-                          glassCard.edgeLit.color.cyan.glow,
+                          glassCard.edgeLit.color.teal.line,
+                          glassCard.edgeLit.color.teal.glow,
                         )}
                       />
                       <div
                         className={cn(
                           "absolute inset-x-0 top-0 h-16 bg-gradient-to-b to-transparent blur-lg pointer-events-none z-10",
-                          glassCard.edgeLit.color.cyan.gradient.vertical,
+                          glassCard.edgeLit.color.teal.gradient.vertical,
                         )}
                       />
                     </>

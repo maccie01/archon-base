@@ -12,6 +12,7 @@ import { isOptimistic } from "@/features/shared/utils/optimistic";
 import { KnowledgeCardProgress } from "../../progress/components/KnowledgeCardProgress";
 import type { ActiveOperation } from "../../progress/types";
 import { StatPill } from "../../ui/primitives";
+import { Badge } from "@/components/ui/Badge";
 import { DataCard, DataCardContent, DataCardFooter, DataCardHeader } from "../../ui/primitives/data-card";
 import { OptimisticIndicator } from "../../ui/primitives/OptimisticIndicator";
 import { cn } from "../../ui/primitives/styles";
@@ -81,20 +82,20 @@ export const KnowledgeCard: React.FC<KnowledgeCardProps> = ({
   };
 
   // Determine edge color for DataCard primitive
-  const getEdgeColor = (): "cyan" | "purple" | "blue" | "pink" | "red" | "orange" => {
-    if (activeOperation) return "cyan";
+  const getEdgeColor = (): "teal" | "purple" | "blue" | "pink" | "red" | "orange" => {
+    if (activeOperation) return "teal";
     if (hasError) return "red";
     if (isProcessing) return "orange";
-    if (isTechnical) return isUrl ? "cyan" : "purple";
+    if (isTechnical) return isUrl ? "teal" : "purple";
     return isUrl ? "blue" : "pink";
   };
 
   // Accent color name for title component
   const getAccentColorName = () => {
-    if (activeOperation) return "cyan" as const;
+    if (activeOperation) return "teal" as const;
     if (hasError) return "red" as const;
     if (isProcessing) return "yellow" as const;
-    if (isTechnical) return isUrl ? ("cyan" as const) : ("purple" as const);
+    if (isTechnical) return isUrl ? ("teal" as const) : ("purple" as const);
     return isUrl ? ("blue" as const) : ("pink" as const);
   };
 
@@ -134,7 +135,7 @@ export const KnowledgeCard: React.FC<KnowledgeCardProps> = ({
         <DataCardHeader>
           <div className="flex items-start justify-between gap-2 mb-2">
             {/* Type and Source Badge */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <SimpleTooltip content={isUrl ? "Content from a web page" : "Uploaded document"}>
                 <div
                   className={cn(
@@ -149,6 +150,16 @@ export const KnowledgeCard: React.FC<KnowledgeCardProps> = ({
                 </div>
               </SimpleTooltip>
               <KnowledgeCardType sourceId={item.source_id} knowledgeType={item.knowledge_type} />
+              {item.knowledge_scope === "project" && item.project_title && (
+                <Badge variant="outline" className="text-xs">
+                  Project: {item.project_title}
+                </Badge>
+              )}
+              {item.folder_name && (
+                <Badge variant="outline" className="text-xs text-purple-600 dark:text-purple-400">
+                  {item.folder_name}
+                </Badge>
+              )}
             </div>
 
             {/* Actions */}

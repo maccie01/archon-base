@@ -33,21 +33,21 @@ export const Toast = React.forwardRef<
   }
 >(({ className, variant = "default", ...props }, ref) => {
   const variantStyles = {
-    default: cn(glassmorphism.background.card, glassmorphism.border.default, glassmorphism.shadow.elevated),
+    default: cn(glassmorphism.background.card, glassmorphism.border.default, "shadow-lg ring-1 ring-accent/20"),
     success: cn(
-      "backdrop-blur-md bg-gradient-to-b from-green-100/80 dark:from-green-500/20 to-white/60 dark:to-green-500/5",
-      "border-green-300 dark:border-green-500/30",
-      "shadow-[0_0_10px_2px_rgba(16,185,129,0.4)] dark:shadow-[0_0_20px_5px_rgba(16,185,129,0.7)]",
+      "backdrop-blur-md bg-gradient-to-b from-green-pastel/30 to-white/60 dark:from-green-pastel/20 dark:to-black/30",
+      "border-green-pastel",
+      "shadow-lg ring-1 ring-green-pastel/40",
     ),
     error: cn(
-      "backdrop-blur-md bg-gradient-to-b from-red-100/80 dark:from-red-500/20 to-white/60 dark:to-red-500/5",
-      "border-red-300 dark:border-red-500/30",
-      "shadow-[0_0_10px_2px_rgba(239,68,68,0.4)] dark:shadow-[0_0_20px_5px_rgba(239,68,68,0.7)]",
+      "backdrop-blur-md bg-gradient-to-b from-red-pastel/30 to-white/60 dark:from-red-pastel/20 dark:to-black/30",
+      "border-red-pastel",
+      "shadow-lg ring-1 ring-red-pastel/40",
     ),
     warning: cn(
-      "backdrop-blur-md bg-gradient-to-b from-orange-100/80 dark:from-orange-500/20 to-white/60 dark:to-orange-500/5",
-      "border-orange-300 dark:border-orange-500/30",
-      "shadow-[0_0_10px_2px_rgba(251,146,60,0.4)] dark:shadow-[0_0_20px_5px_rgba(251,146,60,0.7)]",
+      "backdrop-blur-md bg-gradient-to-b from-orange-pastel/30 to-white/60 dark:from-orange-pastel/20 dark:to-black/30",
+      "border-orange-pastel",
+      "shadow-lg ring-1 ring-orange-pastel/40",
     ),
   };
 
@@ -55,7 +55,7 @@ export const Toast = React.forwardRef<
     <ToastPrimitive.Root
       ref={ref}
       className={cn(
-        "relative group p-4 rounded-md border",
+        "relative group p-4 rounded-xl border",
         "pointer-events-auto",
         "transition-all duration-200",
         glassmorphism.animation.fadeIn,
@@ -82,11 +82,11 @@ export const ToastAction = React.forwardRef<
     ref={ref}
     className={cn(
       "inline-flex items-center justify-center",
-      "rounded-md px-3 py-1 text-sm font-medium",
-      "bg-cyan-500/20 dark:bg-cyan-400/20",
-      "border border-cyan-300 dark:border-cyan-500/30",
-      "text-cyan-700 dark:text-cyan-300",
-      "hover:bg-cyan-500/30 dark:hover:bg-cyan-400/30",
+      "rounded-lg px-3 py-1 text-sm font-medium",
+      "bg-accent/20",
+      "border border-accent/30",
+      "text-accent-dark",
+      "hover:bg-accent/30",
       glassmorphism.interactive.base,
       glassmorphism.interactive.disabled,
       className,

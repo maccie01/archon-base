@@ -1,6 +1,6 @@
 /**
  * Shared style utilities for Radix primitives
- * Tron-inspired glassmorphism design system
+ * Apple-inspired minimalist design with pastel colors
  *
  * Theme Support:
  * - All styles use Tailwind's dark: prefix for automatic theme switching
@@ -8,36 +8,39 @@
  * - For runtime theme values, use useThemeAware hook
  */
 
-// Base glassmorphism classes with Tron aesthetic - TRUE GLASS EFFECT
+// Base glassmorphism classes with Apple aesthetic - clean glass effect
 export const glassmorphism = {
-  // Background variations - TRUE TRANSPARENCY for glass effect
+  // Background variations - subtle transparency for glass effect
   background: {
     subtle: "backdrop-blur-xl bg-white/5 dark:bg-white/10",
     strong: "backdrop-blur-xl bg-white/10 dark:bg-white/20",
     card: "backdrop-blur-xl bg-white/5 dark:bg-white/10",
-    // Tron-style colored backgrounds - VERY transparent with strong blur
-    cyan: "backdrop-blur-xl bg-cyan-400/5 dark:bg-cyan-400/10",
-    blue: "backdrop-blur-xl bg-blue-400/5 dark:bg-blue-400/10",
-    purple: "backdrop-blur-xl bg-purple-400/5 dark:bg-purple-400/10",
+    // Pastel colored backgrounds - soft and minimal
+    purple: "backdrop-blur-xl bg-purple-pastel/5 dark:bg-purple-pastel/10",
+    blue: "backdrop-blur-xl bg-blue-pastel/5 dark:bg-blue-pastel/10",
+    green: "backdrop-blur-xl bg-green-pastel/5 dark:bg-green-pastel/10",
+    pink: "backdrop-blur-xl bg-pink-pastel/5 dark:bg-pink-pastel/10",
+    orange: "backdrop-blur-xl bg-orange-pastel/5 dark:bg-orange-pastel/10",
+    teal: "backdrop-blur-xl bg-teal-pastel/5 dark:bg-teal-pastel/10",
   },
 
-  // Border styles for glass effect - more prominent for edge definition
+  // Border styles for glass effect - subtle and clean
   border: {
-    default: "border border-white/10 dark:border-white/[0.06]",
-    cyan: "border border-cyan-400/50 dark:border-cyan-400/40",
-    blue: "border border-blue-400/50 dark:border-blue-400/40",
-    purple: "border border-purple-400/50 dark:border-purple-400/40",
-    focus: "focus:border-cyan-400 focus:shadow-[0_0_30px_10px_rgba(34,211,238,0.6)]",
-    hover: "hover:border-cyan-400/80 hover:shadow-[0_0_25px_5px_rgba(34,211,238,0.5)]",
+    default: "border border-border",
+    primary: "border border-primary/30",
+    blue: "border border-blue-pastel/30",
+    purple: "border border-purple-pastel/30",
+    focus: "focus:border-primary focus:ring-2 focus:ring-primary/20",
+    hover: "hover:border-primary/50",
   },
 
   // Interactive states
   interactive: {
     base: "transition-all duration-200",
-    hover: "hover:bg-cyan-500/10 dark:hover:bg-cyan-400/10",
-    active: "active:bg-cyan-500/20 dark:active:bg-cyan-400/20",
+    hover: "hover:bg-muted",
+    active: "active:bg-muted/80",
     selected:
-      "data-[state=checked]:bg-cyan-500/20 dark:data-[state=checked]:bg-cyan-400/20 data-[state=checked]:text-cyan-700 dark:data-[state=checked]:text-cyan-300",
+      "data-[state=checked]:bg-primary/10 data-[state=checked]:text-primary",
     disabled: "disabled:opacity-50 disabled:cursor-not-allowed",
   },
 
@@ -52,25 +55,25 @@ export const glassmorphism = {
     slideFromRight: "data-[side=left]:slide-in-from-right-2",
   },
 
-  // Shadow effects with Tron-style neon glow
+  // Shadow effects - subtle and clean
   shadow: {
-    sm: "shadow-sm dark:shadow-md",
-    md: "shadow-md dark:shadow-lg",
-    lg: "shadow-lg dark:shadow-2xl",
-    elevated: "shadow-[0_10px_30px_-15px_rgba(0,0,0,0.1)] dark:shadow-[0_10px_30px_-15px_rgba(0,0,0,0.7)]",
-    // Strong neon glow effects for true Tron aesthetic
-    glow: {
-      purple: "shadow-[0_0_30px_10px_rgba(168,85,247,0.5)] dark:shadow-[0_0_40px_15px_rgba(168,85,247,0.7)]",
-      blue: "shadow-[0_0_30px_10px_rgba(59,130,246,0.5)] dark:shadow-[0_0_40px_15px_rgba(59,130,246,0.7)]",
-      green: "shadow-[0_0_30px_10px_rgba(34,197,94,0.5)] dark:shadow-[0_0_40px_15px_rgba(34,197,94,0.7)]",
-      red: "shadow-[0_0_30px_10px_rgba(239,68,68,0.5)] dark:shadow-[0_0_40px_15px_rgba(239,68,68,0.7)]",
-      orange: "shadow-[0_0_30px_10px_rgba(251,146,60,0.5)] dark:shadow-[0_0_40px_15px_rgba(251,146,60,0.7)]",
-      cyan: "shadow-[0_0_30px_10px_rgba(34,211,238,0.5)] dark:shadow-[0_0_40px_15px_rgba(34,211,238,0.7)]",
-      pink: "shadow-[0_0_30px_10px_rgba(236,72,153,0.5)] dark:shadow-[0_0_40px_15px_rgba(236,72,153,0.7)]",
+    sm: "shadow-sm",
+    md: "shadow-md",
+    lg: "shadow-lg",
+    elevated: "shadow-xl",
+    // Subtle accent shadows
+    accent: {
+      purple: "shadow-sm shadow-purple-pastel/10",
+      blue: "shadow-sm shadow-blue-pastel/10",
+      green: "shadow-sm shadow-green-pastel/10",
+      red: "shadow-sm shadow-destructive/10",
+      orange: "shadow-sm shadow-orange-pastel/10",
+      primary: "shadow-sm shadow-primary/10",
+      pink: "shadow-sm shadow-pink-pastel/10",
     },
   },
 
-  // Edge glow positions - now part of glassCard for better integration
+  // Edge positions for decorative accents
   edgePositions: {
     none: "",
     top: "before:content-[''] before:absolute before:top-0 before:left-0 before:right-0 before:h-[2px]",
@@ -89,384 +92,293 @@ export const glassmorphism = {
     },
   },
 
-  // Priority colors (matching our task system)
+  // Priority colors (matching our task system) - pastel variants
   priority: {
     critical: {
-      background: "bg-red-100/80 dark:bg-red-500/20",
-      text: "text-red-600 dark:text-red-400",
-      hover: "hover:bg-red-200 dark:hover:bg-red-500/30",
-      glow: "hover:shadow-[0_0_10px_rgba(239,68,68,0.3)]",
+      background: "bg-red-100/80 dark:bg-destructive/20",
+      text: "text-destructive",
+      hover: "hover:bg-red-100 dark:hover:bg-destructive/30",
+      shadow: "shadow-sm",
     },
     high: {
-      background: "bg-orange-100/80 dark:bg-orange-500/20",
-      text: "text-orange-600 dark:text-orange-400",
-      hover: "hover:bg-orange-200 dark:hover:bg-orange-500/30",
-      glow: "hover:shadow-[0_0_10px_rgba(249,115,22,0.3)]",
+      background: "bg-orange-pastel/20 dark:bg-orange-pastel/15",
+      text: "text-orange-700 dark:text-orange-300",
+      hover: "hover:bg-orange-pastel/30 dark:hover:bg-orange-pastel/20",
+      shadow: "shadow-sm",
     },
     medium: {
-      background: "bg-blue-100/80 dark:bg-blue-500/20",
-      text: "text-blue-600 dark:text-blue-400",
-      hover: "hover:bg-blue-200 dark:hover:bg-blue-500/30",
-      glow: "hover:shadow-[0_0_10px_rgba(59,130,246,0.3)]",
+      background: "bg-blue-pastel/20 dark:bg-blue-pastel/15",
+      text: "text-blue-700 dark:text-blue-300",
+      hover: "hover:bg-blue-pastel/30 dark:hover:bg-blue-pastel/20",
+      shadow: "shadow-sm",
     },
     low: {
-      background: "bg-gray-100/80 dark:bg-gray-500/20",
-      text: "text-gray-600 dark:text-gray-400",
-      hover: "hover:bg-gray-200 dark:hover:bg-gray-500/30",
-      glow: "hover:shadow-[0_0_10px_rgba(107,114,128,0.3)]",
+      background: "bg-muted",
+      text: "text-muted-foreground",
+      hover: "hover:bg-muted/80",
+      shadow: "shadow-sm",
     },
   },
 };
 
-// Card-specific glass styles with accent colors
+// Card-specific glass styles with accent colors - Apple-inspired
 export const glassCard = {
-  // Base glass card (true transparency) - NO blur here, controlled separately
-  base: "relative rounded-lg overflow-hidden border transition-all duration-300",
+  // Base glass card - clean and minimal
+  base: "relative rounded-xl overflow-hidden border transition-all duration-200",
 
-  // Blur intensity levels - Visible glass effect
+  // Blur intensity levels - subtle glass effect
   blur: {
-    none: "backdrop-blur-none", // No blur (0px)
-    sm: "backdrop-blur-sm", // 4px - Light glass
-    md: "backdrop-blur-md", // 12px - Medium glass (visible blur)
-    lg: "backdrop-blur-lg", // 16px - Strong glass
-    xl: "backdrop-blur-xl", // 24px - Very strong glass
-    "2xl": "backdrop-blur-2xl", // 40px - Heavy glass
-    "3xl": "backdrop-blur-3xl", // 64px - Maximum glass
+    none: "backdrop-blur-none",
+    sm: "backdrop-blur-sm",
+    md: "backdrop-blur-md",
+    lg: "backdrop-blur-lg",
+    xl: "backdrop-blur-xl",
+    "2xl": "backdrop-blur-2xl",
+    "3xl": "backdrop-blur-3xl",
   },
 
-  // Glass transparency levels - Theme-aware for better color visibility
+  // Glass transparency levels - theme-aware
   transparency: {
-    clear: "bg-white/[0.02] dark:bg-white/[0.01]", // Very transparent - see through
-    light: "bg-white/[0.08] dark:bg-white/[0.05]", // Light glass - see through clearly
-    medium: "bg-white/[0.15] dark:bg-white/[0.08]", // Medium glass - lighter in dark mode
-    frosted: "bg-white/[0.40] dark:bg-black/[0.40]", // Frosted - white in light, black in dark
-    solid: "bg-white/[0.90] dark:bg-black/[0.95]", // Solid - opaque
+    clear: "bg-white/[0.02] dark:bg-white/[0.01]",
+    light: "bg-white/[0.08] dark:bg-white/[0.05]",
+    medium: "bg-white/[0.15] dark:bg-white/[0.08]",
+    frosted: "bg-white/[0.40] dark:bg-black/[0.40]",
+    solid: "bg-white/[0.90] dark:bg-black/[0.95]",
   },
 
-  // Edge color mappings for DataCard (edge-lit cards with colored gradients)
+  // Edge colors for decorative accents - pastel palette
   edgeColors: {
     purple: {
-      solid: "bg-purple-500",
-      gradient: "from-purple-500/40",
-      border: "border-purple-500/30",
-      bg: "bg-gradient-to-br from-purple-500/8 to-purple-600/3",
+      solid: "bg-purple-pastel",
+      gradient: "from-purple-pastel/30",
+      border: "border-purple-pastel/30",
+      bg: "bg-gradient-to-br from-purple-pastel/5 to-purple-pastel/2",
     },
     blue: {
-      solid: "bg-blue-500",
-      gradient: "from-blue-500/40",
-      border: "border-blue-500/30",
-      bg: "bg-gradient-to-br from-blue-500/8 to-blue-600/3",
-    },
-    cyan: {
-      solid: "bg-cyan-500",
-      gradient: "from-cyan-500/40",
-      border: "border-cyan-500/30",
-      bg: "bg-gradient-to-br from-cyan-500/8 to-cyan-600/3",
+      solid: "bg-blue-pastel",
+      gradient: "from-blue-pastel/30",
+      border: "border-blue-pastel/30",
+      bg: "bg-gradient-to-br from-blue-pastel/5 to-blue-pastel/2",
     },
     green: {
-      solid: "bg-green-500",
-      gradient: "from-green-500/40",
-      border: "border-green-500/30",
-      bg: "bg-gradient-to-br from-green-500/8 to-green-600/3",
+      solid: "bg-green-pastel",
+      gradient: "from-green-pastel/30",
+      border: "border-green-pastel/30",
+      bg: "bg-gradient-to-br from-green-pastel/5 to-green-pastel/2",
     },
     orange: {
-      solid: "bg-orange-500",
-      gradient: "from-orange-500/40",
-      border: "border-orange-500/30",
-      bg: "bg-gradient-to-br from-orange-500/8 to-orange-600/3",
+      solid: "bg-orange-pastel",
+      gradient: "from-orange-pastel/30",
+      border: "border-orange-pastel/30",
+      bg: "bg-gradient-to-br from-orange-pastel/5 to-orange-pastel/2",
     },
     pink: {
-      solid: "bg-pink-500",
-      gradient: "from-pink-500/40",
-      border: "border-pink-500/30",
-      bg: "bg-gradient-to-br from-pink-500/8 to-pink-600/3",
+      solid: "bg-pink-pastel",
+      gradient: "from-pink-pastel/30",
+      border: "border-pink-pastel/30",
+      bg: "bg-gradient-to-br from-pink-pastel/5 to-pink-pastel/2",
     },
     red: {
-      solid: "bg-red-500",
-      gradient: "from-red-500/40",
-      border: "border-red-500/30",
-      bg: "bg-gradient-to-br from-red-500/8 to-red-600/3",
+      solid: "bg-destructive",
+      gradient: "from-destructive/30",
+      border: "border-destructive/30",
+      bg: "bg-gradient-to-br from-destructive/5 to-destructive/2",
+    },
+    teal: {
+      solid: "bg-teal-pastel",
+      gradient: "from-teal-pastel/30",
+      border: "border-teal-pastel/30",
+      bg: "bg-gradient-to-br from-teal-pastel/5 to-teal-pastel/2",
     },
   },
 
-  // Colored glass tints - BRIGHT NEON COLORS with higher opacity
+  // Colored glass tints - soft pastel backgrounds
   tints: {
     none: "",
     purple: {
-      clear: "bg-purple-500/[0.03] dark:bg-purple-400/[0.04]", // 3-4% - barely visible tint
-      light: "bg-purple-500/[0.08] dark:bg-purple-400/[0.10]", // 8-10% - subtle colored glass
-      medium: "bg-purple-500/[0.15] dark:bg-purple-400/[0.20]", // 15-20% - standard colored glass
-      frosted: "bg-purple-500/[0.25] dark:bg-purple-400/[0.35]", // 25-35% - frosted colored glass
-      solid: "bg-purple-500/[0.40] dark:bg-purple-400/[0.60]", // 40-60% - bright neon glow
+      clear: "bg-purple-pastel/[0.02] dark:bg-purple-pastel/[0.03]",
+      light: "bg-purple-pastel/[0.05] dark:bg-purple-pastel/[0.08]",
+      medium: "bg-purple-pastel/[0.10] dark:bg-purple-pastel/[0.12]",
+      frosted: "bg-purple-pastel/[0.15] dark:bg-purple-pastel/[0.20]",
+      solid: "bg-purple-pastel/[0.25] dark:bg-purple-pastel/[0.30]",
     },
     blue: {
-      clear: "bg-blue-500/[0.03] dark:bg-blue-400/[0.04]",
-      light: "bg-blue-500/[0.08] dark:bg-blue-400/[0.10]",
-      medium: "bg-blue-500/[0.15] dark:bg-blue-400/[0.20]",
-      frosted: "bg-blue-500/[0.25] dark:bg-blue-400/[0.35]",
-      solid: "bg-blue-500/[0.40] dark:bg-blue-400/[0.60]",
-    },
-    cyan: {
-      clear: "bg-cyan-500/[0.03] dark:bg-cyan-400/[0.04]",
-      light: "bg-cyan-500/[0.08] dark:bg-cyan-400/[0.10]",
-      medium: "bg-cyan-500/[0.15] dark:bg-cyan-400/[0.20]",
-      frosted: "bg-cyan-500/[0.25] dark:bg-cyan-400/[0.35]",
-      solid: "bg-cyan-500/[0.40] dark:bg-cyan-400/[0.60]",
+      clear: "bg-blue-pastel/[0.02] dark:bg-blue-pastel/[0.03]",
+      light: "bg-blue-pastel/[0.05] dark:bg-blue-pastel/[0.08]",
+      medium: "bg-blue-pastel/[0.10] dark:bg-blue-pastel/[0.12]",
+      frosted: "bg-blue-pastel/[0.15] dark:bg-blue-pastel/[0.20]",
+      solid: "bg-blue-pastel/[0.25] dark:bg-blue-pastel/[0.30]",
     },
     green: {
-      clear: "bg-green-500/[0.03] dark:bg-green-400/[0.04]",
-      light: "bg-green-500/[0.08] dark:bg-green-400/[0.10]",
-      medium: "bg-green-500/[0.15] dark:bg-green-400/[0.20]",
-      frosted: "bg-green-500/[0.25] dark:bg-green-400/[0.35]",
-      solid: "bg-green-500/[0.40] dark:bg-green-400/[0.60]",
+      clear: "bg-green-pastel/[0.02] dark:bg-green-pastel/[0.03]",
+      light: "bg-green-pastel/[0.05] dark:bg-green-pastel/[0.08]",
+      medium: "bg-green-pastel/[0.10] dark:bg-green-pastel/[0.12]",
+      frosted: "bg-green-pastel/[0.15] dark:bg-green-pastel/[0.20]",
+      solid: "bg-green-pastel/[0.25] dark:bg-green-pastel/[0.30]",
     },
     orange: {
-      clear: "bg-orange-500/[0.03] dark:bg-orange-400/[0.04]",
-      light: "bg-orange-500/[0.08] dark:bg-orange-400/[0.10]",
-      medium: "bg-orange-500/[0.15] dark:bg-orange-400/[0.20]",
-      frosted: "bg-orange-500/[0.25] dark:bg-orange-400/[0.35]",
-      solid: "bg-orange-500/[0.40] dark:bg-orange-400/[0.60]",
+      clear: "bg-orange-pastel/[0.02] dark:bg-orange-pastel/[0.03]",
+      light: "bg-orange-pastel/[0.05] dark:bg-orange-pastel/[0.08]",
+      medium: "bg-orange-pastel/[0.10] dark:bg-orange-pastel/[0.12]",
+      frosted: "bg-orange-pastel/[0.15] dark:bg-orange-pastel/[0.20]",
+      solid: "bg-orange-pastel/[0.25] dark:bg-orange-pastel/[0.30]",
     },
     pink: {
-      clear: "bg-pink-500/[0.03] dark:bg-pink-400/[0.04]",
-      light: "bg-pink-500/[0.08] dark:bg-pink-400/[0.10]",
-      medium: "bg-pink-500/[0.15] dark:bg-pink-400/[0.20]",
-      frosted: "bg-pink-500/[0.25] dark:bg-pink-400/[0.35]",
-      solid: "bg-pink-500/[0.40] dark:bg-pink-400/[0.60]",
+      clear: "bg-pink-pastel/[0.02] dark:bg-pink-pastel/[0.03]",
+      light: "bg-pink-pastel/[0.05] dark:bg-pink-pastel/[0.08]",
+      medium: "bg-pink-pastel/[0.10] dark:bg-pink-pastel/[0.12]",
+      frosted: "bg-pink-pastel/[0.15] dark:bg-pink-pastel/[0.20]",
+      solid: "bg-pink-pastel/[0.25] dark:bg-pink-pastel/[0.30]",
     },
     red: {
-      clear: "bg-red-500/[0.03] dark:bg-red-400/[0.04]",
-      light: "bg-red-500/[0.08] dark:bg-red-400/[0.10]",
-      medium: "bg-red-500/[0.15] dark:bg-red-400/[0.20]",
-      frosted: "bg-red-500/[0.25] dark:bg-red-400/[0.35]",
-      solid: "bg-red-500/[0.40] dark:bg-red-400/[0.60]",
+      clear: "bg-destructive/[0.02] dark:bg-destructive/[0.03]",
+      light: "bg-destructive/[0.05] dark:bg-destructive/[0.08]",
+      medium: "bg-destructive/[0.10] dark:bg-destructive/[0.12]",
+      frosted: "bg-destructive/[0.15] dark:bg-destructive/[0.20]",
+      solid: "bg-destructive/[0.25] dark:bg-destructive/[0.30]",
+    },
+    teal: {
+      clear: "bg-teal-pastel/[0.02] dark:bg-teal-pastel/[0.03]",
+      light: "bg-teal-pastel/[0.05] dark:bg-teal-pastel/[0.08]",
+      medium: "bg-teal-pastel/[0.10] dark:bg-teal-pastel/[0.12]",
+      frosted: "bg-teal-pastel/[0.15] dark:bg-teal-pastel/[0.20]",
+      solid: "bg-teal-pastel/[0.25] dark:bg-teal-pastel/[0.30]",
     },
   },
 
-  // Neon glow effects - BRIGHTER & MORE INTENSE (default = md size)
+  // Card variants with subtle shadows and borders
   variants: {
     none: {
-      border: "border-gray-300/20 dark:border-white/10",
-      glow: "",
-      hover: "hover:bg-white/[0.04] dark:hover:bg-white/[0.02]",
+      border: "border-border",
+      shadow: "shadow-sm",
+      hover: "hover:shadow-md hover:bg-white/[0.04] dark:hover:bg-white/[0.02]",
     },
     purple: {
-      border: "border-purple-500/50 dark:border-purple-400/40",
-      glow: "shadow-[0_0_40px_15px_rgba(168,85,247,0.4)] dark:shadow-[0_0_60px_25px_rgba(168,85,247,0.7)]",
-      hover: "hover:shadow-[0_0_50px_20px_rgba(168,85,247,0.5)] dark:hover:shadow-[0_0_80px_30px_rgba(168,85,247,0.8)]",
+      border: "border-purple-pastel/30 dark:border-purple-pastel/20",
+      shadow: "shadow-sm ring-1 ring-purple-pastel/10",
+      hover: "hover:shadow-md hover:ring-purple-pastel/20 hover:bg-purple-pastel/5",
     },
     blue: {
-      border: "border-blue-500/50 dark:border-blue-400/40",
-      glow: "shadow-[0_0_40px_15px_rgba(59,130,246,0.4)] dark:shadow-[0_0_60px_25px_rgba(59,130,246,0.7)]",
-      hover: "hover:shadow-[0_0_50px_20px_rgba(59,130,246,0.5)] dark:hover:shadow-[0_0_80px_30px_rgba(59,130,246,0.8)]",
+      border: "border-blue-pastel/30 dark:border-blue-pastel/20",
+      shadow: "shadow-sm ring-1 ring-blue-pastel/10",
+      hover: "hover:shadow-md hover:ring-blue-pastel/20 hover:bg-blue-pastel/5",
     },
     green: {
-      border: "border-green-500/50 dark:border-green-400/40",
-      glow: "shadow-[0_0_40px_15px_rgba(34,197,94,0.4)] dark:shadow-[0_0_60px_25px_rgba(34,197,94,0.7)]",
-      hover: "hover:shadow-[0_0_50px_20px_rgba(34,197,94,0.5)] dark:hover:shadow-[0_0_80px_30px_rgba(34,197,94,0.8)]",
-    },
-    cyan: {
-      border: "border-cyan-500/50 dark:border-cyan-400/40",
-      glow: "shadow-[0_0_40px_15px_rgba(34,211,238,0.4)] dark:shadow-[0_0_60px_25px_rgba(34,211,238,0.7)]",
-      hover: "hover:shadow-[0_0_50px_20px_rgba(34,211,238,0.5)] dark:hover:shadow-[0_0_80px_30px_rgba(34,211,238,0.8)]",
+      border: "border-green-pastel/30 dark:border-green-pastel/20",
+      shadow: "shadow-sm ring-1 ring-green-pastel/10",
+      hover: "hover:shadow-md hover:ring-green-pastel/20 hover:bg-green-pastel/5",
     },
     orange: {
-      border: "border-orange-500/50 dark:border-orange-400/40",
-      glow: "shadow-[0_0_40px_15px_rgba(251,146,60,0.4)] dark:shadow-[0_0_60px_25px_rgba(251,146,60,0.7)]",
-      hover: "hover:shadow-[0_0_50px_20px_rgba(251,146,60,0.5)] dark:hover:shadow-[0_0_80px_30px_rgba(251,146,60,0.8)]",
+      border: "border-orange-pastel/30 dark:border-orange-pastel/20",
+      shadow: "shadow-sm ring-1 ring-orange-pastel/10",
+      hover: "hover:shadow-md hover:ring-orange-pastel/20 hover:bg-orange-pastel/5",
     },
     pink: {
-      border: "border-pink-500/50 dark:border-pink-400/40",
-      glow: "shadow-[0_0_40px_15px_rgba(236,72,153,0.4)] dark:shadow-[0_0_60px_25px_rgba(236,72,153,0.7)]",
-      hover: "hover:shadow-[0_0_50px_20px_rgba(236,72,153,0.5)] dark:hover:shadow-[0_0_80px_30px_rgba(236,72,153,0.8)]",
+      border: "border-pink-pastel/30 dark:border-pink-pastel/20",
+      shadow: "shadow-sm ring-1 ring-pink-pastel/10",
+      hover: "hover:shadow-md hover:ring-pink-pastel/20 hover:bg-pink-pastel/5",
     },
     red: {
-      border: "border-red-500/50 dark:border-red-400/40",
-      glow: "shadow-[0_0_40px_15px_rgba(239,68,68,0.4)] dark:shadow-[0_0_60px_25px_rgba(239,68,68,0.7)]",
-      hover: "hover:shadow-[0_0_50px_20px_rgba(239,68,68,0.5)] dark:hover:shadow-[0_0_80px_30px_rgba(239,68,68,0.8)]",
+      border: "border-destructive/30 dark:border-destructive/20",
+      shadow: "shadow-sm ring-1 ring-destructive/10",
+      hover: "hover:shadow-md hover:ring-destructive/20 hover:bg-destructive/5",
+    },
+    teal: {
+      border: "border-teal-pastel/30 dark:border-teal-pastel/20",
+      shadow: "shadow-sm ring-1 ring-teal-pastel/10",
+      hover: "hover:shadow-md hover:ring-teal-pastel/20 hover:bg-teal-pastel/5",
     },
   },
 
-  // Outer glow size variants (static classes for each color)
-  outerGlowSizes: {
-    cyan: {
-      sm: "shadow-[0_0_20px_rgba(34,211,238,0.3)]",
-      md: "shadow-[0_0_40px_rgba(34,211,238,0.4)]",
-      lg: "shadow-[0_0_70px_rgba(34,211,238,0.5)]",
-      xl: "shadow-[0_0_100px_rgba(34,211,238,0.6)]",
-    },
+  // Shadow size variants - simple, no glow
+  shadows: {
     purple: {
-      sm: "shadow-[0_0_20px_rgba(168,85,247,0.3)]",
-      md: "shadow-[0_0_40px_rgba(168,85,247,0.4)]",
-      lg: "shadow-[0_0_70px_rgba(168,85,247,0.5)]",
-      xl: "shadow-[0_0_100px_rgba(168,85,247,0.6)]",
+      sm: "shadow-sm shadow-purple-pastel/5",
+      md: "shadow-md shadow-purple-pastel/10",
+      lg: "shadow-lg shadow-purple-pastel/15",
+      xl: "shadow-xl shadow-purple-pastel/20",
     },
     blue: {
-      sm: "shadow-[0_0_20px_rgba(59,130,246,0.3)]",
-      md: "shadow-[0_0_40px_rgba(59,130,246,0.4)]",
-      lg: "shadow-[0_0_70px_rgba(59,130,246,0.5)]",
-      xl: "shadow-[0_0_100px_rgba(59,130,246,0.6)]",
-    },
-    pink: {
-      sm: "shadow-[0_0_20px_rgba(236,72,153,0.3)]",
-      md: "shadow-[0_0_40px_rgba(236,72,153,0.4)]",
-      lg: "shadow-[0_0_70px_rgba(236,72,153,0.5)]",
-      xl: "shadow-[0_0_100px_rgba(236,72,153,0.6)]",
+      sm: "shadow-sm shadow-blue-pastel/5",
+      md: "shadow-md shadow-blue-pastel/10",
+      lg: "shadow-lg shadow-blue-pastel/15",
+      xl: "shadow-xl shadow-blue-pastel/20",
     },
     green: {
-      sm: "shadow-[0_0_20px_rgba(34,197,94,0.3)]",
-      md: "shadow-[0_0_40px_rgba(34,197,94,0.4)]",
-      lg: "shadow-[0_0_70px_rgba(34,197,94,0.5)]",
-      xl: "shadow-[0_0_100px_rgba(34,197,94,0.6)]",
+      sm: "shadow-sm shadow-green-pastel/5",
+      md: "shadow-md shadow-green-pastel/10",
+      lg: "shadow-lg shadow-green-pastel/15",
+      xl: "shadow-xl shadow-green-pastel/20",
     },
     orange: {
-      sm: "shadow-[0_0_20px_rgba(251,146,60,0.3)]",
-      md: "shadow-[0_0_40px_rgba(251,146,60,0.4)]",
-      lg: "shadow-[0_0_70px_rgba(251,146,60,0.5)]",
-      xl: "shadow-[0_0_100px_rgba(251,146,60,0.6)]",
+      sm: "shadow-sm shadow-orange-pastel/5",
+      md: "shadow-md shadow-orange-pastel/10",
+      lg: "shadow-lg shadow-orange-pastel/15",
+      xl: "shadow-xl shadow-orange-pastel/20",
+    },
+    pink: {
+      sm: "shadow-sm shadow-pink-pastel/5",
+      md: "shadow-md shadow-pink-pastel/10",
+      lg: "shadow-lg shadow-pink-pastel/15",
+      xl: "shadow-xl shadow-pink-pastel/20",
     },
     red: {
-      sm: "shadow-[0_0_20px_rgba(239,68,68,0.3)]",
-      md: "shadow-[0_0_40px_rgba(239,68,68,0.4)]",
-      lg: "shadow-[0_0_70px_rgba(239,68,68,0.5)]",
-      xl: "shadow-[0_0_100px_rgba(239,68,68,0.6)]",
+      sm: "shadow-sm shadow-destructive/5",
+      md: "shadow-md shadow-destructive/10",
+      lg: "shadow-lg shadow-destructive/15",
+      xl: "shadow-xl shadow-destructive/20",
+    },
+    teal: {
+      sm: "shadow-sm shadow-teal-pastel/5",
+      md: "shadow-md shadow-teal-pastel/10",
+      lg: "shadow-lg shadow-teal-pastel/15",
+      xl: "shadow-xl shadow-teal-pastel/20",
     },
   },
 
-  // Inner glow variants (static classes for each color) - WIDER range than outer
-  innerGlowSizes: {
-    cyan: {
-      sm: "shadow-[inset_0_0_15px_rgba(34,211,238,0.2)]",
-      md: "shadow-[inset_0_0_40px_rgba(34,211,238,0.3)]",
-      lg: "shadow-[inset_0_0_80px_rgba(34,211,238,0.4)]",
-      xl: "shadow-[inset_0_0_120px_rgba(34,211,238,0.5)]",
-    },
+  // Hover shadow enhancements
+  hoverShadows: {
     purple: {
-      sm: "shadow-[inset_0_0_15px_rgba(168,85,247,0.2)]",
-      md: "shadow-[inset_0_0_40px_rgba(168,85,247,0.3)]",
-      lg: "shadow-[inset_0_0_80px_rgba(168,85,247,0.4)]",
-      xl: "shadow-[inset_0_0_120px_rgba(168,85,247,0.5)]",
+      sm: "hover:shadow-md hover:shadow-purple-pastel/10",
+      md: "hover:shadow-lg hover:shadow-purple-pastel/15",
+      lg: "hover:shadow-xl hover:shadow-purple-pastel/20",
+      xl: "hover:shadow-2xl hover:shadow-purple-pastel/25",
     },
     blue: {
-      sm: "shadow-[inset_0_0_15px_rgba(59,130,246,0.2)]",
-      md: "shadow-[inset_0_0_40px_rgba(59,130,246,0.3)]",
-      lg: "shadow-[inset_0_0_80px_rgba(59,130,246,0.4)]",
-      xl: "shadow-[inset_0_0_120px_rgba(59,130,246,0.5)]",
-    },
-    pink: {
-      sm: "shadow-[inset_0_0_15px_rgba(236,72,153,0.2)]",
-      md: "shadow-[inset_0_0_40px_rgba(236,72,153,0.3)]",
-      lg: "shadow-[inset_0_0_80px_rgba(236,72,153,0.4)]",
-      xl: "shadow-[inset_0_0_120px_rgba(236,72,153,0.5)]",
+      sm: "hover:shadow-md hover:shadow-blue-pastel/10",
+      md: "hover:shadow-lg hover:shadow-blue-pastel/15",
+      lg: "hover:shadow-xl hover:shadow-blue-pastel/20",
+      xl: "hover:shadow-2xl hover:shadow-blue-pastel/25",
     },
     green: {
-      sm: "shadow-[inset_0_0_15px_rgba(34,197,94,0.2)]",
-      md: "shadow-[inset_0_0_40px_rgba(34,197,94,0.3)]",
-      lg: "shadow-[inset_0_0_80px_rgba(34,197,94,0.4)]",
-      xl: "shadow-[inset_0_0_120px_rgba(34,197,94,0.5)]",
+      sm: "hover:shadow-md hover:shadow-green-pastel/10",
+      md: "hover:shadow-lg hover:shadow-green-pastel/15",
+      lg: "hover:shadow-xl hover:shadow-green-pastel/20",
+      xl: "hover:shadow-2xl hover:shadow-green-pastel/25",
     },
     orange: {
-      sm: "shadow-[inset_0_0_15px_rgba(251,146,60,0.2)]",
-      md: "shadow-[inset_0_0_40px_rgba(251,146,60,0.3)]",
-      lg: "shadow-[inset_0_0_80px_rgba(251,146,60,0.4)]",
-      xl: "shadow-[inset_0_0_120px_rgba(251,146,60,0.5)]",
-    },
-    red: {
-      sm: "shadow-[inset_0_0_15px_rgba(239,68,68,0.2)]",
-      md: "shadow-[inset_0_0_40px_rgba(239,68,68,0.3)]",
-      lg: "shadow-[inset_0_0_80px_rgba(239,68,68,0.4)]",
-      xl: "shadow-[inset_0_0_120px_rgba(239,68,68,0.5)]",
-    },
-  },
-
-  // Hover glow variants - size-matched (brighter, same size)
-  outerGlowHover: {
-    cyan: {
-      sm: "hover:shadow-[0_0_20px_rgba(34,211,238,0.5)]",
-      md: "hover:shadow-[0_0_40px_rgba(34,211,238,0.6)]",
-      lg: "hover:shadow-[0_0_70px_rgba(34,211,238,0.7)]",
-      xl: "hover:shadow-[0_0_100px_rgba(34,211,238,0.8)]",
-    },
-    purple: {
-      sm: "hover:shadow-[0_0_20px_rgba(168,85,247,0.5)]",
-      md: "hover:shadow-[0_0_40px_rgba(168,85,247,0.6)]",
-      lg: "hover:shadow-[0_0_70px_rgba(168,85,247,0.7)]",
-      xl: "hover:shadow-[0_0_100px_rgba(168,85,247,0.8)]",
-    },
-    blue: {
-      sm: "hover:shadow-[0_0_20px_rgba(59,130,246,0.5)]",
-      md: "hover:shadow-[0_0_40px_rgba(59,130,246,0.6)]",
-      lg: "hover:shadow-[0_0_70px_rgba(59,130,246,0.7)]",
-      xl: "hover:shadow-[0_0_100px_rgba(59,130,246,0.8)]",
+      sm: "hover:shadow-md hover:shadow-orange-pastel/10",
+      md: "hover:shadow-lg hover:shadow-orange-pastel/15",
+      lg: "hover:shadow-xl hover:shadow-orange-pastel/20",
+      xl: "hover:shadow-2xl hover:shadow-orange-pastel/25",
     },
     pink: {
-      sm: "hover:shadow-[0_0_20px_rgba(236,72,153,0.5)]",
-      md: "hover:shadow-[0_0_40px_rgba(236,72,153,0.6)]",
-      lg: "hover:shadow-[0_0_70px_rgba(236,72,153,0.7)]",
-      xl: "hover:shadow-[0_0_100px_rgba(236,72,153,0.8)]",
-    },
-    green: {
-      sm: "hover:shadow-[0_0_20px_rgba(34,197,94,0.5)]",
-      md: "hover:shadow-[0_0_40px_rgba(34,197,94,0.6)]",
-      lg: "hover:shadow-[0_0_70px_rgba(34,197,94,0.7)]",
-      xl: "hover:shadow-[0_0_100px_rgba(34,197,94,0.8)]",
-    },
-    orange: {
-      sm: "hover:shadow-[0_0_20px_rgba(251,146,60,0.5)]",
-      md: "hover:shadow-[0_0_40px_rgba(251,146,60,0.6)]",
-      lg: "hover:shadow-[0_0_70px_rgba(251,146,60,0.7)]",
-      xl: "hover:shadow-[0_0_100px_rgba(251,146,60,0.8)]",
+      sm: "hover:shadow-md hover:shadow-pink-pastel/10",
+      md: "hover:shadow-lg hover:shadow-pink-pastel/15",
+      lg: "hover:shadow-xl hover:shadow-pink-pastel/20",
+      xl: "hover:shadow-2xl hover:shadow-pink-pastel/25",
     },
     red: {
-      sm: "hover:shadow-[0_0_20px_rgba(239,68,68,0.5)]",
-      md: "hover:shadow-[0_0_40px_rgba(239,68,68,0.6)]",
-      lg: "hover:shadow-[0_0_70px_rgba(239,68,68,0.7)]",
-      xl: "hover:shadow-[0_0_100px_rgba(239,68,68,0.8)]",
+      sm: "hover:shadow-md hover:shadow-destructive/10",
+      md: "hover:shadow-lg hover:shadow-destructive/15",
+      lg: "hover:shadow-xl hover:shadow-destructive/20",
+      xl: "hover:shadow-2xl hover:shadow-destructive/25",
     },
-  },
-
-  innerGlowHover: {
-    cyan: {
-      sm: "hover:shadow-[inset_0_0_15px_rgba(34,211,238,0.4)]",
-      md: "hover:shadow-[inset_0_0_40px_rgba(34,211,238,0.5)]",
-      lg: "hover:shadow-[inset_0_0_80px_rgba(34,211,238,0.6)]",
-      xl: "hover:shadow-[inset_0_0_120px_rgba(34,211,238,0.7)]",
-    },
-    purple: {
-      sm: "hover:shadow-[inset_0_0_15px_rgba(168,85,247,0.4)]",
-      md: "hover:shadow-[inset_0_0_40px_rgba(168,85,247,0.5)]",
-      lg: "hover:shadow-[inset_0_0_80px_rgba(168,85,247,0.6)]",
-      xl: "hover:shadow-[inset_0_0_120px_rgba(168,85,247,0.7)]",
-    },
-    blue: {
-      sm: "hover:shadow-[inset_0_0_15px_rgba(59,130,246,0.4)]",
-      md: "hover:shadow-[inset_0_0_40px_rgba(59,130,246,0.5)]",
-      lg: "hover:shadow-[inset_0_0_80px_rgba(59,130,246,0.6)]",
-      xl: "hover:shadow-[inset_0_0_120px_rgba(59,130,246,0.7)]",
-    },
-    pink: {
-      sm: "hover:shadow-[inset_0_0_15px_rgba(236,72,153,0.4)]",
-      md: "hover:shadow-[inset_0_0_40px_rgba(236,72,153,0.5)]",
-      lg: "hover:shadow-[inset_0_0_80px_rgba(236,72,153,0.6)]",
-      xl: "hover:shadow-[inset_0_0_120px_rgba(236,72,153,0.7)]",
-    },
-    green: {
-      sm: "hover:shadow-[inset_0_0_15px_rgba(34,197,94,0.4)]",
-      md: "hover:shadow-[inset_0_0_40px_rgba(34,197,94,0.5)]",
-      lg: "hover:shadow-[inset_0_0_80px_rgba(34,197,94,0.6)]",
-      xl: "hover:shadow-[inset_0_0_120px_rgba(34,197,94,0.7)]",
-    },
-    orange: {
-      sm: "hover:shadow-[inset_0_0_15px_rgba(251,146,60,0.4)]",
-      md: "hover:shadow-[inset_0_0_40px_rgba(251,146,60,0.5)]",
-      lg: "hover:shadow-[inset_0_0_80px_rgba(251,146,60,0.6)]",
-      xl: "hover:shadow-[inset_0_0_120px_rgba(251,146,60,0.7)]",
-    },
-    red: {
-      sm: "hover:shadow-[inset_0_0_15px_rgba(239,68,68,0.4)]",
-      md: "hover:shadow-[inset_0_0_40px_rgba(239,68,68,0.5)]",
-      lg: "hover:shadow-[inset_0_0_80px_rgba(239,68,68,0.6)]",
-      xl: "hover:shadow-[inset_0_0_120px_rgba(239,68,68,0.7)]",
+    teal: {
+      sm: "hover:shadow-md hover:shadow-teal-pastel/10",
+      md: "hover:shadow-lg hover:shadow-teal-pastel/15",
+      lg: "hover:shadow-xl hover:shadow-teal-pastel/20",
+      xl: "hover:shadow-2xl hover:shadow-teal-pastel/25",
     },
   },
 
@@ -479,86 +391,79 @@ export const glassCard = {
     xl: "p-10",
   },
 
-  // Edge-lit effects for cards (top, left, right, bottom edges)
+  // Edge-lit effects for cards - minimal, no glow
   edgeLit: {
     position: {
       none: "",
-      top: "before:content-[''] before:absolute before:top-0 before:left-0 before:right-0 before:h-[2px] before:rounded-t-lg",
-      left: "before:content-[''] before:absolute before:top-0 before:left-0 before:bottom-0 before:w-[2px] before:rounded-l-lg",
+      top: "before:content-[''] before:absolute before:top-0 before:left-0 before:right-0 before:h-[2px] before:rounded-t-xl",
+      left: "before:content-[''] before:absolute before:top-0 before:left-0 before:bottom-0 before:w-[2px] before:rounded-l-xl",
       right:
-        "before:content-[''] before:absolute before:top-0 before:right-0 before:bottom-0 before:w-[2px] before:rounded-r-lg",
+        "before:content-[''] before:absolute before:top-0 before:right-0 before:bottom-0 before:w-[2px] before:rounded-r-xl",
       bottom:
-        "before:content-[''] before:absolute before:bottom-0 before:left-0 before:right-0 before:h-[2px] before:rounded-b-lg",
+        "before:content-[''] before:absolute before:bottom-0 before:left-0 before:right-0 before:h-[2px] before:rounded-b-xl",
     },
     color: {
       purple: {
-        line: "before:bg-purple-500 dark:before:bg-purple-400",
-        glow: "before:shadow-[0_0_15px_4px_rgba(168,85,247,0.8)]",
+        line: "before:bg-purple-pastel dark:before:bg-purple-pastel/80",
         gradient: {
           horizontal:
-            "before:bg-gradient-to-r before:from-transparent before:via-purple-500 dark:before:via-purple-400 before:to-transparent",
+            "before:bg-gradient-to-r before:from-transparent before:via-purple-pastel dark:before:via-purple-pastel/80 before:to-transparent",
           vertical:
-            "before:bg-gradient-to-b before:from-transparent before:via-purple-500 dark:before:via-purple-400 before:to-transparent",
+            "before:bg-gradient-to-b before:from-transparent before:via-purple-pastel dark:before:via-purple-pastel/80 before:to-transparent",
         },
       },
       blue: {
-        line: "before:bg-blue-500 dark:before:bg-blue-400",
-        glow: "before:shadow-[0_0_15px_4px_rgba(59,130,246,0.8)]",
+        line: "before:bg-blue-pastel dark:before:bg-blue-pastel/80",
         gradient: {
           horizontal:
-            "before:bg-gradient-to-r before:from-transparent before:via-blue-500 dark:before:via-blue-400 before:to-transparent",
+            "before:bg-gradient-to-r before:from-transparent before:via-blue-pastel dark:before:via-blue-pastel/80 before:to-transparent",
           vertical:
-            "before:bg-gradient-to-b before:from-transparent before:via-blue-500 dark:before:via-blue-400 before:to-transparent",
-        },
-      },
-      cyan: {
-        line: "before:bg-cyan-500 dark:before:bg-cyan-400",
-        glow: "before:shadow-[0_0_15px_4px_rgba(34,211,238,0.8)]",
-        gradient: {
-          horizontal:
-            "before:bg-gradient-to-r before:from-transparent before:via-cyan-500 dark:before:via-cyan-400 before:to-transparent",
-          vertical:
-            "before:bg-gradient-to-b before:from-transparent before:via-cyan-500 dark:before:via-cyan-400 before:to-transparent",
+            "before:bg-gradient-to-b before:from-transparent before:via-blue-pastel dark:before:via-blue-pastel/80 before:to-transparent",
         },
       },
       green: {
-        line: "before:bg-green-500 dark:before:bg-green-400",
-        glow: "before:shadow-[0_0_15px_4px_rgba(34,197,94,0.8)]",
+        line: "before:bg-green-pastel dark:before:bg-green-pastel/80",
         gradient: {
           horizontal:
-            "before:bg-gradient-to-r before:from-transparent before:via-green-500 dark:before:via-green-400 before:to-transparent",
+            "before:bg-gradient-to-r before:from-transparent before:via-green-pastel dark:before:via-green-pastel/80 before:to-transparent",
           vertical:
-            "before:bg-gradient-to-b before:from-transparent before:via-green-500 dark:before:via-green-400 before:to-transparent",
+            "before:bg-gradient-to-b before:from-transparent before:via-green-pastel dark:before:via-green-pastel/80 before:to-transparent",
         },
       },
       orange: {
-        line: "before:bg-orange-500 dark:before:bg-orange-400",
-        glow: "before:shadow-[0_0_15px_4px_rgba(251,146,60,0.8)]",
+        line: "before:bg-orange-pastel dark:before:bg-orange-pastel/80",
         gradient: {
           horizontal:
-            "before:bg-gradient-to-r before:from-transparent before:via-orange-500 dark:before:via-orange-400 before:to-transparent",
+            "before:bg-gradient-to-r before:from-transparent before:via-orange-pastel dark:before:via-orange-pastel/80 before:to-transparent",
           vertical:
-            "before:bg-gradient-to-b before:from-transparent before:via-orange-500 dark:before:via-orange-400 before:to-transparent",
+            "before:bg-gradient-to-b before:from-transparent before:via-orange-pastel dark:before:via-orange-pastel/80 before:to-transparent",
         },
       },
       pink: {
-        line: "before:bg-pink-500 dark:before:bg-pink-400",
-        glow: "before:shadow-[0_0_15px_4px_rgba(236,72,153,0.8)]",
+        line: "before:bg-pink-pastel dark:before:bg-pink-pastel/80",
         gradient: {
           horizontal:
-            "before:bg-gradient-to-r before:from-transparent before:via-pink-500 dark:before:via-pink-400 before:to-transparent",
+            "before:bg-gradient-to-r before:from-transparent before:via-pink-pastel dark:before:via-pink-pastel/80 before:to-transparent",
           vertical:
-            "before:bg-gradient-to-b before:from-transparent before:via-pink-500 dark:before:via-pink-400 before:to-transparent",
+            "before:bg-gradient-to-b before:from-transparent before:via-pink-pastel dark:before:via-pink-pastel/80 before:to-transparent",
         },
       },
       red: {
-        line: "before:bg-red-500 dark:before:bg-red-400",
-        glow: "before:shadow-[0_0_15px_4px_rgba(239,68,68,0.8)]",
+        line: "before:bg-destructive dark:before:bg-destructive/80",
         gradient: {
           horizontal:
-            "before:bg-gradient-to-r before:from-transparent before:via-red-500 dark:before:via-red-400 before:to-transparent",
+            "before:bg-gradient-to-r before:from-transparent before:via-destructive dark:before:via-destructive/80 before:to-transparent",
           vertical:
-            "before:bg-gradient-to-b before:from-transparent before:via-red-500 dark:before:via-red-400 before:to-transparent",
+            "before:bg-gradient-to-b before:from-transparent before:via-destructive dark:before:via-destructive/80 before:to-transparent",
+        },
+      },
+      teal: {
+        line: "before:bg-teal-pastel dark:before:bg-teal-pastel/80",
+        gradient: {
+          horizontal:
+            "before:bg-gradient-to-r before:from-transparent before:via-teal-pastel dark:before:via-teal-pastel/80 before:to-transparent",
+          vertical:
+            "before:bg-gradient-to-b before:from-transparent before:via-teal-pastel dark:before:via-teal-pastel/80 before:to-transparent",
         },
       },
     },

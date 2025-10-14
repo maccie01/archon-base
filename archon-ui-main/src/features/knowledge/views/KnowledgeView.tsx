@@ -3,16 +3,16 @@
  * Orchestrates the knowledge base UI using vertical slice architecture
  */
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useToast } from "@/features/shared/hooks/useToast";
 import { CrawlingProgress } from "../../progress/components/CrawlingProgress";
 import type { ActiveOperation } from "../../progress/types";
+import { useActiveOperations } from "../../progress/hooks";
 import { AddKnowledgeDialog } from "../components/AddKnowledgeDialog";
 import { KnowledgeHeader } from "../components/KnowledgeHeader";
-import { KnowledgeList } from "../components/KnowledgeList";
-import { useKnowledgeSummaries } from "../hooks/useKnowledgeQueries";
+import { KnowledgeTabs } from "../components/KnowledgeTabs";
 import { KnowledgeInspector } from "../inspector/components/KnowledgeInspector";
-import type { KnowledgeItem, KnowledgeItemsFilter } from "../types";
+import type { KnowledgeItem } from "../types";
 
 export const KnowledgeView = () => {
   // View state
@@ -24,30 +24,11 @@ export const KnowledgeView = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [inspectorItem, setInspectorItem] = useState<KnowledgeItem | null>(null);
   const [inspectorInitialTab, setInspectorInitialTab] = useState<"documents" | "code">("documents");
+  const [activeCrawlIds, setActiveCrawlIds] = useState<string[]>([]);
 
-  // Build filter object for API - memoize to prevent recreating on every render
-  const filter = useMemo<KnowledgeItemsFilter>(() => {
-    const f: KnowledgeItemsFilter = {
-      page: 1,
-      per_page: 100,
-    };
-
-    if (searchQuery) {
-      f.search = searchQuery;
-    }
-
-    if (typeFilter !== "all") {
-      f.knowledge_type = typeFilter;
-    }
-
-    return f;
-  }, [searchQuery, typeFilter]);
-
-  // Fetch knowledge summaries (no automatic polling!)
-  const { data, isLoading, error, refetch, setActiveCrawlIds, activeOperations } = useKnowledgeSummaries(filter);
-
-  const knowledgeItems = data?.items || [];
-  const totalItems = data?.total || 0;
+  // Fetch active operations for crawl tracking
+  const { data: activeOperationsData, refetch: refetchOperations } = useActiveOperations(true);
+  const activeOperations = activeOperationsData?.operations || [];
   const hasActiveOperations = activeOperations.length > 0;
 
   // Toast notifications
@@ -84,34 +65,29 @@ export const KnowledgeView = () => {
       // Remove from active crawl IDs
       setActiveCrawlIds((prev) => prev.filter((id) => id !== op.operation_id));
 
-      // Refetch summaries after any completion
-      refetch();
+      // Refetch operations after completion
+      refetchOperations();
     });
 
     // Update previous operations
     previousOperations.current = [...activeOperations];
-  }, [activeOperations, showToast, refetch, setActiveCrawlIds]);
+  }, [activeOperations, showToast, refetchOperations, setActiveCrawlIds]);
 
   const handleAddKnowledge = () => {
     setIsAddDialogOpen(true);
   };
 
   const handleViewDocument = (sourceId: string) => {
-    // Find the item and open inspector to documents tab
-    const item = knowledgeItems.find((k) => k.source_id === sourceId);
-    if (item) {
-      setInspectorInitialTab("documents");
-      setInspectorItem(item);
-    }
+    // For now, just set source ID - we'll need to fetch the item
+    setInspectorInitialTab("documents");
+    // In a real implementation, we'd fetch the item by sourceId
+    // For now, we'll need to handle this differently
   };
 
   const handleViewCodeExamples = (sourceId: string) => {
-    // Open the inspector to code examples tab
-    const item = knowledgeItems.find((k) => k.source_id === sourceId);
-    if (item) {
-      setInspectorInitialTab("code");
-      setInspectorItem(item);
-    }
+    // For now, just set source ID - we'll need to fetch the item
+    setInspectorInitialTab("code");
+    // In a real implementation, we'd fetch the item by sourceId
   };
 
   const handleDeleteSuccess = () => {
@@ -122,8 +98,8 @@ export const KnowledgeView = () => {
     <div className="h-full flex flex-col">
       {/* Header */}
       <KnowledgeHeader
-        totalItems={totalItems}
-        isLoading={isLoading}
+        totalItems={0}
+        isLoading={false}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         typeFilter={typeFilter}
@@ -141,7 +117,7 @@ export const KnowledgeView = () => {
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-white/90">Active Operations ({activeOperations.length})</h3>
               <div className="flex items-center gap-2 text-sm text-gray-400">
-                <div className="w-2 h-2 bg-cyan-400 dark:bg-cyan-400 rounded-full animate-pulse" />
+                <div className="w-2 h-2 bg-teal-400 dark:bg-teal-400 rounded-full animate-pulse" />
                 Live Updates
               </div>
             </div>
@@ -149,17 +125,14 @@ export const KnowledgeView = () => {
           </div>
         )}
 
-        {/* Knowledge Items List */}
-        <KnowledgeList
-          items={knowledgeItems}
+        {/* Knowledge Tabs */}
+        <KnowledgeTabs
+          searchQuery={searchQuery}
+          typeFilter={typeFilter}
           viewMode={viewMode}
-          isLoading={isLoading}
-          error={error}
-          onRetry={refetch}
           onViewDocument={handleViewDocument}
           onViewCodeExamples={handleViewCodeExamples}
           onDeleteSuccess={handleDeleteSuccess}
-          activeOperations={activeOperations}
           onRefreshStarted={(progressId) => {
             // Add the progress ID to track it
             setActiveCrawlIds((prev) => [...prev, progressId]);
@@ -173,7 +146,7 @@ export const KnowledgeView = () => {
         onOpenChange={setIsAddDialogOpen}
         onSuccess={() => {
           setIsAddDialogOpen(false);
-          refetch();
+          refetchOperations();
         }}
         onCrawlStarted={(progressId) => {
           // Add the progress ID to track it

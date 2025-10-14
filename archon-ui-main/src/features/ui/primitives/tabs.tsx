@@ -34,50 +34,44 @@ export const TabsTrigger = React.forwardRef<
 >(({ className, color = "blue", ...props }, ref) => {
   const activeClasses = {
     blue: [
-      "data-[state=active]:bg-blue-500/20 dark:data-[state=active]:bg-blue-400/20",
-      "data-[state=active]:text-blue-700 dark:data-[state=active]:text-blue-300",
-      "data-[state=active]:border data-[state=active]:border-blue-400/50",
-      "data-[state=active]:shadow-[0_0_10px_rgba(59,130,246,0.5)]",
+      "data-[state=active]:bg-blue-pastel/30",
+      "data-[state=active]:text-blue-pastel-dark",
+      "data-[state=active]:ring-1 data-[state=active]:ring-blue-pastel/50",
     ].join(" "),
     purple: [
-      "data-[state=active]:bg-purple-500/20 dark:data-[state=active]:bg-purple-400/20",
-      "data-[state=active]:text-purple-700 dark:data-[state=active]:text-purple-300",
-      "data-[state=active]:border data-[state=active]:border-purple-400/50",
-      "data-[state=active]:shadow-[0_0_10px_rgba(168,85,247,0.5)]",
+      "data-[state=active]:bg-purple-pastel/30",
+      "data-[state=active]:text-purple-pastel-dark",
+      "data-[state=active]:ring-1 data-[state=active]:ring-purple-pastel/50",
     ].join(" "),
     pink: [
-      "data-[state=active]:bg-pink-500/20 dark:data-[state=active]:bg-pink-400/20",
-      "data-[state=active]:text-pink-700 dark:data-[state=active]:text-pink-300",
-      "data-[state=active]:border data-[state=active]:border-pink-400/50",
-      "data-[state=active]:shadow-[0_0_10px_rgba(236,72,153,0.5)]",
+      "data-[state=active]:bg-pink-pastel/30",
+      "data-[state=active]:text-pink-pastel-dark",
+      "data-[state=active]:ring-1 data-[state=active]:ring-pink-pastel/50",
     ].join(" "),
     orange: [
-      "data-[state=active]:bg-orange-500/20 dark:data-[state=active]:bg-orange-400/20",
-      "data-[state=active]:text-orange-700 dark:data-[state=active]:text-orange-300",
-      "data-[state=active]:border data-[state=active]:border-orange-400/50",
-      "data-[state=active]:shadow-[0_0_10px_rgba(251,146,60,0.5)]",
+      "data-[state=active]:bg-orange-pastel/30",
+      "data-[state=active]:text-orange-pastel-dark",
+      "data-[state=active]:ring-1 data-[state=active]:ring-orange-pastel/50",
     ].join(" "),
     cyan: [
-      "data-[state=active]:bg-cyan-500/20 dark:data-[state=active]:bg-cyan-400/20",
-      "data-[state=active]:text-cyan-700 dark:data-[state=active]:text-cyan-300",
-      "data-[state=active]:border data-[state=active]:border-cyan-400/50",
-      "data-[state=active]:shadow-[0_0_10px_rgba(34,211,238,0.5)]",
+      "data-[state=active]:bg-teal-pastel/30",
+      "data-[state=active]:text-teal-pastel-dark",
+      "data-[state=active]:ring-1 data-[state=active]:ring-teal-pastel/50",
     ].join(" "),
     green: [
-      "data-[state=active]:bg-green-500/20 dark:data-[state=active]:bg-green-400/20",
-      "data-[state=active]:text-green-700 dark:data-[state=active]:text-green-300",
-      "data-[state=active]:border data-[state=active]:border-green-400/50",
-      "data-[state=active]:shadow-[0_0_10px_rgba(34,197,94,0.5)]",
+      "data-[state=active]:bg-green-pastel/30",
+      "data-[state=active]:text-green-pastel-dark",
+      "data-[state=active]:ring-1 data-[state=active]:ring-green-pastel/50",
     ].join(" "),
   } satisfies Record<TabColor, string>;
 
   const focusRingClasses = {
-    blue: "focus-visible:ring-blue-500",
-    purple: "focus-visible:ring-purple-500",
-    pink: "focus-visible:ring-pink-500",
-    orange: "focus-visible:ring-orange-500",
-    cyan: "focus-visible:ring-cyan-500",
-    green: "focus-visible:ring-green-500",
+    blue: "focus-visible:ring-blue-pastel",
+    purple: "focus-visible:ring-purple-pastel",
+    pink: "focus-visible:ring-pink-pastel",
+    orange: "focus-visible:ring-orange-pastel",
+    cyan: "focus-visible:ring-teal-pastel",
+    green: "focus-visible:ring-green-pastel",
   } satisfies Record<TabColor, string>;
 
   return (

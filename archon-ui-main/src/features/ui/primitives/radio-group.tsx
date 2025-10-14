@@ -17,15 +17,16 @@ export const RadioGroupItem = React.forwardRef<
       "dark:from-white/10 dark:to-black/30",
       glassmorphism.border.default,
       glassmorphism.interactive.base,
-      "focus:outline-none focus:ring-2 focus:ring-cyan-500",
+      "focus:outline-none focus:ring-2 focus:ring-accent",
       "disabled:cursor-not-allowed disabled:opacity-50",
-      "data-[state=checked]:border-cyan-500",
+      "data-[state=checked]:border-accent data-[state=checked]:ring-1 data-[state=checked]:ring-accent/40",
+      "transition-all duration-200",
       className,
     )}
     {...props}
   >
     <RadioGroupPrimitive.Indicator className="flex items-center justify-center">
-      <Circle className="h-2.5 w-2.5 fill-cyan-500 text-cyan-500" />
+      <Circle className="h-2.5 w-2.5 fill-accent text-accent" />
     </RadioGroupPrimitive.Indicator>
   </RadioGroupPrimitive.Item>
 ));

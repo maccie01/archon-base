@@ -3,58 +3,60 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  /* Light mode variables - bare HSL values (Tailwind adds hsl() wrapper) */
-  --background: 0 0% 98%;
-  --foreground: 240 10% 3.9%;
-  --muted: 240 4.8% 95.9%;
-  --muted-foreground: 240 3.8% 46.1%;
+  /* Light mode variables - Apple-inspired pastel palette */
+  --background: 0 0% 99%;
+  --foreground: 0 0% 13%;
+  --muted: 210 40% 96.5%;
+  --muted-foreground: 215 16% 47%;
   --popover: 0 0% 100%;
-  --popover-foreground: 240 10% 3.9%;
-  --border: 240 5.9% 90%;
-  --input: 240 5.9% 90%;
+  --popover-foreground: 0 0% 13%;
+  --border: 214 32% 91%;
+  --input: 214 32% 91%;
   --card: 0 0% 100%;
-  --card-foreground: 240 10% 3.9%;
-  --primary: 271 91% 65%;
+  --card-foreground: 0 0% 13%;
+  --primary: 213 94% 68%;
   --primary-foreground: 0 0% 100%;
-  --secondary: 240 4.8% 95.9%;
-  --secondary-foreground: 240 5.9% 10%;
-  --accent: 271 91% 65%;
+  --secondary: 210 40% 96%;
+  --secondary-foreground: 0 0% 13%;
+  --accent: 213 94% 68%;
   --accent-foreground: 0 0% 100%;
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 0 0% 98%;
-  --ring: 240 5.9% 10%;
-  --radius: 0.5rem;
+  --destructive: 0 72% 65%;
+  --destructive-foreground: 0 0% 100%;
+  --ring: 213 94% 68%;
+  --radius: 0.75rem;
 
-  /* Tron accent colors */
-  --purple-accent: 271 91% 65%;
-  --green-accent: 160 84% 39%;
-  --pink-accent: 330 90% 65%;
-  --blue-accent: 217 91% 60%;
+  /* Apple-inspired pastel accent colors */
+  --purple-accent: 250 60% 75%;
+  --green-accent: 142 52% 70%;
+  --pink-accent: 330 60% 80%;
+  --blue-accent: 213 94% 68%;
+  --orange-accent: 25 95% 70%;
+  --teal-accent: 180 55% 70%;
 
   color-scheme: light;
 }
 
 .dark {
-  /* Dark mode variables - bare HSL values */
-  --background: 0 0% 0%;
-  --foreground: 0 0% 100%;
-  --muted: 240 4% 16%;
-  --muted-foreground: 240 5% 65%;
-  --popover: 0 0% 0%;
-  --popover-foreground: 0 0% 100%;
-  --border: 240 3.7% 15.9%;
-  --input: 240 3.7% 15.9%;
-  --card: 0 0% 0%;
-  --card-foreground: 0 0% 100%;
-  --primary: 271 91% 65%;
+  /* Dark mode variables - softer, Apple-inspired palette */
+  --background: 220 13% 9%;
+  --foreground: 0 0% 95%;
+  --muted: 220 13% 15%;
+  --muted-foreground: 220 9% 65%;
+  --popover: 220 13% 11%;
+  --popover-foreground: 0 0% 95%;
+  --border: 220 13% 20%;
+  --input: 220 13% 20%;
+  --card: 220 13% 11%;
+  --card-foreground: 0 0% 95%;
+  --primary: 213 94% 68%;
   --primary-foreground: 0 0% 100%;
-  --secondary: 240 3.7% 15.9%;
-  --secondary-foreground: 0 0% 98%;
-  --accent: 271 91% 65%;
+  --secondary: 220 13% 18%;
+  --secondary-foreground: 0 0% 95%;
+  --accent: 213 94% 68%;
   --accent-foreground: 0 0% 100%;
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 0 0% 98%;
-  --ring: 240 3.7% 15.9%;
+  --destructive: 0 72% 65%;
+  --destructive-foreground: 0 0% 100%;
+  --ring: 213 94% 68%;
 
   color-scheme: dark;
 }
@@ -117,18 +119,18 @@
 }
 
 @layer components {
-  /* Grid pattern for background (used in MainLayout) */
+  /* Subtle grid pattern for background (Apple-inspired minimalism) */
   .neon-grid {
     background-image:
-      linear-gradient(to right, #a855f720 1px, transparent 1px),
-      linear-gradient(to bottom, #a855f720 1px, transparent 1px);
-    background-size: 40px 40px;
+      linear-gradient(to right, hsl(214 32% 91% / 0.3) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(214 32% 91% / 0.3) 1px, transparent 1px);
+    background-size: 32px 32px;
   }
 
   .dark .neon-grid {
     background-image:
-      linear-gradient(to right, #a855f730 1px, transparent 1px),
-      linear-gradient(to bottom, #a855f730 1px, transparent 1px);
+      linear-gradient(to right, hsl(220 13% 20% / 0.4) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(220 13% 20% / 0.4) 1px, transparent 1px);
   }
 }
 
@@ -174,10 +176,10 @@
   }
 }
 
-/* Custom scrollbar styles (used in multiple components) */
+/* Custom scrollbar styles - Apple-inspired minimalism */
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: hsl(var(--blue-accent) / 0.30) transparent;
+  scrollbar-color: hsl(214 32% 75% / 0.5) transparent;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -189,31 +191,31 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: hsl(var(--blue-accent) / 0.30);
-  border-radius: 4px;
+  background-color: hsl(214 32% 75% / 0.5);
+  border-radius: 8px;
   transition: background-color 0.2s ease;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background-color: hsl(var(--blue-accent) / 0.50);
+  background-color: hsl(214 32% 65% / 0.7);
 }
 
 .dark .custom-scrollbar {
-  scrollbar-color: hsl(var(--blue-accent) / 0.45) transparent;
+  scrollbar-color: hsl(220 13% 35% / 0.6) transparent;
 }
 
 .dark .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: hsl(var(--blue-accent) / 0.40);
+  background-color: hsl(220 13% 35% / 0.6);
 }
 
 .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background-color: hsl(var(--blue-accent) / 0.60);
+  background-color: hsl(220 13% 45% / 0.8);
 }
 
-/* Thin scrollbar styles (used in KanbanColumn and other components) - Tron-themed */
+/* Thin scrollbar styles - Apple-inspired minimalism */
 .scrollbar-thin {
   scrollbar-width: thin;
-  scrollbar-color: hsl(var(--blue-accent) / 0.40) transparent;
+  scrollbar-color: hsl(214 32% 80% / 0.4) transparent;
 }
 
 .scrollbar-thin::-webkit-scrollbar {
@@ -226,47 +228,23 @@
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  background: linear-gradient(
-    to bottom,
-    hsl(var(--blue-accent) / 0.60),
-    hsl(var(--blue-accent) / 0.30)
-  );
-  border-radius: 3px;
-  box-shadow: 0 0 3px hsl(var(--blue-accent) / 0.40);
-  transition: background 0.2s ease, box-shadow 0.2s ease;
+  background: hsl(214 32% 75% / 0.4);
+  border-radius: 6px;
+  transition: background 0.2s ease;
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(
-    to bottom,
-    hsl(var(--blue-accent) / 0.80),
-    hsl(var(--blue-accent) / 0.50)
-  );
-  box-shadow:
-    0 0 6px hsl(var(--blue-accent) / 0.60),
-    inset 0 0 3px hsl(var(--blue-accent) / 0.30);
+  background: hsl(214 32% 65% / 0.6);
 }
 
 .dark .scrollbar-thin {
-  scrollbar-color: hsl(var(--blue-accent) / 0.50) transparent;
+  scrollbar-color: hsl(220 13% 35% / 0.5) transparent;
 }
 
 .dark .scrollbar-thin::-webkit-scrollbar-thumb {
-  background: linear-gradient(
-    to bottom,
-    hsl(var(--blue-accent) / 0.50),
-    hsl(var(--blue-accent) / 0.20)
-  );
-  box-shadow: 0 0 4px hsl(var(--blue-accent) / 0.50);
+  background: hsl(220 13% 35% / 0.5);
 }
 
 .dark .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(
-    to bottom,
-    hsl(var(--blue-accent) / 0.70),
-    hsl(var(--blue-accent) / 0.40)
-  );
-  box-shadow:
-    0 0 8px hsl(var(--blue-accent) / 0.70),
-    inset 0 0 3px hsl(var(--blue-accent) / 0.40);
+  background: hsl(220 13% 45% / 0.7);
 }

@@ -10,16 +10,15 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({ className
     <input
       type={type}
       className={cn(
-        "w-full rounded-md py-2 px-3",
+        "w-full rounded-lg py-2 px-3",
         "bg-white/50 dark:bg-black/70",
-        "border border-gray-300 dark:border-gray-700",
-        "text-gray-900 dark:text-white",
-        "placeholder:text-gray-500 dark:placeholder:text-gray-400",
-        "focus:outline-none focus:border-cyan-400",
-        "focus:shadow-[0_0_10px_rgba(34,211,238,0.2)]",
-        "transition-all duration-300",
+        "border border-border",
+        "text-foreground",
+        "placeholder:text-muted-foreground",
+        "focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2",
+        "transition-all duration-200",
         "disabled:opacity-50 disabled:cursor-not-allowed",
-        error && "border-red-500 dark:border-red-400 focus:border-red-500 focus:shadow-[0_0_10px_rgba(239,68,68,0.2)]",
+        error && "border-red-pastel focus:ring-red-pastel",
         className,
       )}
       ref={ref}
@@ -38,17 +37,16 @@ export const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(({ 
   return (
     <textarea
       className={cn(
-        "w-full rounded-md py-2 px-3",
+        "w-full rounded-lg py-2 px-3",
         "bg-white/50 dark:bg-black/70",
-        "border border-gray-300 dark:border-gray-700",
-        "text-gray-900 dark:text-white",
-        "placeholder:text-gray-500 dark:placeholder:text-gray-400",
-        "focus:outline-none focus:border-cyan-400",
-        "focus:shadow-[0_0_10px_rgba(34,211,238,0.2)]",
-        "transition-all duration-300",
+        "border border-border",
+        "text-foreground",
+        "placeholder:text-muted-foreground",
+        "focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2",
+        "transition-all duration-200",
         "disabled:opacity-50 disabled:cursor-not-allowed",
         "resize-y min-h-[80px]",
-        error && "border-red-500 dark:border-red-400 focus:border-red-500 focus:shadow-[0_0_10px_rgba(239,68,68,0.2)]",
+        error && "border-red-pastel focus:ring-red-pastel",
         className,
       )}
       ref={ref}

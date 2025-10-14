@@ -2,7 +2,7 @@ import React from "react";
 import { cn } from "./styles";
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "default" | "destructive" | "outline" | "ghost" | "link" | "cyan" | "knowledge"; // Tron-style purple button used on Knowledge Base
+  variant?: "default" | "destructive" | "outline" | "ghost" | "link" | "primary" | "knowledge";
   size?: "default" | "sm" | "lg" | "icon" | "xs";
   loading?: boolean;
   children: React.ReactNode;
@@ -11,9 +11,9 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = "default", size = "default", loading = false, disabled, children, ...props }, ref) => {
     const baseStyles = cn(
-      "inline-flex items-center justify-center rounded-md font-medium",
-      "transition-all duration-300",
-      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500",
+      "inline-flex items-center justify-center rounded-xl font-medium",
+      "transition-all duration-200",
+      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
       "disabled:pointer-events-none disabled:opacity-50",
       loading && "cursor-wait",
     );
@@ -21,72 +21,46 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     type ButtonVariant = NonNullable<ButtonProps["variant"]>;
     const variants: Record<ButtonVariant, string> = {
       default: cn(
-        "backdrop-blur-md",
-        "bg-gradient-to-b from-cyan-500/90 to-cyan-600/90",
-        "dark:from-cyan-400/80 dark:to-cyan-500/80",
-        "text-white dark:text-gray-900",
-        "border border-cyan-400/30 dark:border-cyan-300/30",
-        "hover:from-cyan-400 hover:to-cyan-500",
-        "dark:hover:from-cyan-300 dark:hover:to-cyan-400",
-        "hover:shadow-[0_0_20px_rgba(34,211,238,0.5)]",
-        "dark:hover:shadow-[0_0_25px_rgba(34,211,238,0.7)]",
+        "bg-primary text-primary-foreground",
+        "hover:bg-primary/90",
+        "shadow-sm hover:shadow-md",
       ),
       destructive: cn(
-        "backdrop-blur-md",
-        "bg-gradient-to-b from-red-500/90 to-red-600/90",
-        "dark:from-red-400/80 dark:to-red-500/80",
-        "text-white",
-        "border border-red-400/30 dark:border-red-300/30",
-        "hover:from-red-400 hover:to-red-500",
-        "dark:hover:from-red-300 dark:hover:to-red-400",
-        "hover:shadow-[0_0_20px_rgba(239,68,68,0.5)]",
-        "dark:hover:shadow-[0_0_25px_rgba(239,68,68,0.7)]",
+        "bg-destructive text-destructive-foreground",
+        "hover:bg-destructive/90",
+        "shadow-sm hover:shadow-md",
       ),
       outline: cn(
-        "backdrop-blur-md",
-        "bg-gradient-to-b from-white/50 to-white/30",
-        "dark:from-gray-900/50 dark:to-black/50",
-        "text-gray-900 dark:text-cyan-100",
-        "border border-gray-300/50 dark:border-cyan-500/50",
-        "hover:from-white/70 hover:to-white/50",
-        "dark:hover:from-gray-900/70 dark:hover:to-black/70",
-        "hover:border-cyan-500/50 dark:hover:border-cyan-400/50",
-        "hover:shadow-[0_0_15px_rgba(34,211,238,0.3)]",
-        "dark:hover:shadow-[0_0_20px_rgba(34,211,238,0.5)]",
+        "border border-border bg-background",
+        "hover:bg-muted",
+        "text-foreground",
       ),
       ghost: cn(
-        "text-gray-700 dark:text-cyan-100",
-        "hover:bg-gray-100/50 dark:hover:bg-cyan-500/10",
-        "hover:backdrop-blur-md",
+        "text-foreground",
+        "hover:bg-muted",
       ),
       link: cn(
-        "text-cyan-600 dark:text-cyan-400",
+        "text-primary",
         "underline-offset-4 hover:underline",
-        "hover:text-cyan-500 dark:hover:text-cyan-300",
       ),
-      cyan: cn(
-        "backdrop-blur-md",
-        "bg-gradient-to-b from-cyan-100/80 to-white/60",
-        "dark:from-cyan-500/20 dark:to-cyan-500/10",
-        "text-cyan-700 dark:text-cyan-100",
-        "border border-cyan-300/50 dark:border-cyan-500/50",
-        "hover:from-cyan-200/90 hover:to-cyan-100/70",
-        "dark:hover:from-cyan-400/30 dark:hover:to-cyan-500/20",
-        "hover:shadow-[0_0_20px_rgba(34,211,238,0.5)]",
-        "dark:hover:shadow-[0_0_25px_rgba(34,211,238,0.7)]",
+      primary: cn(
+        "bg-gradient-to-b from-blue-pastel/80 to-blue-pastel/60",
+        "dark:from-blue-pastel/20 dark:to-blue-pastel/10",
+        "text-blue-700 dark:text-blue-100",
+        "border border-blue-pastel/50",
+        "hover:from-blue-pastel/90 hover:to-blue-pastel/70",
+        "dark:hover:from-blue-pastel/30 dark:hover:to-blue-pastel/20",
+        "shadow-sm hover:shadow-md",
       ),
       knowledge: cn(
-        // Mirror the New Project button style, but purple
-        "backdrop-blur-md",
-        "bg-gradient-to-b from-purple-100/80 to-white/60",
-        "dark:from-purple-500/20 dark:to-purple-500/10",
+        "bg-gradient-to-b from-purple-pastel/80 to-purple-pastel/60",
+        "dark:from-purple-pastel/20 dark:to-purple-pastel/10",
         "text-purple-700 dark:text-purple-100",
-        "border border-purple-300/50 dark:border-purple-500/50",
-        "hover:from-purple-200/90 hover:to-purple-100/70",
-        "dark:hover:from-purple-400/30 dark:hover:to-purple-500/20",
-        "hover:shadow-[0_0_20px_rgba(168,85,247,0.5)]",
-        "dark:hover:shadow-[0_0_25px_rgba(168,85,247,0.7)]",
-        "focus-visible:ring-purple-500",
+        "border border-purple-pastel/50",
+        "hover:from-purple-pastel/90 hover:to-purple-pastel/70",
+        "dark:hover:from-purple-pastel/30 dark:hover:to-purple-pastel/20",
+        "shadow-sm hover:shadow-md",
+        "focus-visible:ring-purple-pastel",
       ),
     };
 
