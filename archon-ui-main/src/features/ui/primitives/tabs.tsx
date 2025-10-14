@@ -33,12 +33,12 @@ export const TabsTrigger = React.forwardRef<
   }
 >(({ className, color = "blue", ...props }, ref) => {
   const activeClasses = {
-    blue: "data-[state=active]:bg-blue-pastel/30 data-[state=active]:text-blue-pastel-dark data-[state=active]:ring-1 data-[state=active]:ring-blue-pastel/50 data-[state=active]:shadow-sm",
-    purple: "data-[state=active]:bg-purple-pastel/30 data-[state=active]:text-purple-pastel-dark data-[state=active]:ring-1 data-[state=active]:ring-purple-pastel/50 data-[state=active]:shadow-sm",
-    pink: "data-[state=active]:bg-pink-pastel/30 data-[state=active]:text-pink-pastel-dark data-[state=active]:ring-1 data-[state=active]:ring-pink-pastel/50 data-[state=active]:shadow-sm",
-    orange: "data-[state=active]:bg-orange-pastel/30 data-[state=active]:text-orange-pastel-dark data-[state=active]:ring-1 data-[state=active]:ring-orange-pastel/50 data-[state=active]:shadow-sm",
-    cyan: "data-[state=active]:bg-teal-pastel/30 data-[state=active]:text-teal-pastel-dark data-[state=active]:ring-1 data-[state=active]:ring-teal-pastel/50 data-[state=active]:shadow-sm",
-    green: "data-[state=active]:bg-green-pastel/30 data-[state=active]:text-green-pastel-dark data-[state=active]:ring-1 data-[state=active]:ring-green-pastel/50 data-[state=active]:shadow-sm",
+    blue: "data-active:bg-blue-pastel/30 data-active:text-blue-pastel-dark data-active:border data-active:border-blue-pastel/50 data-active:shadow-sm",
+    purple: "data-active:bg-purple-pastel/30 data-active:text-purple-pastel-dark data-active:border data-active:border-purple-pastel/50 data-active:shadow-sm",
+    pink: "data-active:bg-pink-pastel/30 data-active:text-pink-pastel-dark data-active:border data-active:border-pink-pastel/50 data-active:shadow-sm",
+    orange: "data-active:bg-orange-pastel/30 data-active:text-orange-pastel-dark data-active:border data-active:border-orange-pastel/50 data-active:shadow-sm",
+    cyan: "data-active:bg-teal-pastel/30 data-active:text-teal-pastel-dark data-active:border data-active:border-teal-pastel/50 data-active:shadow-sm",
+    green: "data-active:bg-green-pastel/30 data-active:text-green-pastel-dark data-active:border data-active:border-green-pastel/50 data-active:shadow-sm",
   } satisfies Record<TabColor, string>;
 
   const focusRingClasses = {

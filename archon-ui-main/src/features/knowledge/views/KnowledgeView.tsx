@@ -12,6 +12,7 @@ import { AddKnowledgeDialog } from "../components/AddKnowledgeDialog";
 import { KnowledgeHeader } from "../components/KnowledgeHeader";
 import { KnowledgeTabs } from "../components/KnowledgeTabs";
 import { KnowledgeInspector } from "../inspector/components/KnowledgeInspector";
+import { useKnowledgeItem } from "../hooks/useKnowledgeQueries";
 import type { KnowledgeItem } from "../types";
 
 export const KnowledgeView = () => {
@@ -24,12 +25,15 @@ export const KnowledgeView = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [inspectorItem, setInspectorItem] = useState<KnowledgeItem | null>(null);
   const [inspectorInitialTab, setInspectorInitialTab] = useState<"documents" | "code">("documents");
-  const [activeCrawlIds, setActiveCrawlIds] = useState<string[]>([]);
+  const [selectedSourceId, setSelectedSourceId] = useState<string | null>(null);
 
   // Fetch active operations for crawl tracking
   const { data: activeOperationsData, refetch: refetchOperations } = useActiveOperations(true);
   const activeOperations = activeOperationsData?.operations || [];
   const hasActiveOperations = activeOperations.length > 0;
+
+  // Fetch the selected knowledge item when needed
+  const { data: fetchedItem } = useKnowledgeItem(selectedSourceId);
 
   // Toast notifications
   const { showToast } = useToast();
@@ -62,32 +66,34 @@ export const KnowledgeView = () => {
         showToast(`✅ ${message}`, "success", 5000);
       }
 
-      // Remove from active crawl IDs
-      setActiveCrawlIds((prev) => prev.filter((id) => id !== op.operation_id));
-
       // Refetch operations after completion
       refetchOperations();
     });
 
     // Update previous operations
     previousOperations.current = [...activeOperations];
-  }, [activeOperations, showToast, refetchOperations, setActiveCrawlIds]);
+  }, [activeOperations, showToast, refetchOperations]);
+
+  // When fetchedItem loads, set it as the inspector item
+  useEffect(() => {
+    if (fetchedItem) {
+      setInspectorItem(fetchedItem);
+      setSelectedSourceId(null);
+    }
+  }, [fetchedItem]);
 
   const handleAddKnowledge = () => {
     setIsAddDialogOpen(true);
   };
 
   const handleViewDocument = (sourceId: string) => {
-    // For now, just set source ID - we'll need to fetch the item
     setInspectorInitialTab("documents");
-    // In a real implementation, we'd fetch the item by sourceId
-    // For now, we'll need to handle this differently
+    setSelectedSourceId(sourceId);
   };
 
   const handleViewCodeExamples = (sourceId: string) => {
-    // For now, just set source ID - we'll need to fetch the item
     setInspectorInitialTab("code");
-    // In a real implementation, we'd fetch the item by sourceId
+    setSelectedSourceId(sourceId);
   };
 
   const handleDeleteSuccess = () => {
@@ -133,9 +139,8 @@ export const KnowledgeView = () => {
           onViewDocument={handleViewDocument}
           onViewCodeExamples={handleViewCodeExamples}
           onDeleteSuccess={handleDeleteSuccess}
-          onRefreshStarted={(progressId) => {
-            // Add the progress ID to track it
-            setActiveCrawlIds((prev) => [...prev, progressId]);
+          onRefreshStarted={() => {
+            refetchOperations();
           }}
         />
       </div>
@@ -147,10 +152,6 @@ export const KnowledgeView = () => {
         onSuccess={() => {
           setIsAddDialogOpen(false);
           refetchOperations();
-        }}
-        onCrawlStarted={(progressId) => {
-          // Add the progress ID to track it
-          setActiveCrawlIds((prev) => [...prev, progressId]);
         }}
       />
 
