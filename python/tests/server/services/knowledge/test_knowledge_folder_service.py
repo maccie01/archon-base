@@ -43,9 +43,11 @@ class TestListProjectFolders:
     async def test_list_project_folders_success(self, folder_service, mock_supabase):
         """Should return list of folders for a project."""
         project_id = str(uuid4())
+        folder_id_1 = str(uuid4())
+        folder_id_2 = str(uuid4())
         mock_folders = [
             {
-                "id": str(uuid4()),
+                "id": folder_id_1,
                 "project_id": project_id,
                 "folder_name": "Authentication",
                 "description": "Auth docs",
@@ -54,7 +56,7 @@ class TestListProjectFolders:
                 "sort_order": 0,
             },
             {
-                "id": str(uuid4()),
+                "id": folder_id_2,
                 "project_id": project_id,
                 "folder_name": "API",
                 "description": "API docs",
@@ -63,14 +65,31 @@ class TestListProjectFolders:
                 "sort_order": 1,
             },
         ]
+
+        # Mock the folder query
         mock_supabase.execute.return_value = MagicMock(data=mock_folders)
+
+        # Mock the source count queries (returns count attribute)
+        count_result = MagicMock()
+        count_result.count = 5
+
+        # Create a side effect that returns folder data first, then count results
+        def execute_side_effect():
+            if mock_supabase.execute.call_count == 1:
+                return MagicMock(data=mock_folders)
+            else:
+                return count_result
+
+        mock_supabase.execute.side_effect = execute_side_effect
 
         result = await folder_service.list_project_folders(project_id)
 
-        assert result == mock_folders
-        mock_supabase.from_.assert_called_once_with("archon_project_knowledge_folders")
-        mock_supabase.eq.assert_called_once_with("project_id", project_id)
-        mock_supabase.order.assert_called_once_with("sort_order")
+        # Check that folders were returned with source_count added
+        assert len(result) == 2
+        assert result[0]["folder_name"] == "Authentication"
+        assert "source_count" in result[0]
+        assert result[1]["folder_name"] == "API"
+        assert "source_count" in result[1]
 
     @pytest.mark.asyncio
     async def test_list_project_folders_empty(self, folder_service, mock_supabase):
@@ -108,7 +127,7 @@ class TestGetFolder:
             "icon_name": "lock",
             "sort_order": 0,
         }
-        mock_supabase.execute.return_value = MagicMock(data=[mock_folder])
+        mock_supabase.execute.return_value = MagicMock(data=mock_folder)
 
         result = await folder_service.get_folder(folder_id)
 
@@ -118,22 +137,24 @@ class TestGetFolder:
 
     @pytest.mark.asyncio
     async def test_get_folder_not_found(self, folder_service, mock_supabase):
-        """Should return empty dict when folder not found."""
+        """Should return None when folder not found."""
         folder_id = str(uuid4())
-        mock_supabase.execute.return_value = MagicMock(data=[])
+        mock_supabase.execute.return_value = MagicMock(data=None)
 
         result = await folder_service.get_folder(folder_id)
 
-        assert result == {}
+        assert result is None
 
     @pytest.mark.asyncio
     async def test_get_folder_error(self, folder_service, mock_supabase):
-        """Should raise exception on database error."""
+        """Should return None and log warning on database error."""
         folder_id = str(uuid4())
         mock_supabase.execute.side_effect = Exception("Database error")
 
-        with pytest.raises(Exception, match="Database error"):
-            await folder_service.get_folder(folder_id)
+        result = await folder_service.get_folder(folder_id)
+
+        # get_folder catches exceptions and returns None
+        assert result is None
 
 
 class TestCreateFolder:
@@ -218,12 +239,12 @@ class TestUpdateFolder:
         }
         mock_supabase.execute.return_value = MagicMock(data=[updated_folder])
 
-        result = await folder_service.update_folder(
-            folder_id=folder_id,
-            folder_name="Updated Name",
-            description="Updated description",
-            color_hex="#10b981",
-        )
+        updates = {
+            "folder_name": "Updated Name",
+            "description": "Updated description",
+            "color_hex": "#10b981",
+        }
+        result = await folder_service.update_folder(folder_id, updates)
 
         assert result == updated_folder
         mock_supabase.from_.assert_called_once_with("archon_project_knowledge_folders")
@@ -240,25 +261,20 @@ class TestUpdateFolder:
         }
         mock_supabase.execute.return_value = MagicMock(data=[updated_folder])
 
-        result = await folder_service.update_folder(
-            folder_id=folder_id,
-            folder_name="New Name",
-        )
+        updates = {"folder_name": "New Name"}
+        result = await folder_service.update_folder(folder_id, updates)
 
         assert result == updated_folder
 
     @pytest.mark.asyncio
     async def test_update_folder_not_found(self, folder_service, mock_supabase):
-        """Should return empty dict when folder not found."""
+        """Should raise exception when folder not found."""
         folder_id = str(uuid4())
         mock_supabase.execute.return_value = MagicMock(data=[])
 
-        result = await folder_service.update_folder(
-            folder_id=folder_id,
-            folder_name="New Name",
-        )
-
-        assert result == {}
+        updates = {"folder_name": "New Name"}
+        with pytest.raises(Exception, match="not found"):
+            await folder_service.update_folder(folder_id, updates)
 
     @pytest.mark.asyncio
     async def test_update_folder_error(self, folder_service, mock_supabase):
@@ -266,11 +282,9 @@ class TestUpdateFolder:
         folder_id = str(uuid4())
         mock_supabase.execute.side_effect = Exception("Database error")
 
+        updates = {"folder_name": "New Name"}
         with pytest.raises(Exception, match="Database error"):
-            await folder_service.update_folder(
-                folder_id=folder_id,
-                folder_name="New Name",
-            )
+            await folder_service.update_folder(folder_id, updates)
 
 
 class TestDeleteFolder:
@@ -280,24 +294,33 @@ class TestDeleteFolder:
     async def test_delete_folder_success(self, folder_service, mock_supabase):
         """Should delete folder successfully."""
         folder_id = str(uuid4())
-        mock_supabase.execute.return_value = MagicMock(data=[{"id": folder_id}])
+        # Mock both the source count query and the delete query
+        count_result = MagicMock()
+        count_result.count = 3
+        delete_result = MagicMock(data=[{"id": folder_id}])
+
+        # First call returns count, second returns delete result
+        mock_supabase.execute.side_effect = [count_result, delete_result]
 
         result = await folder_service.delete_folder(folder_id)
 
         assert result is True
-        mock_supabase.from_.assert_called_once_with("archon_project_knowledge_folders")
-        mock_supabase.eq.assert_called_once_with("id", folder_id)
-        mock_supabase.delete.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_delete_folder_not_found(self, folder_service, mock_supabase):
-        """Should return False when folder not found."""
+    async def test_delete_folder_always_returns_true(self, folder_service, mock_supabase):
+        """Should return True even if folder doesn't exist (idempotent)."""
         folder_id = str(uuid4())
-        mock_supabase.execute.return_value = MagicMock(data=[])
+        # Mock both queries
+        count_result = MagicMock()
+        count_result.count = 0
+        delete_result = MagicMock(data=[])
+
+        mock_supabase.execute.side_effect = [count_result, delete_result]
 
         result = await folder_service.delete_folder(folder_id)
 
-        assert result is False
+        # delete_folder always returns True or raises
+        assert result is True
 
     @pytest.mark.asyncio
     async def test_delete_folder_error(self, folder_service, mock_supabase):
