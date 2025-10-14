@@ -24,17 +24,16 @@ def mock_supabase():
     mock.delete = MagicMock(return_value=mock)
     mock.eq = MagicMock(return_value=mock)
     mock.order = MagicMock(return_value=mock)
-    mock.execute = AsyncMock()
+    mock.single = MagicMock(return_value=mock)
+    mock.execute = MagicMock()  # Synchronous, not async
     return mock
 
 
 @pytest.fixture
 def folder_service(mock_supabase):
     """Create KnowledgeFolderService with mocked Supabase client."""
-    with patch("src.server.services.knowledge.knowledge_folder_service.get_supabase_client", return_value=mock_supabase):
-        service = KnowledgeFolderService()
-        service.supabase = mock_supabase
-        return service
+    service = KnowledgeFolderService(mock_supabase)
+    return service
 
 
 class TestListProjectFolders:

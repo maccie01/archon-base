@@ -21,17 +21,15 @@ def mock_supabase():
     mock.select = MagicMock(return_value=mock)
     mock.eq = MagicMock(return_value=mock)
     mock.order = MagicMock(return_value=mock)
-    mock.execute = AsyncMock()
+    mock.execute = MagicMock()  # Synchronous, not async
     return mock
 
 
 @pytest.fixture
 def tag_service(mock_supabase):
     """Create KnowledgeTagService with mocked Supabase client."""
-    with patch("src.server.services.knowledge.knowledge_tag_service.get_supabase_client", return_value=mock_supabase):
-        service = KnowledgeTagService()
-        service.supabase = mock_supabase
-        return service
+    service = KnowledgeTagService(mock_supabase)
+    return service
 
 
 class TestGetAllTags:
