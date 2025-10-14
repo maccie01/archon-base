@@ -148,6 +148,76 @@
       linear-gradient(to right, hsl(220 13% 20% / 0.4) 1px, transparent 1px),
       linear-gradient(to bottom, hsl(220 13% 20% / 0.4) 1px, transparent 1px);
   }
+
+  /* Tab active states - Manual CSS since Tailwind v4 custom variants don't generate utilities */
+  [data-state="active"].data-active\:bg-blue-pastel\/30 {
+    background-color: hsl(var(--color-blue-pastel) / 0.3);
+  }
+  [data-state="active"].data-active\:text-blue-pastel-dark {
+    color: hsl(var(--color-blue-pastel-dark));
+  }
+  [data-state="active"].data-active\:border-blue-pastel\/50 {
+    border-color: hsl(var(--color-blue-pastel) / 0.5);
+  }
+
+  [data-state="active"].data-active\:bg-purple-pastel\/30 {
+    background-color: hsl(var(--color-purple-pastel) / 0.3);
+  }
+  [data-state="active"].data-active\:text-purple-pastel-dark {
+    color: hsl(var(--color-purple-pastel-dark));
+  }
+  [data-state="active"].data-active\:border-purple-pastel\/50 {
+    border-color: hsl(var(--color-purple-pastel) / 0.5);
+  }
+
+  [data-state="active"].data-active\:bg-pink-pastel\/30 {
+    background-color: hsl(var(--color-pink-pastel) / 0.3);
+  }
+  [data-state="active"].data-active\:text-pink-pastel-dark {
+    color: hsl(var(--color-pink-pastel-dark));
+  }
+  [data-state="active"].data-active\:border-pink-pastel\/50 {
+    border-color: hsl(var(--color-pink-pastel) / 0.5);
+  }
+
+  [data-state="active"].data-active\:bg-orange-pastel\/30 {
+    background-color: hsl(var(--color-orange-pastel) / 0.3);
+  }
+  [data-state="active"].data-active\:text-orange-pastel-dark {
+    color: hsl(var(--color-orange-pastel-dark));
+  }
+  [data-state="active"].data-active\:border-orange-pastel\/50 {
+    border-color: hsl(var(--color-orange-pastel) / 0.5);
+  }
+
+  [data-state="active"].data-active\:bg-teal-pastel\/30 {
+    background-color: hsl(var(--color-teal-pastel) / 0.3);
+  }
+  [data-state="active"].data-active\:text-teal-pastel-dark {
+    color: hsl(var(--color-teal-pastel-dark));
+  }
+  [data-state="active"].data-active\:border-teal-pastel\/50 {
+    border-color: hsl(var(--color-teal-pastel) / 0.5);
+  }
+
+  [data-state="active"].data-active\:bg-green-pastel\/30 {
+    background-color: hsl(var(--color-green-pastel) / 0.3);
+  }
+  [data-state="active"].data-active\:text-green-pastel-dark {
+    color: hsl(var(--color-green-pastel-dark));
+  }
+  [data-state="active"].data-active\:border-green-pastel\/50 {
+    border-color: hsl(var(--color-green-pastel) / 0.5);
+  }
+
+  [data-state="active"].data-active\:border {
+    border-width: 1px;
+    border-style: solid;
+  }
+
+  [data-state="active"].data-active\:shadow-sm {
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  }
 }
 
 /* Hide scrollbar but keep scroll functionality */
