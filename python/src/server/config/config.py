@@ -111,6 +111,12 @@ def validate_supabase_url(url: str) -> bool:
         if hostname in local_hosts or hostname.endswith(".localhost"):
             return True
 
+        # Allow Docker Compose service names (no dots, underscores allowed)
+        # Examples: supabase_kong_archon, postgres_db, redis_cache
+        # This pattern matches internal Docker network hostnames
+        if "_" in hostname and "." not in hostname:
+            return True
+
         # Check if hostname is a private IP address
         try:
             ip = ipaddress.ip_address(hostname)
