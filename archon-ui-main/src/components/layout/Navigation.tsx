@@ -29,7 +29,7 @@ export function Navigation({ className }: NavigationProps) {
   // Navigation items configuration
   const navigationItems: NavigationItem[] = [
     {
-      path: "/",
+      path: "/knowledge",
       icon: <BookOpen className="h-5 w-5" />,
       label: "Knowledge Base",
       enabled: true,
