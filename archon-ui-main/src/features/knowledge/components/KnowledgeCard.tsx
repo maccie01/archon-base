@@ -11,7 +11,7 @@ import { useState } from "react";
 import { isOptimistic } from "@/features/shared/utils/optimistic";
 import { KnowledgeCardProgress } from "../../progress/components/KnowledgeCardProgress";
 import type { ActiveOperation } from "../../progress/types";
-import { StatPill } from "../../ui/primitives";
+import { Badge, StatPill } from "../../ui/primitives";
 import { DataCard, DataCardContent, DataCardFooter, DataCardHeader } from "../../ui/primitives/data-card";
 import { OptimisticIndicator } from "../../ui/primitives/OptimisticIndicator";
 import { cn } from "../../ui/primitives/styles";
@@ -134,7 +134,7 @@ export const KnowledgeCard: React.FC<KnowledgeCardProps> = ({
         <DataCardHeader>
           <div className="flex items-start justify-between gap-2 mb-2">
             {/* Type and Source Badge */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <SimpleTooltip content={isUrl ? "Content from a web page" : "Uploaded document"}>
                 <div
                   className={cn(
@@ -149,6 +149,16 @@ export const KnowledgeCard: React.FC<KnowledgeCardProps> = ({
                 </div>
               </SimpleTooltip>
               <KnowledgeCardType sourceId={item.source_id} knowledgeType={item.knowledge_type} />
+              {item.knowledge_scope === "project" && item.project_title && (
+                <Badge variant="outline" className="text-xs">
+                  Project: {item.project_title}
+                </Badge>
+              )}
+              {item.folder_name && (
+                <Badge variant="outline" className="text-xs text-purple-600 dark:text-purple-400">
+                  {item.folder_name}
+                </Badge>
+              )}
             </div>
 
             {/* Actions */}

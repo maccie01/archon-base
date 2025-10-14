@@ -36,6 +36,12 @@ export interface KnowledgeItem {
   metadata: KnowledgeItemMetadata;
   created_at: string;
   updated_at: string;
+  knowledge_scope?: KnowledgeScope;
+  project_id?: string;
+  project_title?: string;
+  folder_id?: string;
+  folder_name?: string;
+  linked_projects?: string[];
 }
 
 export interface CodeExampleMetadata {
@@ -123,6 +129,32 @@ export interface CodeExamplesResponse {
   has_more: boolean;
 }
 
+// Knowledge Organization Types
+export type KnowledgeScope = "global" | "project";
+
+export interface KnowledgeFolder {
+  id: string;
+  project_id: string;
+  folder_name: string;
+  description?: string;
+  color_hex: string;
+  icon_name: string;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface KnowledgeTag {
+  id: string;
+  tag_name: string;
+  category: string;
+  description: string;
+  usage_guidelines?: string;
+  color_hex?: string;
+  icon_name?: string;
+  usage_count: number;
+}
+
 // Request types
 export interface KnowledgeItemsFilter {
   knowledge_type?: "technical" | "business";
@@ -131,6 +163,8 @@ export interface KnowledgeItemsFilter {
   search?: string;
   page?: number;
   per_page?: number;
+  project_id?: string;
+  scope?: "all" | "global" | "project";
 }
 
 export interface CrawlRequest {
@@ -140,11 +174,41 @@ export interface CrawlRequest {
   update_frequency?: number;
   max_depth?: number;
   extract_code_examples?: boolean;
+  scope?: KnowledgeScope;
+  project_id?: string;
+  folder_id?: string;
 }
 
 export interface UploadMetadata {
   knowledge_type?: "technical" | "business";
   tags?: string[];
+  scope?: KnowledgeScope;
+  project_id?: string;
+  folder_id?: string;
+}
+
+// Folder management types
+export interface CreateFolderRequest {
+  project_id: string;
+  folder_name: string;
+  description?: string;
+  color_hex?: string;
+  icon_name?: string;
+}
+
+export interface UpdateFolderRequest {
+  folder_name?: string;
+  description?: string;
+  color_hex?: string;
+  icon_name?: string;
+  sort_order?: number;
+}
+
+// Tag suggestion types
+export interface SuggestTagsRequest {
+  url?: string;
+  title?: string;
+  summary?: string;
 }
 
 export interface SearchOptions {

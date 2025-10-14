@@ -8,10 +8,14 @@ import { useId, useState } from "react";
 import { useToast } from "@/features/shared/hooks/useToast";
 import { Button, Input, Label } from "../../ui/primitives";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../../ui/primitives/dialog";
+import { RadioGroup, RadioGroupItem } from "../../ui/primitives/radio-group";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../ui/primitives/select";
 import { cn, glassCard } from "../../ui/primitives/styles";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/primitives/tabs";
+import { useProjects } from "../../projects/hooks/useProjectQueries";
 import { useCrawlUrl, useUploadDocument } from "../hooks";
-import type { CrawlRequest, UploadMetadata } from "../types";
+import { useProjectFolders } from "../hooks/useKnowledgeFolders";
+import type { CrawlRequest, KnowledgeScope, UploadMetadata } from "../types";
 import { KnowledgeTypeSelector } from "./KnowledgeTypeSelector";
 import { LevelSelector } from "./LevelSelector";
 import { TagInput } from "./TagInput";
@@ -43,20 +47,39 @@ export const AddKnowledgeDialog: React.FC<AddKnowledgeDialogProps> = ({
   const [crawlType, setCrawlType] = useState<"technical" | "business">("technical");
   const [maxDepth, setMaxDepth] = useState("2");
   const [tags, setTags] = useState<string[]>([]);
+  const [crawlScope, setCrawlScope] = useState<KnowledgeScope>("global");
+  const [crawlProjectId, setCrawlProjectId] = useState<string>("");
+  const [crawlFolderId, setCrawlFolderId] = useState<string>("");
 
   // Upload form state
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadType, setUploadType] = useState<"technical" | "business">("technical");
   const [uploadTags, setUploadTags] = useState<string[]>([]);
+  const [uploadScope, setUploadScope] = useState<KnowledgeScope>("global");
+  const [uploadProjectId, setUploadProjectId] = useState<string>("");
+  const [uploadFolderId, setUploadFolderId] = useState<string>("");
+
+  // Fetch projects for scope selection
+  const { data: projects } = useProjects();
+
+  // Fetch folders for selected projects
+  const { data: crawlFolders } = useProjectFolders(crawlScope === "project" ? crawlProjectId : undefined);
+  const { data: uploadFolders } = useProjectFolders(uploadScope === "project" ? uploadProjectId : undefined);
 
   const resetForm = () => {
     setCrawlUrl("");
     setCrawlType("technical");
     setMaxDepth("2");
     setTags([]);
+    setCrawlScope("global");
+    setCrawlProjectId("");
+    setCrawlFolderId("");
     setSelectedFile(null);
     setUploadType("technical");
     setUploadTags([]);
+    setUploadScope("global");
+    setUploadProjectId("");
+    setUploadFolderId("");
   };
 
   const handleCrawl = async () => {
@@ -71,6 +94,9 @@ export const AddKnowledgeDialog: React.FC<AddKnowledgeDialogProps> = ({
         knowledge_type: crawlType,
         max_depth: parseInt(maxDepth, 10),
         tags: tags.length > 0 ? tags : undefined,
+        scope: crawlScope,
+        project_id: crawlScope === "project" ? crawlProjectId : undefined,
+        folder_id: crawlFolderId || undefined,
       };
 
       const response = await crawlMutation.mutateAsync(request);
@@ -101,6 +127,9 @@ export const AddKnowledgeDialog: React.FC<AddKnowledgeDialogProps> = ({
       const metadata: UploadMetadata = {
         knowledge_type: uploadType,
         tags: uploadTags.length > 0 ? uploadTags : undefined,
+        scope: uploadScope,
+        project_id: uploadScope === "project" ? uploadProjectId : undefined,
+        folder_id: uploadFolderId || undefined,
       };
 
       const response = await uploadMutation.mutateAsync({ file: selectedFile, metadata });
@@ -149,6 +178,65 @@ export const AddKnowledgeDialog: React.FC<AddKnowledgeDialogProps> = ({
 
           {/* Crawl Tab */}
           <TabsContent value="crawl" className="space-y-6 mt-6">
+            {/* Scope Selection */}
+            <div className="space-y-3">
+              <Label className="text-sm font-medium text-gray-900 dark:text-white/90">Scope</Label>
+              <RadioGroup value={crawlScope} onValueChange={(v) => setCrawlScope(v as KnowledgeScope)}>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="global" id="crawl-global" />
+                  <Label htmlFor="crawl-global" className="font-normal cursor-pointer">
+                    Global (shared across all work)
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="project" id="crawl-project" />
+                  <Label htmlFor="crawl-project" className="font-normal cursor-pointer">
+                    Project-Specific
+                  </Label>
+                </div>
+              </RadioGroup>
+            </div>
+
+            {/* Project and Folder Selection (only when project scope) */}
+            {crawlScope === "project" && (
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="crawl-project-select">Project</Label>
+                  <Select value={crawlProjectId} onValueChange={setCrawlProjectId}>
+                    <SelectTrigger id="crawl-project-select">
+                      <SelectValue placeholder="Select a project..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {projects?.map((project) => (
+                        <SelectItem key={project.id} value={project.id}>
+                          {project.title}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {crawlProjectId && crawlFolders && crawlFolders.length > 0 && (
+                  <div className="space-y-2">
+                    <Label htmlFor="crawl-folder-select">Folder (optional)</Label>
+                    <Select value={crawlFolderId} onValueChange={setCrawlFolderId}>
+                      <SelectTrigger id="crawl-folder-select">
+                        <SelectValue placeholder="No folder (unfiled)" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">No folder</SelectItem>
+                        {crawlFolders.map((folder) => (
+                          <SelectItem key={folder.id} value={folder.id}>
+                            {folder.folder_name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Enhanced URL Input Section */}
             <div className="space-y-3">
               <Label htmlFor={urlId} className="text-sm font-medium text-gray-900 dark:text-white/90">
@@ -215,6 +303,65 @@ export const AddKnowledgeDialog: React.FC<AddKnowledgeDialogProps> = ({
 
           {/* Upload Tab */}
           <TabsContent value="upload" className="space-y-6 mt-6">
+            {/* Scope Selection */}
+            <div className="space-y-3">
+              <Label className="text-sm font-medium text-gray-900 dark:text-white/90">Scope</Label>
+              <RadioGroup value={uploadScope} onValueChange={(v) => setUploadScope(v as KnowledgeScope)}>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="global" id="upload-global" />
+                  <Label htmlFor="upload-global" className="font-normal cursor-pointer">
+                    Global (shared across all work)
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="project" id="upload-project" />
+                  <Label htmlFor="upload-project" className="font-normal cursor-pointer">
+                    Project-Specific
+                  </Label>
+                </div>
+              </RadioGroup>
+            </div>
+
+            {/* Project and Folder Selection (only when project scope) */}
+            {uploadScope === "project" && (
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="upload-project-select">Project</Label>
+                  <Select value={uploadProjectId} onValueChange={setUploadProjectId}>
+                    <SelectTrigger id="upload-project-select">
+                      <SelectValue placeholder="Select a project..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {projects?.map((project) => (
+                        <SelectItem key={project.id} value={project.id}>
+                          {project.title}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {uploadProjectId && uploadFolders && uploadFolders.length > 0 && (
+                  <div className="space-y-2">
+                    <Label htmlFor="upload-folder-select">Folder (optional)</Label>
+                    <Select value={uploadFolderId} onValueChange={setUploadFolderId}>
+                      <SelectTrigger id="upload-folder-select">
+                        <SelectValue placeholder="No folder (unfiled)" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">No folder</SelectItem>
+                        {uploadFolders.map((folder) => (
+                          <SelectItem key={folder.id} value={folder.id}>
+                            {folder.folder_name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Enhanced File Input Section */}
             <div className="space-y-3">
               <Label htmlFor={fileId} className="text-sm font-medium text-gray-900 dark:text-white/90">
