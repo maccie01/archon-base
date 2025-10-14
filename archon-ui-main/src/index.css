@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
-@custom-variant data-active ([data-state="active"]);
-@custom-variant data-inactive ([data-state="inactive"]);
+@custom-variant data-active (&[data-state="active"]);
+@custom-variant data-inactive (&[data-state="inactive"]);
 
 :root {
   /* Light mode variables - Apple-inspired pastel palette */
