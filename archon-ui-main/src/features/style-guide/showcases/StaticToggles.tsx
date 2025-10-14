@@ -10,7 +10,7 @@ export const StaticToggles = () => {
 
   const [powerStates, setPowerStates] = useState({
     purple: true,
-    cyan: false,
+    teal: false,
     green: true,
     orange: false,
   });
@@ -40,9 +40,9 @@ export const StaticToggles = () => {
           </div>
           <div className="flex flex-col items-center gap-2">
             <PowerButton
-              isOn={powerStates.cyan}
-              onClick={() => setPowerStates((s) => ({ ...s, cyan: !s.cyan }))}
-              color="cyan"
+              isOn={powerStates.teal}
+              onClick={() => setPowerStates((s) => ({ ...s, teal: !s.teal }))}
+              color="teal"
               size={40}
             />
             <span className="text-xs text-gray-500">Cyan</span>

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 interface PowerButtonProps {
   isOn: boolean;
   onClick: () => void;
-  color?: 'purple' | 'green' | 'pink' | 'blue' | 'cyan' | 'orange';
+  color?: 'purple' | 'green' | 'pink' | 'blue' | 'teal' | 'orange';
   size?: number;
 }
 
@@ -15,7 +15,7 @@ const getColorValue = (color: string) => {
     green: 'rgb(16,185,129)',
     pink: 'rgb(236,72,153)',
     blue: 'rgb(59,130,246)',
-    cyan: 'rgb(34,211,238)',
+    teal: 'rgb(20,184,166)',
     orange: 'rgb(249,115,22)'
   };
   return colorValues[color as keyof typeof colorValues] || colorValues.blue;
@@ -56,12 +56,12 @@ export const PowerButton: React.FC<PowerButtonProps> = ({
       fill: 'bg-blue-400',
       innerGlow: 'shadow-[inset_0_0_10px_rgba(59,130,246,0.8)]'
     },
-    cyan: {
-      border: 'border-cyan-400',
-      glow: 'shadow-[0_0_15px_rgba(34,211,238,0.8)]',
-      glowHover: 'hover:shadow-[0_0_25px_rgba(34,211,238,1)]',
-      fill: 'bg-cyan-400',
-      innerGlow: 'shadow-[inset_0_0_10px_rgba(34,211,238,0.8)]'
+    teal: {
+      border: 'border-teal-400',
+      glow: 'shadow-[0_0_15px_rgba(20,184,166,0.8)]',
+      glowHover: 'hover:shadow-[0_0_25px_rgba(20,184,166,1)]',
+      fill: 'bg-teal-400',
+      innerGlow: 'shadow-[inset_0_0_10px_rgba(20,184,166,0.8)]'
     },
     orange: {
       border: 'border-orange-400',
