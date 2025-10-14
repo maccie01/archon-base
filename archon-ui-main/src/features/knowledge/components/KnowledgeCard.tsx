@@ -107,12 +107,11 @@ export const KnowledgeCard: React.FC<KnowledgeCardProps> = ({
   return (
     // biome-ignore lint/a11y/useSemanticElements: Card contains nested interactive elements (buttons, links) - using div to avoid invalid HTML nesting
     <motion.div
-      className={cn("relative group cursor-pointer", optimistic && "opacity-80")}
+      className={cn("relative group", optimistic && "opacity-80")}
       role="button"
       tabIndex={0}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      onClick={onViewDocument}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
@@ -126,8 +125,9 @@ export const KnowledgeCard: React.FC<KnowledgeCardProps> = ({
         edgePosition="top"
         edgeColor={getEdgeColor()}
         blur="md"
+        onClick={onViewDocument}
         className={cn(
-          "transition-shadow",
+          "transition-shadow cursor-pointer",
           isHovered && "shadow-[0_0_30px_rgba(6,182,212,0.2)]",
           optimistic && "ring-1 ring-cyan-400/30",
         )}
