@@ -32,43 +32,14 @@ export const TabsTrigger = React.forwardRef<
     color?: TabColor;
   }
 >(({ className, color = "blue", ...props }, ref) => {
-  const activeClasses = {
-    blue: [
-      "data-active:bg-blue-500",
-      "data-active:text-white",
-      "data-active:ring-2 data-active:ring-blue-400",
-      "data-active:shadow-md",
-    ].join(" "),
-    purple: [
-      "data-active:bg-purple-500",
-      "data-active:text-white",
-      "data-active:ring-2 data-active:ring-purple-400",
-      "data-active:shadow-md",
-    ].join(" "),
-    pink: [
-      "data-active:bg-pink-500",
-      "data-active:text-white",
-      "data-active:ring-2 data-active:ring-pink-400",
-      "data-active:shadow-md",
-    ].join(" "),
-    orange: [
-      "data-active:bg-orange-500",
-      "data-active:text-white",
-      "data-active:ring-2 data-active:ring-orange-400",
-      "data-active:shadow-md",
-    ].join(" "),
-    cyan: [
-      "data-active:bg-teal-500",
-      "data-active:text-white",
-      "data-active:ring-2 data-active:ring-teal-400",
-      "data-active:shadow-md",
-    ].join(" "),
-    green: [
-      "data-active:bg-green-500",
-      "data-active:text-white",
-      "data-active:ring-2 data-active:ring-green-400",
-      "data-active:shadow-md",
-    ].join(" "),
+  // CSS variable values for each color
+  const colorValues = {
+    blue: "rgb(59 130 246)", // blue-500
+    purple: "rgb(168 85 247)", // purple-500
+    pink: "rgb(236 72 153)", // pink-500
+    orange: "rgb(249 115 22)", // orange-500
+    cyan: "rgb(20 184 166)", // teal-500
+    green: "rgb(34 197 94)", // green-500
   } satisfies Record<TabColor, string>;
 
   const focusRingClasses = {
@@ -83,6 +54,7 @@ export const TabsTrigger = React.forwardRef<
   return (
     <TabsPrimitive.Trigger
       ref={ref}
+      style={{ "--tab-active-bg": colorValues[color] } as React.CSSProperties}
       className={cn(
         "flex items-center gap-2 px-5 py-2.5 rounded-full transition-all duration-200",
         "text-sm font-semibold whitespace-nowrap",
@@ -90,7 +62,6 @@ export const TabsTrigger = React.forwardRef<
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
         focusRingClasses[color],
         "disabled:pointer-events-none disabled:opacity-50",
-        activeClasses[color],
         className,
       )}
       {...props}
