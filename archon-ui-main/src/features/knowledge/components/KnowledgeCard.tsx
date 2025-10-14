@@ -82,20 +82,20 @@ export const KnowledgeCard: React.FC<KnowledgeCardProps> = ({
   };
 
   // Determine edge color for DataCard primitive
-  const getEdgeColor = (): "cyan" | "purple" | "blue" | "pink" | "red" | "orange" => {
-    if (activeOperation) return "cyan";
+  const getEdgeColor = (): "teal" | "purple" | "blue" | "pink" | "red" | "orange" => {
+    if (activeOperation) return "teal";
     if (hasError) return "red";
     if (isProcessing) return "orange";
-    if (isTechnical) return isUrl ? "cyan" : "purple";
+    if (isTechnical) return isUrl ? "teal" : "purple";
     return isUrl ? "blue" : "pink";
   };
 
   // Accent color name for title component
   const getAccentColorName = () => {
-    if (activeOperation) return "cyan" as const;
+    if (activeOperation) return "teal" as const;
     if (hasError) return "red" as const;
     if (isProcessing) return "yellow" as const;
-    if (isTechnical) return isUrl ? ("cyan" as const) : ("purple" as const);
+    if (isTechnical) return isUrl ? ("teal" as const) : ("purple" as const);
     return isUrl ? ("blue" as const) : ("pink" as const);
   };
 

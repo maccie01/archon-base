@@ -12,33 +12,33 @@ export const SelectValue = SelectPrimitive.Value;
 const selectColorVariants = {
   purple: {
     trigger:
-      "hover:border-purple-400/50 hover:shadow-[0_0_15px_rgba(168,85,247,0.3)] focus:border-purple-500 focus:shadow-[0_0_20px_rgba(168,85,247,0.4)]",
-    item: "hover:bg-purple-500/20 dark:hover:bg-purple-400/20 data-[state=checked]:bg-purple-500/30 dark:data-[state=checked]:bg-purple-400/30 data-[state=checked]:text-purple-700 dark:data-[state=checked]:text-purple-300",
+      "hover:border-purple-pastel/50 hover:ring-1 hover:ring-purple-pastel/30 focus:border-purple-pastel focus:ring-2 focus:ring-purple-pastel/40",
+    item: "hover:bg-purple-pastel/20 data-[state=checked]:bg-purple-pastel/30 data-[state=checked]:text-purple-pastel-dark",
   },
   blue: {
     trigger:
-      "hover:border-blue-400/50 hover:shadow-[0_0_15px_rgba(59,130,246,0.3)] focus:border-blue-500 focus:shadow-[0_0_20px_rgba(59,130,246,0.4)]",
-    item: "hover:bg-blue-500/20 dark:hover:bg-blue-400/20 data-[state=checked]:bg-blue-500/30 dark:data-[state=checked]:bg-blue-400/30 data-[state=checked]:text-blue-700 dark:data-[state=checked]:text-blue-300",
+      "hover:border-blue-pastel/50 hover:ring-1 hover:ring-blue-pastel/30 focus:border-blue-pastel focus:ring-2 focus:ring-blue-pastel/40",
+    item: "hover:bg-blue-pastel/20 data-[state=checked]:bg-blue-pastel/30 data-[state=checked]:text-blue-pastel-dark",
   },
   green: {
     trigger:
-      "hover:border-green-400/50 hover:shadow-[0_0_15px_rgba(34,197,94,0.3)] focus:border-green-500 focus:shadow-[0_0_20px_rgba(34,197,94,0.4)]",
-    item: "hover:bg-green-500/20 dark:hover:bg-green-400/20 data-[state=checked]:bg-green-500/30 dark:data-[state=checked]:bg-green-400/30 data-[state=checked]:text-green-700 dark:data-[state=checked]:text-green-300",
+      "hover:border-green-pastel/50 hover:ring-1 hover:ring-green-pastel/30 focus:border-green-pastel focus:ring-2 focus:ring-green-pastel/40",
+    item: "hover:bg-green-pastel/20 data-[state=checked]:bg-green-pastel/30 data-[state=checked]:text-green-pastel-dark",
   },
   pink: {
     trigger:
-      "hover:border-pink-400/50 hover:shadow-[0_0_15px_rgba(236,72,153,0.3)] focus:border-pink-500 focus:shadow-[0_0_20px_rgba(236,72,153,0.4)]",
-    item: "hover:bg-pink-500/20 dark:hover:bg-pink-400/20 data-[state=checked]:bg-pink-500/30 dark:data-[state=checked]:bg-pink-400/30 data-[state=checked]:text-pink-700 dark:data-[state=checked]:text-pink-300",
+      "hover:border-pink-pastel/50 hover:ring-1 hover:ring-pink-pastel/30 focus:border-pink-pastel focus:ring-2 focus:ring-pink-pastel/40",
+    item: "hover:bg-pink-pastel/20 data-[state=checked]:bg-pink-pastel/30 data-[state=checked]:text-pink-pastel-dark",
   },
   orange: {
     trigger:
-      "hover:border-orange-400/50 hover:shadow-[0_0_15px_rgba(249,115,22,0.3)] focus:border-orange-500 focus:shadow-[0_0_20px_rgba(249,115,22,0.4)]",
-    item: "hover:bg-orange-500/20 dark:hover:bg-orange-400/20 data-[state=checked]:bg-orange-500/30 dark:data-[state=checked]:bg-orange-400/30 data-[state=checked]:text-orange-700 dark:data-[state=checked]:text-orange-300",
+      "hover:border-orange-pastel/50 hover:ring-1 hover:ring-orange-pastel/30 focus:border-orange-pastel focus:ring-2 focus:ring-orange-pastel/40",
+    item: "hover:bg-orange-pastel/20 data-[state=checked]:bg-orange-pastel/30 data-[state=checked]:text-orange-pastel-dark",
   },
   cyan: {
     trigger:
-      "hover:border-cyan-400/50 hover:shadow-[0_0_15px_rgba(34,211,238,0.3)] focus:border-cyan-500 focus:shadow-[0_0_20px_rgba(34,211,238,0.4)]",
-    item: "hover:bg-cyan-500/20 dark:hover:bg-cyan-400/20 data-[state=checked]:bg-cyan-500/30 dark:data-[state=checked]:bg-cyan-400/30 data-[state=checked]:text-cyan-700 dark:data-[state=checked]:text-cyan-300",
+      "hover:border-teal-pastel/50 hover:ring-1 hover:ring-teal-pastel/30 focus:border-teal-pastel focus:ring-2 focus:ring-teal-pastel/40",
+    item: "hover:bg-teal-pastel/20 data-[state=checked]:bg-teal-pastel/30 data-[state=checked]:text-teal-pastel-dark",
   },
 };
 
@@ -67,11 +67,11 @@ export const SelectTrigger = React.forwardRef<
       className={cn(
         "flex items-center justify-between gap-2 px-3 py-2 rounded-lg",
         "backdrop-blur-xl bg-black/10 dark:bg-white/10",
-        "border border-gray-300/30 dark:border-white/10",
-        "transition-all duration-300",
+        "border border-border",
+        "transition-all duration-200",
         colorStyles.trigger,
         "disabled:opacity-50 disabled:cursor-not-allowed",
-        "data-[placeholder]:text-gray-500 dark:data-[placeholder]:text-gray-400",
+        "data-[placeholder]:text-muted-foreground",
         glassmorphism.interactive.base,
         className,
       )}
@@ -105,12 +105,12 @@ export const SelectContent = React.forwardRef<
   }
 >(({ className = "", children, position = "popper", color = "cyan", ...props }, ref) => {
   const glowColor = {
-    purple: "shadow-purple-500/20 dark:shadow-purple-500/30",
-    blue: "shadow-blue-500/20 dark:shadow-blue-500/30",
-    green: "shadow-green-500/20 dark:shadow-green-500/30",
-    pink: "shadow-pink-500/20 dark:shadow-pink-500/30",
-    orange: "shadow-orange-500/20 dark:shadow-orange-500/30",
-    cyan: "shadow-cyan-500/20 dark:shadow-cyan-500/30",
+    purple: "ring-1 ring-purple-pastel/30",
+    blue: "ring-1 ring-blue-pastel/30",
+    green: "ring-1 ring-green-pastel/30",
+    pink: "ring-1 ring-pink-pastel/30",
+    orange: "ring-1 ring-orange-pastel/30",
+    cyan: "ring-1 ring-teal-pastel/30",
   }[color];
 
   return (
@@ -119,15 +119,11 @@ export const SelectContent = React.forwardRef<
         ref={ref}
         className={cn(
           "relative z-[10000] min-w-[8rem] overflow-hidden rounded-lg",
-          // True glassmorphism
           "backdrop-blur-xl bg-black/20 dark:bg-white/10",
-          "border border-gray-300/30 dark:border-white/10",
-          // Neon shadow with color glow
-          "shadow-[0_10px_30px_-15px_rgba(0,0,0,0.3)] dark:shadow-[0_10px_30px_-15px_rgba(0,0,0,0.7)]",
+          "border border-border",
+          "shadow-lg",
           glowColor,
-          // Text colors
-          "text-gray-900 dark:text-gray-100",
-          // Animation
+          "text-foreground",
           "data-[state=open]:animate-in data-[state=closed]:animate-out",
           "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
           "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
@@ -164,16 +160,12 @@ export const SelectItem = React.forwardRef<
       ref={ref}
       className={cn(
         "relative flex items-center text-sm outline-none",
-        "transition-all duration-150 cursor-pointer rounded-md",
-        "pl-8 pr-3 py-2", // Added left padding for checkmark space
-        // Text colors
-        "text-gray-700 dark:text-gray-200",
-        // Hover and focus states with color tint
-        "hover:text-gray-900 dark:hover:text-white",
-        "focus:text-gray-900 dark:focus:text-white",
-        // Disabled state
+        "transition-all duration-200 cursor-pointer rounded-md",
+        "pl-8 pr-3 py-2",
+        "text-foreground",
+        "hover:text-foreground",
+        "focus:text-foreground",
         "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-        // Selected/checked state with stronger color
         "data-[state=checked]:font-medium",
         colorStyles.item,
         glassmorphism.interactive.base,

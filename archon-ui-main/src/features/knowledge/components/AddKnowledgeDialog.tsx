@@ -260,7 +260,7 @@ export const AddKnowledgeDialog: React.FC<AddKnowledgeDialogProps> = ({
                     "pl-10 h-12",
                     glassCard.blur.md,
                     glassCard.transparency.medium,
-                    "border-gray-300/60 dark:border-gray-600/60 focus:border-cyan-400/70",
+                    "border-gray-300/60 dark:border-gray-600/60 focus:border-teal-400/70",
                   )}
                 />
               </div>
@@ -283,9 +283,9 @@ export const AddKnowledgeDialog: React.FC<AddKnowledgeDialogProps> = ({
               onClick={handleCrawl}
               disabled={isProcessing || !crawlUrl}
               className={[
-                "w-full bg-gradient-to-r from-cyan-500 to-cyan-600",
-                "hover:from-cyan-600 hover:to-cyan-700",
-                "backdrop-blur-md border border-cyan-400/50",
+                "w-full bg-gradient-to-r from-teal-500 to-teal-600",
+                "hover:from-teal-600 hover:to-teal-700",
+                "backdrop-blur-md border border-teal-400/50",
                 "shadow-[0_0_20px_rgba(6,182,212,0.25)] hover:shadow-[0_0_30px_rgba(6,182,212,0.35)]",
                 "transition-all duration-200",
               ].join(" ")}

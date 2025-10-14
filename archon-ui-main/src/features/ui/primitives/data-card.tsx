@@ -4,10 +4,10 @@ import { cn, glassCard } from "./styles";
 interface DataCardProps extends React.HTMLAttributes<HTMLDivElement> {
   // Edge-lit properties
   edgePosition?: "none" | "top" | "left" | "right" | "bottom";
-  edgeColor?: "purple" | "blue" | "cyan" | "green" | "orange" | "pink" | "red";
+  edgeColor?: "purple" | "blue" | "teal" | "green" | "orange" | "pink" | "red";
 
   // Glow properties
-  glowColor?: "none" | "purple" | "blue" | "cyan" | "green" | "orange" | "pink" | "red";
+  glowColor?: "none" | "purple" | "blue" | "teal" | "green" | "orange" | "pink" | "red";
 
   // Glass properties
   blur?: "none" | "sm" | "md" | "lg" | "xl";
@@ -23,7 +23,7 @@ export const DataCard = React.forwardRef<HTMLDivElement, DataCardProps>(
     {
       className,
       edgePosition = "none",
-      edgeColor = "cyan",
+      edgeColor = "teal",
       glowColor = "none",
       blur = "md",
       transparency = "light",
@@ -48,13 +48,12 @@ export const DataCard = React.forwardRef<HTMLDivElement, DataCardProps>(
           )}
           {...props}
         >
-          {/* Top edge light with glow */}
+          {/* Top edge light */}
           <div
             className={cn(
               "absolute inset-x-0 top-0 h-[2px] pointer-events-none z-10",
               glassCard.edgeLit.position.top,
               glassCard.edgeLit.color[edgeColor].line,
-              glassCard.edgeLit.color[edgeColor].glow,
             )}
           />
           {/* Glow bleeding down */}
@@ -80,7 +79,7 @@ export const DataCard = React.forwardRef<HTMLDivElement, DataCardProps>(
     }
 
     // Standard card (no edge-lit)
-    const glowClasses = !hasEdge && hasGlow ? [glowVariant.border, glowVariant.glow, glowVariant.hover] : [];
+    const glowClasses = !hasEdge && hasGlow ? [glowVariant.border, glowVariant.shadow, glowVariant.hover] : [];
 
     return (
       <div

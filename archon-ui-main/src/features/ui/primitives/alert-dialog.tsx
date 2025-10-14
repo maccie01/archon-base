@@ -39,14 +39,10 @@ export const AlertDialogContent = React.forwardRef<
 >(({ className, variant = "default", ...props }, ref) => {
   const variantStyles = {
     default: cn(
-      "before:bg-gradient-to-r before:from-cyan-500 before:to-fuchsia-500",
-      "before:shadow-[0_0_10px_2px_rgba(34,211,238,0.4)]",
-      "dark:before:shadow-[0_0_20px_5px_rgba(34,211,238,0.7)]",
+      "ring-1 ring-accent/20",
     ),
     destructive: cn(
-      "before:bg-red-500",
-      "before:shadow-[0_0_10px_2px_rgba(239,68,68,0.4)]",
-      "dark:before:shadow-[0_0_20px_5px_rgba(239,68,68,0.7)]",
+      "ring-1 ring-red-pastel/40",
     ),
   };
 
@@ -57,15 +53,13 @@ export const AlertDialogContent = React.forwardRef<
         ref={ref}
         className={cn(
           "fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2",
-          "p-6 rounded-md backdrop-blur-md",
+          "p-6 rounded-xl backdrop-blur-md",
           "w-full max-w-lg",
           glassmorphism.background.card,
           glassmorphism.border.default,
-          glassmorphism.shadow.elevated,
-          // Top gradient bar
-          "before:content-[''] before:absolute before:top-0 before:left-0 before:right-0",
-          "before:h-[2px] before:rounded-t-[4px]",
+          "shadow-lg",
           variantStyles[variant],
+          "transition-all duration-200",
           className,
         )}
         {...props}

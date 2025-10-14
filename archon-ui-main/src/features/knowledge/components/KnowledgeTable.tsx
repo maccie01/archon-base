@@ -60,7 +60,7 @@ export const KnowledgeTable: React.FC<KnowledgeTableProps> = ({ items, onViewDoc
 
   const getTypeColor = (type?: string) => {
     if (type === "technical") {
-      return "bg-cyan-500/10 text-cyan-600 dark:text-cyan-400";
+      return "bg-teal-500/10 text-teal-600 dark:text-teal-400";
     }
     return "bg-purple-500/10 text-purple-600 dark:text-purple-400";
   };
@@ -152,7 +152,7 @@ export const KnowledgeTable: React.FC<KnowledgeTableProps> = ({ items, onViewDoc
                         href={item.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors"
+                        className="inline-flex items-center gap-1 hover:text-teal-600 dark:hover:text-teal-400 transition-colors"
                       >
                         <ExternalLink className="w-3.5 h-3.5" />
                         <span className="truncate inline-block">{getHostname(item.url)}</span>

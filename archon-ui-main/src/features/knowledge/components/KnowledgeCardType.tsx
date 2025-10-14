@@ -69,10 +69,10 @@ export const KnowledgeCardType: React.FC<KnowledgeCardTypeProps> = ({ sourceId, 
           <SelectTrigger
             className={cn(
               "w-auto h-auto text-xs font-medium px-2 py-1 rounded-md",
-              "border-cyan-400 dark:border-cyan-600",
-              "focus:ring-1 focus:ring-cyan-400",
+              "border-teal-400 dark:border-teal-600",
+              "focus:ring-1 focus:ring-teal-400",
               isTechnical
-                ? "bg-cyan-500/10 text-cyan-600 dark:text-cyan-400"
+                ? "bg-teal-500/10 text-teal-600 dark:text-teal-400"
                 : "bg-purple-500/10 text-purple-600 dark:text-purple-400",
             )}
           >
@@ -109,9 +109,9 @@ export const KnowledgeCardType: React.FC<KnowledgeCardTypeProps> = ({ sourceId, 
       <div
         className={cn(
           "flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium cursor-pointer",
-          "hover:ring-1 hover:ring-cyan-400/50 transition-all",
+          "hover:ring-1 hover:ring-teal-400/50 transition-all",
           isTechnical
-            ? "bg-cyan-500/10 text-cyan-600 dark:text-cyan-400"
+            ? "bg-teal-500/10 text-teal-600 dark:text-teal-400"
             : "bg-purple-500/10 text-purple-600 dark:text-purple-400",
           updateMutation.isPending && "opacity-50 cursor-not-allowed",
         )}

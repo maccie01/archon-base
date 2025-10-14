@@ -12,7 +12,7 @@ import { useUpdateKnowledgeItem } from "../hooks";
 
 // Centralized color class mappings
 const ICON_COLOR_CLASSES: Record<string, string> = {
-  cyan: "text-gray-400 hover:!text-cyan-600 dark:text-gray-500 dark:hover:!text-cyan-400",
+  cyan: "text-gray-400 hover:!text-teal-600 dark:text-gray-500 dark:hover:!text-teal-400",
   purple: "text-gray-400 hover:!text-purple-600 dark:text-gray-500 dark:hover:!text-purple-400",
   blue: "text-gray-400 hover:!text-blue-600 dark:text-gray-500 dark:hover:!text-blue-400",
   pink: "text-gray-400 hover:!text-pink-600 dark:text-gray-500 dark:hover:!text-pink-400",
@@ -22,7 +22,7 @@ const ICON_COLOR_CLASSES: Record<string, string> = {
 };
 
 const TOOLTIP_COLOR_CLASSES: Record<string, string> = {
-  cyan: "border-cyan-500/50 shadow-[0_0_15px_rgba(34,211,238,0.5)] dark:border-cyan-400/50 dark:shadow-[0_0_15px_rgba(34,211,238,0.7)]",
+  cyan: "border-teal-500/50 shadow-[0_0_15px_rgba(34,211,238,0.5)] dark:border-teal-400/50 dark:shadow-[0_0_15px_rgba(34,211,238,0.7)]",
   purple:
     "border-purple-500/50 shadow-[0_0_15px_rgba(168,85,247,0.5)] dark:border-purple-400/50 dark:shadow-[0_0_15px_rgba(168,85,247,0.7)]",
   blue: "border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.5)] dark:border-blue-400/50 dark:shadow-[0_0_15px_rgba(59,130,246,0.7)]",
@@ -31,7 +31,7 @@ const TOOLTIP_COLOR_CLASSES: Record<string, string> = {
   yellow:
     "border-yellow-500/50 shadow-[0_0_15px_rgba(234,179,8,0.5)] dark:border-yellow-400/50 dark:shadow-[0_0_15px_rgba(234,179,8,0.7)]",
   default:
-    "border-cyan-500/50 shadow-[0_0_15px_rgba(34,211,238,0.5)] dark:border-cyan-400/50 dark:shadow-[0_0_15px_rgba(34,211,238,0.7)]",
+    "border-teal-500/50 shadow-[0_0_15px_rgba(34,211,238,0.5)] dark:border-teal-400/50 dark:shadow-[0_0_15px_rgba(34,211,238,0.7)]",
 };
 
 interface KnowledgeCardTitleProps {
@@ -146,8 +146,8 @@ export const KnowledgeCardTitle: React.FC<KnowledgeCardTitleProps> = ({
           onFocus={(e) => e.stopPropagation()}
           disabled={updateMutation.isPending}
           className={cn(
-            "text-base font-semibold bg-transparent border-cyan-400 dark:border-cyan-600",
-            "focus:ring-1 focus:ring-cyan-400 px-2 py-1",
+            "text-base font-semibold bg-transparent border-teal-400 dark:border-teal-600",
+            "focus:ring-1 focus:ring-teal-400 px-2 py-1",
           )}
         />
         {description && description.trim() && (

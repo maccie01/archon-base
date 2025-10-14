@@ -94,7 +94,7 @@ export const TagsIndexView: React.FC<TagsIndexViewProps> = ({ onTagClick }) => {
           glassCard.blur.md,
           glassCard.transparency.medium,
           "border-gray-300/60 dark:border-gray-600/60",
-          "focus:border-cyan-400/70 focus:outline-none focus:ring-2 focus:ring-cyan-400/20",
+          "focus:border-teal-400/70 focus:outline-none focus:ring-2 focus:ring-teal-400/20",
         )}
       />
 
@@ -134,7 +134,7 @@ export const TagsIndexView: React.FC<TagsIndexViewProps> = ({ onTagClick }) => {
                   }}
                 >
                   <div className="flex items-center gap-3">
-                    <Tag className="w-5 h-5 text-cyan-500" />
+                    <Tag className="w-5 h-5 text-teal-500" />
                     <h3 className="font-semibold text-gray-900 dark:text-white/90 uppercase text-sm tracking-wide">
                       {displayName}
                     </h3>
@@ -194,8 +194,8 @@ export const TagsIndexView: React.FC<TagsIndexViewProps> = ({ onTagClick }) => {
                                 onClick={() => onTagClick(tag.tag_name)}
                                 className={[
                                   "px-3 py-1 text-xs font-medium rounded-md",
-                                  "bg-cyan-500/10 text-cyan-600 dark:text-cyan-400",
-                                  "hover:bg-cyan-500/20 transition-colors",
+                                  "bg-teal-500/10 text-teal-600 dark:text-teal-400",
+                                  "hover:bg-teal-500/20 transition-colors",
                                 ].join(" ")}
                               >
                                 View Sources

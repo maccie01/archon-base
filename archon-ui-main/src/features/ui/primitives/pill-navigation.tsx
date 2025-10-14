@@ -40,19 +40,19 @@ export const PillNavigation = ({
   const getColorClasses = (variant: string, isSelected: boolean) => {
     const colors = {
       blue: isSelected
-        ? "bg-blue-500/20 dark:bg-blue-400/20 text-blue-700 dark:text-blue-300 border border-blue-400/50 shadow-[0_0_10px_rgba(59,130,246,0.5)]"
+        ? "bg-blue-pastel/30 text-blue-pastel-dark ring-1 ring-blue-pastel/50 shadow-sm"
         : "text-gray-700 dark:text-gray-300 hover:bg-white/10 dark:hover:bg-white/5",
       orange: isSelected
-        ? "bg-orange-500/20 dark:bg-orange-400/20 text-orange-700 dark:text-orange-300 border border-orange-400/50 shadow-[0_0_10px_rgba(251,146,60,0.5)]"
+        ? "bg-orange-pastel/30 text-orange-pastel-dark ring-1 ring-orange-pastel/50 shadow-sm"
         : "text-gray-700 dark:text-gray-300 hover:bg-white/10 dark:hover:bg-white/5",
       cyan: isSelected
-        ? "bg-cyan-500/20 dark:bg-cyan-400/20 text-cyan-700 dark:text-cyan-300 border border-cyan-400/50 shadow-[0_0_10px_rgba(34,211,238,0.5)]"
+        ? "bg-teal-pastel/30 text-teal-pastel-dark ring-1 ring-teal-pastel/50 shadow-sm"
         : "text-gray-700 dark:text-gray-300 hover:bg-white/10 dark:hover:bg-white/5",
       purple: isSelected
-        ? "bg-purple-500/20 dark:bg-purple-400/20 text-purple-700 dark:text-purple-300 border border-purple-400/50 shadow-[0_0_10px_rgba(147,51,234,0.5)]"
+        ? "bg-purple-pastel/30 text-purple-pastel-dark ring-1 ring-purple-pastel/50 shadow-sm"
         : "text-gray-700 dark:text-gray-300 hover:bg-white/10 dark:hover:bg-white/5",
       green: isSelected
-        ? "bg-green-500/20 dark:bg-green-400/20 text-green-700 dark:text-green-300 border border-green-400/50 shadow-[0_0_10px_rgba(34,197,94,0.5)]"
+        ? "bg-green-pastel/30 text-green-pastel-dark ring-1 ring-green-pastel/50 shadow-sm"
         : "text-gray-700 dark:text-gray-300 hover:bg-white/10 dark:hover:bg-white/5",
     };
     return colors[variant as keyof typeof colors] || colors.cyan;

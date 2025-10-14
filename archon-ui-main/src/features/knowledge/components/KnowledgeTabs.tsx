@@ -35,7 +35,7 @@ export const KnowledgeTabs: React.FC<KnowledgeTabsProps> = ({
     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
       <div className="flex justify-center mb-6">
         <TabsList className="grid w-auto grid-cols-3">
-          <TabsTrigger value="global" color="cyan">
+          <TabsTrigger value="global" color="teal">
             <Globe className="w-4 h-4 mr-2" aria-hidden="true" />
             Global
           </TabsTrigger>

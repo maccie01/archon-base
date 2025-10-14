@@ -260,7 +260,7 @@ export const KnowledgeCardTags: React.FC<KnowledgeCardTagsProps> = ({ sourceId, 
           onClick={() => setShowAllTags(!showAllTags)}
           className={[
             "flex items-center gap-0.5 text-[10px] text-gray-500 dark:text-gray-400",
-            "hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors px-1 py-0.5 rounded",
+            "hover:text-teal-600 dark:hover:text-teal-400 transition-colors px-1 py-0.5 rounded",
           ].join(" ")}
         >
           {showAllTags ? (
@@ -293,8 +293,8 @@ export const KnowledgeCardTags: React.FC<KnowledgeCardTagsProps> = ({ sourceId, 
             placeholder={originalTagBeingEdited ? "Edit tag..." : "Add tag..."}
             className={cn(
               "h-6 text-xs px-2 w-20 min-w-0",
-              "border-cyan-400 dark:border-cyan-600",
-              "focus:ring-1 focus:ring-cyan-400",
+              "border-teal-400 dark:border-teal-600",
+              "focus:ring-1 focus:ring-teal-400",
             )}
             disabled={updateMutation.isPending}
           />
@@ -305,7 +305,7 @@ export const KnowledgeCardTags: React.FC<KnowledgeCardTagsProps> = ({ sourceId, 
                 handleAddTag();
               }
             }}
-            className="text-cyan-600 hover:text-cyan-700 dark:text-cyan-400 dark:hover:text-cyan-300"
+            className="text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300"
             disabled={!newTagValue.trim() || updateMutation.isPending}
             aria-label="Add tag"
           >
@@ -331,7 +331,7 @@ export const KnowledgeCardTags: React.FC<KnowledgeCardTagsProps> = ({ sourceId, 
             className={[
               "flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] rounded border h-5",
               "border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400",
-              "hover:text-cyan-600 dark:hover:text-cyan-400 hover:border-cyan-400 dark:hover:border-cyan-600",
+              "hover:text-teal-600 dark:hover:text-teal-400 hover:border-teal-400 dark:hover:border-teal-600",
               "transition-colors",
             ].join(" ")}
             aria-label="Add tags"
@@ -350,8 +350,8 @@ export const KnowledgeCardTags: React.FC<KnowledgeCardTagsProps> = ({ sourceId, 
             onClick={handleSaveTags}
             disabled={updateMutation.isPending}
             className={[
-              "px-2 py-1 text-xs bg-cyan-600 dark:bg-cyan-600 text-white",
-              "hover:bg-cyan-700 dark:hover:bg-cyan-700 disabled:opacity-50 transition-colors",
+              "px-2 py-1 text-xs bg-teal-600 dark:bg-teal-600 text-white",
+              "hover:bg-teal-700 dark:hover:bg-teal-700 disabled:opacity-50 transition-colors",
             ].join(" ")}
           >
             Save

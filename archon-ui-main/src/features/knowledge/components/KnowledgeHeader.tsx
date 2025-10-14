@@ -59,7 +59,7 @@ export const KnowledgeHeader: React.FC<KnowledgeHeaderProps> = ({
             placeholder="Search knowledge base..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="pl-10 bg-black/30 dark:bg-black/30 border-white/10 dark:border-white/10 focus:border-cyan-500/50"
+            className="pl-10 bg-black/30 dark:bg-black/30 border-white/10 dark:border-white/10 focus:border-teal-500/50"
           />
         </div>
 
@@ -104,7 +104,7 @@ export const KnowledgeHeader: React.FC<KnowledgeHeaderProps> = ({
             className={cn(
               "px-3",
               viewMode === "grid"
-                ? "bg-cyan-500/20 dark:bg-cyan-500/20 text-cyan-400"
+                ? "bg-teal-500/20 dark:bg-teal-500/20 text-teal-400"
                 : "text-gray-400 hover:text-white",
             )}
           >
@@ -120,7 +120,7 @@ export const KnowledgeHeader: React.FC<KnowledgeHeaderProps> = ({
             className={cn(
               "px-3",
               viewMode === "table"
-                ? "bg-cyan-500/20 dark:bg-cyan-500/20 text-cyan-400"
+                ? "bg-teal-500/20 dark:bg-teal-500/20 text-teal-400"
                 : "text-gray-400 hover:text-white",
             )}
           >

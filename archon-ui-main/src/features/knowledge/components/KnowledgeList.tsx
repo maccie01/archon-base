@@ -90,7 +90,7 @@ export const KnowledgeList: React.FC<KnowledgeListProps> = ({
         className="flex items-center justify-center py-12"
       >
         <div className="text-center" aria-live="polite" aria-busy="true">
-          <Loader2 className="w-8 h-8 text-cyan-400 animate-spin mx-auto mb-4" />
+          <Loader2 className="w-8 h-8 text-teal-400 animate-spin mx-auto mb-4" />
           <p className="text-gray-400">Loading knowledge base...</p>
         </div>
       </motion.div>
@@ -130,8 +130,8 @@ export const KnowledgeList: React.FC<KnowledgeListProps> = ({
         className="flex items-center justify-center py-12"
       >
         <div className="text-center max-w-md">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-cyan-500/10 dark:bg-cyan-500/10 mb-4">
-            <AlertCircle className="w-6 h-6 text-cyan-400" />
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-teal-500/10 dark:bg-teal-500/10 mb-4">
+            <AlertCircle className="w-6 h-6 text-teal-400" />
           </div>
           <h3 className="text-lg font-semibold mb-2">No Knowledge Items</h3>
           <p className="text-gray-400">Start by adding documents or crawling websites to build your knowledge base.</p>

@@ -54,9 +54,9 @@ export const DropdownMenuItem = React.forwardRef<
     ref={ref}
     className={cn(
       "relative flex cursor-pointer select-none items-center gap-2 rounded-md px-2 py-1.5 text-sm",
-      "transition-all duration-150 outline-none",
+      "transition-all duration-200 outline-none",
       glassmorphism.interactive.hover,
-      "focus:bg-cyan-500/10 dark:focus:bg-cyan-400/10",
+      "focus:bg-accent/10",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       inset && "pl-8",
       className,
@@ -78,9 +78,9 @@ export const DropdownMenuCheckboxItem = React.forwardRef<
     ref={ref}
     className={cn(
       "relative flex cursor-pointer select-none items-center rounded-md py-1.5 pl-8 pr-2 text-sm",
-      "transition-all duration-150 outline-none",
+      "transition-all duration-200 outline-none",
       glassmorphism.interactive.hover,
-      "focus:bg-cyan-500/10 dark:focus:bg-cyan-400/10",
+      "focus:bg-accent/10",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       className,
     )}
@@ -106,9 +106,9 @@ export const DropdownMenuRadioItem = React.forwardRef<
     ref={ref}
     className={cn(
       "relative flex cursor-pointer select-none items-center rounded-md py-1.5 pl-8 pr-2 text-sm",
-      "transition-all duration-150 outline-none",
+      "transition-all duration-200 outline-none",
       glassmorphism.interactive.hover,
-      "focus:bg-cyan-500/10 dark:focus:bg-cyan-400/10",
+      "focus:bg-accent/10",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       className,
     )}
