@@ -34,34 +34,40 @@ export const TabsTrigger = React.forwardRef<
 >(({ className, color = "blue", ...props }, ref) => {
   const activeClasses = {
     blue: [
-      "data-[state=active]:bg-blue-pastel/30",
+      "data-[state=active]:bg-blue-pastel/50",
       "data-[state=active]:text-blue-pastel-dark",
-      "data-[state=active]:ring-1 data-[state=active]:ring-blue-pastel/50",
+      "data-[state=active]:ring-2 data-[state=active]:ring-blue-pastel/60",
+      "data-[state=active]:shadow-sm",
     ].join(" "),
     purple: [
-      "data-[state=active]:bg-purple-pastel/30",
+      "data-[state=active]:bg-purple-pastel/50",
       "data-[state=active]:text-purple-pastel-dark",
-      "data-[state=active]:ring-1 data-[state=active]:ring-purple-pastel/50",
+      "data-[state=active]:ring-2 data-[state=active]:ring-purple-pastel/60",
+      "data-[state=active]:shadow-sm",
     ].join(" "),
     pink: [
-      "data-[state=active]:bg-pink-pastel/30",
+      "data-[state=active]:bg-pink-pastel/50",
       "data-[state=active]:text-pink-pastel-dark",
-      "data-[state=active]:ring-1 data-[state=active]:ring-pink-pastel/50",
+      "data-[state=active]:ring-2 data-[state=active]:ring-pink-pastel/60",
+      "data-[state=active]:shadow-sm",
     ].join(" "),
     orange: [
-      "data-[state=active]:bg-orange-pastel/30",
+      "data-[state=active]:bg-orange-pastel/50",
       "data-[state=active]:text-orange-pastel-dark",
-      "data-[state=active]:ring-1 data-[state=active]:ring-orange-pastel/50",
+      "data-[state=active]:ring-2 data-[state=active]:ring-orange-pastel/60",
+      "data-[state=active]:shadow-sm",
     ].join(" "),
     cyan: [
-      "data-[state=active]:bg-teal-pastel/30",
+      "data-[state=active]:bg-teal-pastel/50",
       "data-[state=active]:text-teal-pastel-dark",
-      "data-[state=active]:ring-1 data-[state=active]:ring-teal-pastel/50",
+      "data-[state=active]:ring-2 data-[state=active]:ring-teal-pastel/60",
+      "data-[state=active]:shadow-sm",
     ].join(" "),
     green: [
-      "data-[state=active]:bg-green-pastel/30",
+      "data-[state=active]:bg-green-pastel/50",
       "data-[state=active]:text-green-pastel-dark",
-      "data-[state=active]:ring-1 data-[state=active]:ring-green-pastel/50",
+      "data-[state=active]:ring-2 data-[state=active]:ring-green-pastel/60",
+      "data-[state=active]:shadow-sm",
     ].join(" "),
   } satisfies Record<TabColor, string>;
 
@@ -78,9 +84,9 @@ export const TabsTrigger = React.forwardRef<
     <TabsPrimitive.Trigger
       ref={ref}
       className={cn(
-        "flex items-center gap-2 px-4 py-1.5 rounded-full transition-all duration-200",
-        "text-xs font-medium whitespace-nowrap",
-        "text-gray-700 dark:text-gray-300 hover:bg-white/10 dark:hover:bg-white/5",
+        "flex items-center gap-2 px-5 py-2.5 rounded-full transition-all duration-200",
+        "text-sm font-semibold whitespace-nowrap",
+        "text-gray-600 dark:text-gray-400 hover:bg-white/20 dark:hover:bg-white/10",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
         focusRingClasses[color],
         "disabled:pointer-events-none disabled:opacity-50",
