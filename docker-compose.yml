@@ -31,6 +31,7 @@ services:
       - ARCHON_HOST=${HOST:-localhost}
     networks:
       - app-network
+      - supabase_network_archon
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock # Docker socket for MCP container control
       - ./python/src:/app/src # Mount source code for hot reload
@@ -90,6 +91,7 @@ services:
       - ARCHON_AGENTS_PORT=${ARCHON_AGENTS_PORT:-8052}
     networks:
       - app-network
+      - supabase_network_archon
     depends_on:
       archon-server:
         condition: service_healthy
@@ -179,3 +181,5 @@ services:
 networks:
   app-network:
     driver: bridge
+  supabase_network_archon:
+    external: true
