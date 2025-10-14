@@ -32,6 +32,21 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       {
         name: 'test-runner',
         configureServer(server) {
+          // SPA fallback - serve index.html for all non-asset routes
+          server.middlewares.use((req, res, next) => {
+            // Skip API endpoints, WebSocket, and actual files
+            if (req.url &&
+                !req.url.startsWith('/api/') &&
+                !req.url.startsWith('/socket.io') &&
+                !req.url.startsWith('/coverage/') &&
+                !req.url.includes('.') &&
+                req.url !== '/') {
+              // Rewrite to index.html for SPA routing
+              req.url = '/';
+            }
+            next();
+          });
+
           // Serve coverage directory statically
           server.middlewares.use(async (req, res, next) => {
             if (req.url?.startsWith('/coverage/')) {
