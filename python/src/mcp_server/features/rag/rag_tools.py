@@ -39,30 +39,69 @@ def register_rag_tools(mcp: FastMCP):
     """Register all RAG tools with the MCP server."""
 
     @mcp.tool()
-    async def rag_get_available_sources(ctx: Context) -> str:
+    async def rag_get_available_sources(
+        ctx: Context,
+        scope: str | None = None,
+        project_id: str | None = None
+    ) -> str:
         """
-        Get list of available sources in the knowledge base.
+        Get list of available sources in the knowledge base with scope filtering.
+
+        Args:
+            scope: Filter by knowledge scope
+                - "global": Only global knowledge sources
+                - "project": Only project-specific sources
+                - None: All sources (default)
+            project_id: When scope="project", optionally filter by specific project
 
         Returns:
             JSON string with structure:
             - success: bool - Operation success status
-            - sources: list[dict] - Array of source objects
-            - count: int - Number of sources
+            - sources: list[dict] - Array of source objects with scope, project_id, folder_name, tags
+            - count: int - Total number of sources
+            - scope_filter: str|null - Applied scope filter
+            - project_filter: str|null - Applied project filter
             - error: str - Error description if success=false
+
+        Usage Examples:
+            # Get all sources
+            rag_get_available_sources()
+
+            # Get only global sources
+            rag_get_available_sources(scope="global")
+
+            # Get sources for specific project
+            rag_get_available_sources(scope="project", project_id="proj_123")
         """
         try:
             api_url = get_api_url()
             timeout = httpx.Timeout(30.0, connect=5.0)
 
             async with httpx.AsyncClient(timeout=timeout) as client:
-                response = await client.get(urljoin(api_url, "/api/rag/sources"))
+                params = {}
+                if scope:
+                    params["scope"] = scope
+                if project_id:
+                    params["project_id"] = project_id
+
+                response = await client.get(
+                    urljoin(api_url, "/api/rag/sources"),
+                    params=params
+                )
 
                 if response.status_code == 200:
                     result = response.json()
                     sources = result.get("sources", [])
 
                     return json.dumps(
-                        {"success": True, "sources": sources, "count": len(sources)}, indent=2
+                        {
+                            "success": True,
+                            "sources": sources,
+                            "count": len(sources),
+                            "scope_filter": scope,
+                            "project_filter": project_id,
+                        },
+                        indent=2
                     )
                 else:
                     error_detail = response.text
@@ -79,17 +118,24 @@ def register_rag_tools(mcp: FastMCP):
     async def rag_search_knowledge_base(
         ctx: Context,
         query: str,
+        scope: str = "all",
+        project_id: str | None = None,
         source_id: str | None = None,
         match_count: int = 5,
         return_mode: str = "pages"
     ) -> str:
         """
-        Search knowledge base for relevant content using RAG.
+        Search knowledge base for relevant content using RAG with scope filtering.
 
         Args:
             query: Search query - Keep it SHORT and FOCUSED (2-5 keywords).
                    Good: "vector search", "authentication JWT", "React hooks"
                    Bad: "how to implement user authentication with JWT tokens in React with TypeScript and handle refresh tokens"
+            scope: Knowledge scope to search
+                - "all": Search all knowledge (global + current project if in context)
+                - "global": Only search global knowledge sources
+                - "project": Only search project-specific knowledge
+            project_id: Project ID when scope="project" or scope="all" with project context
             source_id: Optional source ID filter from rag_get_available_sources().
                       This is the 'id' field from available sources, NOT a URL or domain name.
                       Example: "src_1234abcd" not "docs.anthropic.com"
@@ -99,12 +145,22 @@ def register_rag_tools(mcp: FastMCP):
         Returns:
             JSON string with structure:
             - success: bool - Operation success status
-            - results: list[dict] - Array of pages/chunks with content and metadata
-                      Pages include: page_id, url, title, preview, word_count, chunk_matches
-                      Chunks include: content, metadata, similarity
+            - results: list[dict] - Array of pages/chunks with content, metadata, scope indicators
+            - search_scope: str - Scope used for search
+            - project_context: str|null - Project ID if provided
             - return_mode: str - Mode used ("pages" or "chunks")
             - reranked: bool - Whether results were reranked
             - error: str|null - Error description if success=false
+
+        Usage Examples:
+            # Search only global knowledge
+            rag_search_knowledge_base("React hooks", scope="global")
+
+            # Search project-specific knowledge
+            rag_search_knowledge_base("authentication flow", scope="project", project_id="proj_123")
+
+            # Search all with project context (prioritizes project sources)
+            rag_search_knowledge_base("API endpoints", scope="all", project_id="proj_123")
 
         Note: Use "pages" mode for better context (recommended), or "chunks" for raw granular results.
         After getting pages, use rag_read_full_page() to retrieve complete page content.
@@ -116,9 +172,12 @@ def register_rag_tools(mcp: FastMCP):
             async with httpx.AsyncClient(timeout=timeout) as client:
                 request_data = {
                     "query": query,
+                    "scope": scope,
                     "match_count": match_count,
                     "return_mode": return_mode
                 }
+                if project_id:
+                    request_data["project_id"] = project_id
                 if source_id:
                     request_data["source"] = source_id
 
@@ -130,6 +189,8 @@ def register_rag_tools(mcp: FastMCP):
                         {
                             "success": True,
                             "results": result.get("results", []),
+                            "search_scope": scope,
+                            "project_context": project_id,
                             "return_mode": result.get("return_mode", return_mode),
                             "reranked": result.get("reranked", False),
                             "error": None,
@@ -356,6 +417,287 @@ def register_rag_tools(mcp: FastMCP):
         except Exception as e:
             logger.error(f"Error reading page: {e}")
             return json.dumps({"success": False, "page": None, "error": str(e)}, indent=2)
+
+    @mcp.tool()
+    async def rag_search_project_knowledge(
+        ctx: Context,
+        query: str,
+        project_id: str,
+        folder_name: str | None = None,
+        match_count: int = 5
+    ) -> str:
+        """
+        Search knowledge specific to a project with optional folder filtering.
+
+        This is a convenience wrapper around rag_search_knowledge_base with
+        project scope and additional folder filtering.
+
+        Args:
+            query: Search query - Keep it SHORT and FOCUSED (2-5 keywords).
+                   Good: "database schema", "login endpoint", "payment flow"
+                   Bad: "how do we implement the user authentication and login endpoint with OAuth"
+            project_id: Project ID to search within
+            folder_name: Optional folder name filter (e.g., "Authentication", "API")
+            match_count: Maximum results (default: 5)
+
+        Returns:
+            JSON string with structure:
+            - success: bool - Operation success status
+            - results: list[dict] - Project-scoped results with folder information
+            - project_id: str - Project ID searched
+            - folder_filter: str|null - Folder name filter if provided
+            - error: str|null - Error description if success=false
+
+        Usage Examples:
+            # Search all project knowledge
+            rag_search_project_knowledge("database schema", "proj_123")
+
+            # Search within specific folder
+            rag_search_project_knowledge("login endpoint", "proj_123", folder_name="API")
+
+            # Search authentication docs in Authentication folder
+            rag_search_project_knowledge("OAuth flow", "proj_123", folder_name="Authentication")
+        """
+        try:
+            api_url = get_api_url()
+            timeout = httpx.Timeout(30.0, connect=5.0)
+
+            async with httpx.AsyncClient(timeout=timeout) as client:
+                request_data = {
+                    "query": query,
+                    "scope": "project",
+                    "project_id": project_id,
+                    "match_count": match_count,
+                    "return_mode": "pages"
+                }
+                if folder_name:
+                    request_data["folder_name"] = folder_name
+
+                response = await client.post(urljoin(api_url, "/api/rag/query"), json=request_data)
+
+                if response.status_code == 200:
+                    result = response.json()
+                    results = result.get("results", [])
+
+                    # If folder_name specified, filter results by folder
+                    if folder_name:
+                        results = [
+                            r for r in results
+                            if r.get("folder_name") == folder_name
+                        ]
+
+                    return json.dumps(
+                        {
+                            "success": True,
+                            "results": results,
+                            "project_id": project_id,
+                            "folder_filter": folder_name,
+                            "error": None,
+                        },
+                        indent=2,
+                    )
+                else:
+                    error_detail = response.text
+                    return json.dumps(
+                        {
+                            "success": False,
+                            "results": [],
+                            "project_id": project_id,
+                            "folder_filter": folder_name,
+                            "error": f"HTTP {response.status_code}: {error_detail}",
+                        },
+                        indent=2,
+                    )
+
+        except Exception as e:
+            logger.error(f"Error searching project knowledge: {e}")
+            return json.dumps(
+                {
+                    "success": False,
+                    "results": [],
+                    "project_id": project_id,
+                    "folder_filter": folder_name,
+                    "error": str(e)
+                },
+                indent=2
+            )
+
+    @mcp.tool()
+    async def rag_search_global_knowledge(
+        ctx: Context,
+        query: str,
+        tags: list[str] | None = None,
+        match_count: int = 5
+    ) -> str:
+        """
+        Search global knowledge base with optional tag filtering.
+
+        Convenience wrapper for searching only global knowledge sources.
+
+        Args:
+            query: Search query - Keep it SHORT and FOCUSED (2-5 keywords).
+                   Good: "REST API design", "React hooks patterns", "OAuth security"
+                   Bad: "how to design REST APIs with proper authentication and error handling"
+            tags: Optional tag filters (e.g., ["react", "typescript"], ["security", "fastapi"])
+            match_count: Maximum results (default: 5)
+
+        Returns:
+            JSON string with structure:
+            - success: bool - Operation success status
+            - results: list[dict] - Global knowledge results with tags
+            - tag_filters: list[str]|null - Tags used for filtering
+            - error: str|null - Error description if success=false
+
+        Usage Examples:
+            # Search all global knowledge
+            rag_search_global_knowledge("REST API design")
+
+            # Search global knowledge with specific tags
+            rag_search_global_knowledge("authentication", tags=["security", "fastapi"])
+
+            # Search framework documentation
+            rag_search_global_knowledge("hooks patterns", tags=["react"])
+        """
+        try:
+            api_url = get_api_url()
+            timeout = httpx.Timeout(30.0, connect=5.0)
+
+            async with httpx.AsyncClient(timeout=timeout) as client:
+                request_data = {
+                    "query": query,
+                    "scope": "global",
+                    "match_count": match_count,
+                    "return_mode": "pages"
+                }
+                if tags:
+                    request_data["tags"] = tags
+
+                response = await client.post(urljoin(api_url, "/api/rag/query"), json=request_data)
+
+                if response.status_code == 200:
+                    result = response.json()
+                    results = result.get("results", [])
+
+                    # If tags specified, filter results by tags
+                    if tags:
+                        filtered_results = []
+                        for r in results:
+                            result_tags = r.get("tags", [])
+                            if any(tag in result_tags for tag in tags):
+                                filtered_results.append(r)
+                        results = filtered_results
+
+                    return json.dumps(
+                        {
+                            "success": True,
+                            "results": results,
+                            "tag_filters": tags,
+                            "error": None,
+                        },
+                        indent=2,
+                    )
+                else:
+                    error_detail = response.text
+                    return json.dumps(
+                        {
+                            "success": False,
+                            "results": [],
+                            "tag_filters": tags,
+                            "error": f"HTTP {response.status_code}: {error_detail}",
+                        },
+                        indent=2,
+                    )
+
+        except Exception as e:
+            logger.error(f"Error searching global knowledge: {e}")
+            return json.dumps(
+                {
+                    "success": False,
+                    "results": [],
+                    "tag_filters": tags,
+                    "error": str(e)
+                },
+                indent=2
+            )
+
+    @mcp.tool()
+    async def rag_list_project_folders(
+        ctx: Context,
+        project_id: str
+    ) -> str:
+        """
+        List all knowledge folders for a project.
+
+        Args:
+            project_id: Project ID to list folders for
+
+        Returns:
+            JSON string with structure:
+            - success: bool - Operation success status
+            - project_id: str - Project ID queried
+            - project_title: str|null - Project name if available
+            - folders: list[dict] - Folders with id, name, description, source_count, color
+            - total: int - Total number of folders
+            - error: str|null - Error description if success=false
+
+        Usage Examples:
+            # List all folders for a project
+            rag_list_project_folders("proj_123")
+
+            # Use to discover available knowledge organization
+            folders = rag_list_project_folders("proj_ecommerce")
+            # Then search specific folder:
+            # rag_search_project_knowledge("API endpoints", "proj_ecommerce", folder_name="API")
+        """
+        try:
+            api_url = get_api_url()
+            timeout = httpx.Timeout(30.0, connect=5.0)
+
+            async with httpx.AsyncClient(timeout=timeout) as client:
+                response = await client.get(
+                    urljoin(api_url, f"/api/projects/{project_id}/folders")
+                )
+
+                if response.status_code == 200:
+                    result = response.json()
+                    return json.dumps(
+                        {
+                            "success": True,
+                            "project_id": project_id,
+                            "project_title": result.get("project_title"),
+                            "folders": result.get("folders", []),
+                            "total": len(result.get("folders", [])),
+                            "error": None,
+                        },
+                        indent=2,
+                    )
+                else:
+                    error_detail = response.text
+                    return json.dumps(
+                        {
+                            "success": False,
+                            "project_id": project_id,
+                            "project_title": None,
+                            "folders": [],
+                            "total": 0,
+                            "error": f"HTTP {response.status_code}: {error_detail}",
+                        },
+                        indent=2,
+                    )
+
+        except Exception as e:
+            logger.error(f"Error listing project folders: {e}")
+            return json.dumps(
+                {
+                    "success": False,
+                    "project_id": project_id,
+                    "project_title": None,
+                    "folders": [],
+                    "total": 0,
+                    "error": str(e)
+                },
+                indent=2
+            )
 
     # Log successful registration
     logger.info("✓ RAG tools registered (HTTP-based version)")
