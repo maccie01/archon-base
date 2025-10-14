@@ -12,6 +12,8 @@ import {
   Bug,
   Info,
   Database,
+  ExternalLink,
+  Server,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useToast } from "../features/shared/hooks/useToast";
@@ -142,6 +144,75 @@ export const SettingsPage = () => {
               defaultExpanded={true}
             >
               <FeaturesSection />
+            </CollapsibleSettingsCard>
+          </motion.div>
+
+          {/* System Services */}
+          <motion.div variants={itemVariants}>
+            <CollapsibleSettingsCard
+              title="System Services"
+              icon={Server}
+              accentColor="teal"
+              storageKey="system-services"
+              defaultExpanded={true}
+            >
+              <div className="space-y-3">
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                  Quick access to Archon system services and administration tools
+                </p>
+                <div className="grid grid-cols-1 gap-3">
+                  {/* Supabase Studio */}
+                  <a
+                    href="/db"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between p-3 rounded-lg border border-gray-300/60 dark:border-gray-600/60 bg-white/5 hover:bg-white/10 dark:bg-white/5 dark:hover:bg-white/10 transition-all group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <Database className="w-5 h-5 text-purple-500" />
+                      <div>
+                        <div className="font-medium text-gray-900 dark:text-white">Supabase Studio</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">Database management and SQL editor</div>
+                      </div>
+                    </div>
+                    <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-purple-500 transition-colors" />
+                  </a>
+
+                  {/* Backend API */}
+                  <a
+                    href="/api/health"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between p-3 rounded-lg border border-gray-300/60 dark:border-gray-600/60 bg-white/5 hover:bg-white/10 dark:bg-white/5 dark:hover:bg-white/10 transition-all group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <Server className="w-5 h-5 text-blue-500" />
+                      <div>
+                        <div className="font-medium text-gray-900 dark:text-white">Backend API</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">API health check and status</div>
+                      </div>
+                    </div>
+                    <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-blue-500 transition-colors" />
+                  </a>
+
+                  {/* MCP Server */}
+                  <a
+                    href="/mcp"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between p-3 rounded-lg border border-gray-300/60 dark:border-gray-600/60 bg-white/5 hover:bg-white/10 dark:bg-white/5 dark:hover:bg-white/10 transition-all group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <Code className="w-5 h-5 text-green-500" />
+                      <div>
+                        <div className="font-medium text-gray-900 dark:text-white">MCP Server</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">Model Context Protocol server status</div>
+                      </div>
+                    </div>
+                    <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-green-500 transition-colors" />
+                  </a>
+                </div>
+              </div>
             </CollapsibleSettingsCard>
           </motion.div>
 
