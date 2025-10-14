@@ -137,9 +137,13 @@
 
   /* Tab active state styles - direct CSS for Radix UI Tabs */
   button[role="tab"][data-state="active"] {
-    background-color: var(--tab-active-bg);
-    color: white;
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    background-color: var(--tab-active-bg) !important;
+    color: white !important;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1) !important;
+  }
+
+  .dark button[role="tab"][data-state="active"] {
+    color: white !important;
   }
 }
 
