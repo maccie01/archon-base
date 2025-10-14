@@ -84,6 +84,20 @@
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
 
+  /* Pastel colors for tab highlighting */
+  --color-purple-pastel: var(--purple-accent);
+  --color-purple-pastel-dark: 250 60% 35%;
+  --color-blue-pastel: var(--blue-accent);
+  --color-blue-pastel-dark: 213 94% 35%;
+  --color-teal-pastel: var(--teal-accent);
+  --color-teal-pastel-dark: 180 55% 35%;
+  --color-orange-pastel: var(--orange-accent);
+  --color-orange-pastel-dark: 25 95% 35%;
+  --color-pink-pastel: var(--pink-accent);
+  --color-pink-pastel-dark: 330 60% 35%;
+  --color-green-pastel: var(--green-accent);
+  --color-green-pastel-dark: 142 52% 35%;
+
   /* Border radius */
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
@@ -133,17 +147,6 @@
     background-image:
       linear-gradient(to right, hsl(220 13% 20% / 0.4) 1px, transparent 1px),
       linear-gradient(to bottom, hsl(220 13% 20% / 0.4) 1px, transparent 1px);
-  }
-
-  /* Tab active state styles - direct CSS for Radix UI Tabs */
-  button[role="tab"][data-state="active"] {
-    background-color: var(--tab-active-bg) !important;
-    color: white !important;
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1) !important;
-  }
-
-  .dark button[role="tab"][data-state="active"] {
-    color: white !important;
   }
 }
 
