@@ -52,7 +52,7 @@ Arcane is a Docker container management and monitoring interface deployed on the
 **Proxy Details**:
 - Listens on: Port 80 (HTTP)
 - Proxies to: http://127.0.0.1:3552
-- Rate limiting: 30 requests/minute per IP
+- Rate limiting: 100 requests/minute per IP (burst 30)
 - WebSocket support: ✅ Enabled
 
 **Security Headers**:
