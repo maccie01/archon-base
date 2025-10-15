@@ -13,13 +13,14 @@ from datetime import datetime, timezone
 from email.utils import format_datetime
 from typing import Any
 
-from fastapi import APIRouter, Header, HTTPException, Request, Response
+from fastapi import APIRouter, Depends, Header, HTTPException, Request, Response
 from fastapi import status as http_status
 from pydantic import BaseModel
 
 # Removed direct logging import - using unified config
 # Set up standard logger for background tasks
 from ..config.logfire_config import get_logger, logfire
+from ..middleware.auth_middleware import require_auth
 from ..utils import get_supabase_client
 from ..utils.etag_utils import check_etag, generate_etag
 

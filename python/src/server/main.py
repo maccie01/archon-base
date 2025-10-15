@@ -19,6 +19,7 @@ from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 
 from .api_routes.agent_chat_api import router as agent_chat_router
+from .api_routes.auth_api import router as auth_router
 from .api_routes.bug_report_api import router as bug_report_router
 from .api_routes.internal_api import router as internal_router
 from .api_routes.knowledge_api import router as knowledge_router
@@ -154,14 +155,23 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Configure CORS
+# Configure CORS - use environment variable for allowed origins
+allowed_origins = os.getenv("ALLOWED_ORIGINS", "*").split(",")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins for development
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Add authentication middleware
+# Check if authentication is enabled via environment variable
+auth_enabled = os.getenv("AUTH_ENABLED", "true").lower() == "true"
+if auth_enabled:
+    from .middleware.auth_middleware import APIKeyAuthMiddleware
+    app.add_middleware(APIKeyAuthMiddleware, enabled=auth_enabled)
+    api_logger.info(f"🔐 API Key Authentication enabled | allowed_origins={allowed_origins}")
 
 
 # Add middleware to skip logging for health checks
@@ -182,6 +192,7 @@ async def skip_health_check_logs(request, call_next):
 
 
 # Include API routers
+app.include_router(auth_router)  # Auth router should be included first
 app.include_router(settings_router)
 app.include_router(mcp_router)
 # app.include_router(mcp_client_router)  # Removed - not part of new architecture

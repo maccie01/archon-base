@@ -15,13 +15,14 @@ import uuid
 from datetime import datetime
 from urllib.parse import urlparse
 
-from fastapi import APIRouter, File, Form, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from pydantic import BaseModel
 
 # Basic validation - simplified inline version
 
 # Import unified logging
 from ..config.logfire_config import get_logger, safe_logfire_error, safe_logfire_info
+from ..middleware.auth_middleware import require_auth
 from ..services.crawler_manager import get_crawler
 from ..services.crawling import CrawlingService
 from ..services.credential_service import credential_service
@@ -343,7 +344,7 @@ async def get_knowledge_item(source_id: str):
 
 
 @router.put("/knowledge-items/{source_id}")
-async def update_knowledge_item(source_id: str, updates: dict):
+async def update_knowledge_item(source_id: str, updates: dict, auth = Depends(require_auth)):
     """Update a knowledge item's metadata."""
     try:
         # Use KnowledgeItemService
@@ -368,7 +369,7 @@ async def update_knowledge_item(source_id: str, updates: dict):
 
 
 @router.delete("/knowledge-items/{source_id}")
-async def delete_knowledge_item(source_id: str):
+async def delete_knowledge_item(source_id: str, auth = Depends(require_auth)):
     """Delete a knowledge item from the database."""
     try:
         logger.debug(f"Starting delete_knowledge_item for source_id: {source_id}")
@@ -666,7 +667,7 @@ async def get_knowledge_item_code_examples(
 
 
 @router.post("/knowledge-items/{source_id}/refresh")
-async def refresh_knowledge_item(source_id: str):
+async def refresh_knowledge_item(source_id: str, auth = Depends(require_auth)):
     """Refresh a knowledge item by re-crawling its URL with the same metadata."""
     
     # Validate API key before starting expensive refresh operation
@@ -784,7 +785,7 @@ async def refresh_knowledge_item(source_id: str):
 
 
 @router.post("/knowledge-items/crawl")
-async def crawl_knowledge_item(request: KnowledgeItemRequest):
+async def crawl_knowledge_item(request: KnowledgeItemRequest, auth = Depends(require_auth)):
     """Crawl a URL and add it to the knowledge base with progress tracking."""
     # Validate URL
     if not request.url:
@@ -953,6 +954,7 @@ async def upload_document(
     tags: str | None = Form(None),
     knowledge_type: str = Form("technical"),
     extract_code_examples: bool = Form(True),
+    auth = Depends(require_auth)
 ):
     """Upload and process a document with progress tracking."""
     
@@ -1261,7 +1263,7 @@ async def get_available_sources():
 
 
 @router.delete("/sources/{source_id}")
-async def delete_source(source_id: str):
+async def delete_source(source_id: str, auth = Depends(require_auth)):
     """Delete a source and all its associated data."""
     try:
         safe_logfire_info(f"Deleting source | source_id={source_id}")
@@ -1338,7 +1340,7 @@ async def knowledge_health():
 
 
 @router.post("/knowledge-items/stop/{progress_id}")
-async def stop_crawl_task(progress_id: str):
+async def stop_crawl_task(progress_id: str, auth = Depends(require_auth)):
     """Stop a running crawl task."""
     try:
         from ..services.crawling import get_active_orchestration, unregister_orchestration

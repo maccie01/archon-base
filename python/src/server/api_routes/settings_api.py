@@ -10,11 +10,12 @@ Handles:
 from datetime import datetime
 from typing import Any
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
 # Import logging
 from ..config.logfire_config import logfire
+from ..middleware.auth_middleware import require_auth
 from ..services.credential_service import credential_service, initialize_credentials
 from ..utils import get_supabase_client
 
@@ -94,7 +95,7 @@ async def get_credentials_by_category(category: str):
 
 
 @router.post("/credentials")
-async def create_credential(request: CredentialRequest):
+async def create_credential(request: CredentialRequest, auth = Depends(require_auth)):
     """Create or update a credential."""
     try:
         logfire.info(
@@ -184,7 +185,7 @@ async def get_credential(key: str):
 
 
 @router.put("/credentials/{key}")
-async def update_credential(key: str, request: dict[str, Any]):
+async def update_credential(key: str, request: dict[str, Any], auth = Depends(require_auth)):
     """Update an existing credential."""
     try:
         logfire.info(f"Updating credential | key={key}")
@@ -244,7 +245,7 @@ async def update_credential(key: str, request: dict[str, Any]):
 
 
 @router.delete("/credentials/{key}")
-async def delete_credential(key: str):
+async def delete_credential(key: str, auth = Depends(require_auth)):
     """Delete a credential."""
     try:
         logfire.info(f"Deleting credential | key={key}")

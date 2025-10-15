@@ -1,8 +1,9 @@
-import { BookOpen, Palette, Settings } from "lucide-react";
+import { BookOpen, Palette, Settings, LogOut } from "lucide-react";
 import type React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 // TEMPORARY: Use old SettingsContext until settings are migrated
 import { useSettings } from "../../contexts/SettingsContext";
+import { useAuth } from "../../contexts/AuthContext";
 import { glassmorphism } from "../../features/ui/primitives/styles";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../features/ui/primitives/tooltip";
 import { cn } from "../../lib/utils";
@@ -24,7 +25,14 @@ interface NavigationProps {
  */
 export function Navigation({ className }: NavigationProps) {
   const location = useLocation();
+  const navigate = useNavigate();
   const { projectsEnabled, styleGuideEnabled } = useSettings();
+  const { logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   // Navigation items configuration
   const navigationItems: NavigationItem[] = [
@@ -175,6 +183,31 @@ export function Navigation({ className }: NavigationProps) {
           );
         })}
       </nav>
+
+      {/* Separator before logout */}
+      <div className="w-8 h-px bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-700 to-transparent" />
+
+      {/* Logout Button */}
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            onClick={handleLogout}
+            className={cn(
+              "relative p-3 rounded-lg transition-all duration-300",
+              "flex items-center justify-center",
+              "text-gray-500 dark:text-zinc-500",
+              "hover:text-red-600 dark:hover:text-red-400",
+              "hover:bg-red-50/10 dark:hover:bg-red-900/10",
+            )}
+            aria-label="Logout"
+          >
+            <LogOut className="h-5 w-5" />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Logout</p>
+        </TooltipContent>
+      </Tooltip>
     </nav>
   );
 }

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { queryClient } from './features/shared/config/queryClient';
@@ -9,6 +9,7 @@ import { MCPPage } from './pages/MCPPage';
 import { OnboardingPage } from './pages/OnboardingPage';
 import { MainLayout } from './components/layout/MainLayout';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { AuthProvider } from './contexts/AuthContext';
 import { ToastProvider } from './features/ui/components/ToastProvider';
 import { SettingsProvider, useSettings } from './contexts/SettingsContext';
 import { TooltipProvider } from './features/ui/primitives/tooltip';
@@ -19,6 +20,9 @@ import { ErrorBoundaryWithBugReport } from './components/bug-report/ErrorBoundar
 import { MigrationBanner } from './components/ui/MigrationBanner';
 import { serverHealthService } from './services/serverHealthService';
 import { useMigrationStatus } from './hooks/useMigrationStatus';
+import { LoginPage } from './features/auth/LoginPage';
+import { ProtectedRoute } from './components/auth/ProtectedRoute';
+import { configureApiClient } from './lib/apiClient';
 
 
 const AppRoutes = () => {
@@ -26,26 +30,44 @@ const AppRoutes = () => {
 
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/knowledge" replace />} />
-      <Route path="/knowledge" element={<KnowledgeBasePage />} />
-      <Route path="/onboarding" element={<OnboardingPage />} />
-      <Route path="/settings" element={<SettingsPage />} />
-      <Route path="/mcp" element={<MCPPage />} />
+      {/* Public route */}
+      <Route path="/login" element={<LoginPage />} />
+
+      {/* Protected routes */}
+      <Route path="/" element={<ProtectedRoute><Navigate to="/knowledge" replace /></ProtectedRoute>} />
+      <Route path="/knowledge" element={<ProtectedRoute><KnowledgeBasePage /></ProtectedRoute>} />
+      <Route path="/onboarding" element={<ProtectedRoute><OnboardingPage /></ProtectedRoute>} />
+      <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
+      <Route path="/mcp" element={<ProtectedRoute><MCPPage /></ProtectedRoute>} />
       {styleGuideEnabled ? (
-        <Route path="/style-guide" element={<StyleGuidePage />} />
+        <Route path="/style-guide" element={<ProtectedRoute><StyleGuidePage /></ProtectedRoute>} />
       ) : (
         <Route path="/style-guide" element={<Navigate to="/" replace />} />
       )}
       {projectsEnabled ? (
         <>
-          <Route path="/projects" element={<ProjectPage />} />
-          <Route path="/projects/:projectId" element={<ProjectPage />} />
+          <Route path="/projects" element={<ProtectedRoute><ProjectPage /></ProtectedRoute>} />
+          <Route path="/projects/:projectId" element={<ProtectedRoute><ProjectPage /></ProtectedRoute>} />
         </>
       ) : (
         <Route path="/projects" element={<Navigate to="/" replace />} />
       )}
     </Routes>
   );
+};
+
+const ApiClientConfigurator = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    configureApiClient({
+      onUnauthorized: () => {
+        navigate('/login', { replace: true });
+      },
+    });
+  }, [navigate]);
+
+  return null;
 };
 
 const AppContent = () => {
@@ -94,6 +116,7 @@ const AppContent = () => {
   return (
     <>
       <Router>
+        <ApiClientConfigurator />
         <ErrorBoundaryWithBugReport>
           <MainLayout>
             {/* Migration Banner - shows when backend is up but DB schema needs work */}
@@ -119,13 +142,15 @@ export function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <ToastProvider>
-          <TooltipProvider>
-            <SettingsProvider>
-              <AppContent />
-            </SettingsProvider>
-          </TooltipProvider>
-        </ToastProvider>
+        <AuthProvider>
+          <ToastProvider>
+            <TooltipProvider>
+              <SettingsProvider>
+                <AppContent />
+              </SettingsProvider>
+            </TooltipProvider>
+          </ToastProvider>
+        </AuthProvider>
       </ThemeProvider>
       {import.meta.env.VITE_SHOW_DEVTOOLS === 'true' && (
         <ReactQueryDevtools initialIsOpen={false} />
