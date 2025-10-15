@@ -447,9 +447,12 @@ location / {
 
 ### Access
 
-**URL**: https://arcane.nexorithm.io
-**First-time setup**: Required on first access
-**Admin account**: To be created during setup
+**URL**: https://arcane.nexorithm.io (after DNS configuration)
+**Default Admin Account** (created automatically):
+- **Username**: `arcane`
+- **Password**: `arcane-admin`
+
+⚠️ **IMPORTANT**: Change this password immediately after first login!
 
 ### Encryption Keys (Production)
 
