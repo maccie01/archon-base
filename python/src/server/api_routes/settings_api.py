@@ -44,7 +44,7 @@ class CredentialResponse(BaseModel):
 
 # Credential Management Endpoints
 @router.get("/credentials")
-async def list_credentials(category: str | None = None):
+async def list_credentials(category: str | None = None, auth = Depends(require_auth)):
     """List all credentials and their categories."""
     try:
         logfire.info(f"Listing credentials | category={category}")
@@ -76,7 +76,7 @@ async def list_credentials(category: str | None = None):
 
 
 @router.get("/credentials/categories/{category}")
-async def get_credentials_by_category(category: str):
+async def get_credentials_by_category(category: str, auth = Depends(require_auth)):
     """Get all credentials for a specific category."""
     try:
         logfire.info(f"Getting credentials by category | category={category}")
@@ -140,7 +140,7 @@ OPTIONAL_SETTINGS_WITH_DEFAULTS = {
 
 
 @router.get("/credentials/{key}")
-async def get_credential(key: str):
+async def get_credential(key: str, auth = Depends(require_auth)):
     """Get a specific credential by key."""
     try:
         logfire.info(f"Getting credential | key={key}")
@@ -265,7 +265,7 @@ async def delete_credential(key: str, auth = Depends(require_auth)):
 
 
 @router.post("/credentials/initialize")
-async def initialize_credentials_endpoint():
+async def initialize_credentials_endpoint(auth = Depends(require_auth)):
     """Reload credentials from database."""
     try:
         logfire.info("Reloading credentials from database")
@@ -280,7 +280,7 @@ async def initialize_credentials_endpoint():
 
 
 @router.get("/database/metrics")
-async def database_metrics():
+async def database_metrics(auth = Depends(require_auth)):
     """Get database metrics and statistics."""
     try:
         logfire.info("Getting database metrics")
@@ -345,9 +345,9 @@ async def settings_health():
 
 
 @router.post("/credentials/status-check")
-async def check_credential_status(request: dict[str, list[str]]):
+async def check_credential_status(request: dict[str, list[str]], auth = Depends(require_auth)):
     """Check status of API credentials by actually decrypting and validating them.
-    
+
     This endpoint is specifically for frontend status indicators and returns
     decrypted credential values for connectivity testing.
     """

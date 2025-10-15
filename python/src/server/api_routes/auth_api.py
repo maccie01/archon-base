@@ -366,7 +366,7 @@ async def revoke_api_key(
         )
 
 
-@router.post("/validate")
+@router.get("/validate")
 async def validate_current_key(auth = Depends(require_auth)):
     """
     Validate the current API key.

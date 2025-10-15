@@ -5,8 +5,10 @@ API routes for database migration tracking and management.
 from datetime import datetime
 
 import logfire
-from fastapi import APIRouter, Header, HTTPException, Response
+from fastapi import APIRouter, Depends, Header, HTTPException, Response
 from pydantic import BaseModel
+
+from ..middleware.auth_middleware import require_auth
 
 from ..config.version import ARCHON_VERSION
 from ..services.migration_service import migration_service
@@ -59,7 +61,7 @@ router = APIRouter(prefix="/api/migrations", tags=["migrations"])
 
 @router.get("/status", response_model=MigrationStatusResponse)
 async def get_migration_status(
-    response: Response, if_none_match: str | None = Header(None)
+    response: Response, if_none_match: str | None = Header(None), auth = Depends(require_auth)
 ):
     """
     Get current migration status including pending and applied migrations.
@@ -96,7 +98,7 @@ async def get_migration_status(
 
 
 @router.get("/history", response_model=MigrationHistoryResponse)
-async def get_migration_history(response: Response, if_none_match: str | None = Header(None)):
+async def get_migration_history(response: Response, if_none_match: str | None = Header(None), auth = Depends(require_auth)):
     """
     Get history of applied migrations.
 
@@ -143,7 +145,7 @@ async def get_migration_history(response: Response, if_none_match: str | None = 
 
 
 @router.get("/pending", response_model=list[PendingMigration])
-async def get_pending_migrations():
+async def get_pending_migrations(auth = Depends(require_auth)):
     """
     Get list of pending migrations only.
 

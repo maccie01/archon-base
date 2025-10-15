@@ -3,8 +3,10 @@
 from datetime import datetime
 from email.utils import formatdate
 
-from fastapi import APIRouter, Header, HTTPException, Response
+from fastapi import APIRouter, Depends, Header, HTTPException, Response
 from fastapi import status as http_status
+
+from ..middleware.auth_middleware import require_auth
 
 from ..config.logfire_config import get_logger, logfire
 from ..models.progress_models import create_progress_response
@@ -23,7 +25,8 @@ TERMINAL_STATES = {"completed", "failed", "error", "cancelled"}
 async def get_progress(
     operation_id: str,
     response: Response,
-    if_none_match: str | None = Header(None)
+    if_none_match: str | None = Header(None),
+    auth = Depends(require_auth)
 ):
     """
     Get progress for an operation with ETag support.
@@ -98,7 +101,7 @@ async def get_progress(
 
 
 @router.get("/")
-async def list_active_operations():
+async def list_active_operations(auth = Depends(require_auth)):
     """
     List all active operations.
 

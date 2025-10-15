@@ -7,8 +7,10 @@ This module handles page retrieval operations for RAG:
 - Get page by URL
 """
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
+
+from ..middleware.auth_middleware import require_auth
 
 from ..config.logfire_config import get_logger, safe_logfire_error
 from ..utils import get_supabase_client
@@ -93,6 +95,7 @@ def _handle_large_page_content(page_data: dict) -> dict:
 async def list_pages(
     source_id: str = Query(..., description="Source ID to filter pages"),
     section: str | None = Query(None, description="Filter by section title (for llms-full.txt)"),
+    auth = Depends(require_auth)
 ):
     """
     List all pages for a given source.
@@ -134,7 +137,7 @@ async def list_pages(
 
 
 @router.get("/pages/by-url")
-async def get_page_by_url(url: str = Query(..., description="The URL of the page to retrieve")):
+async def get_page_by_url(url: str = Query(..., description="The URL of the page to retrieve"), auth = Depends(require_auth)):
     """
     Get a single page by its URL.
 
@@ -168,7 +171,7 @@ async def get_page_by_url(url: str = Query(..., description="The URL of the page
 
 
 @router.get("/pages/{page_id}")
-async def get_page_by_id(page_id: str):
+async def get_page_by_id(page_id: str, auth = Depends(require_auth)):
     """
     Get a single page by its ID.
 

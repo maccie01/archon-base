@@ -80,11 +80,12 @@ class CreateTaskRequest(BaseModel):
 async def list_projects(
     response: Response,
     include_content: bool = True,
-    if_none_match: str | None = Header(None)
+    if_none_match: str | None = Header(None),
+    auth = Depends(require_auth)
 ):
     """
     List all projects.
-    
+
     Args:
         include_content: If True (default), returns full project content.
                         If False, returns lightweight metadata with statistics.
@@ -161,7 +162,7 @@ async def list_projects(
 
 
 @router.post("/projects")
-async def create_project(request: CreateProjectRequest):
+async def create_project(request: CreateProjectRequest, auth = Depends(require_auth)):
     """Create a new project with streaming progress."""
     # Validate title
     if not request.title:
@@ -279,11 +280,12 @@ async def projects_health():
 async def get_all_task_counts(
     request: Request,
     response: Response,
+    auth = Depends(require_auth)
 ):
     """
     Get task counts for all projects in a single batch query.
     Optimized endpoint to avoid N+1 query problem.
-    
+
     Returns counts grouped by project_id with todo, doing, and done counts.
     Review status is included in doing count to match frontend logic.
     """
@@ -337,7 +339,7 @@ async def get_all_task_counts(
 
 
 @router.get("/projects/{project_id}")
-async def get_project(project_id: str):
+async def get_project(project_id: str, auth = Depends(require_auth)):
     """Get a specific project."""
     try:
         logfire.info(f"Getting project | project_id={project_id}")
@@ -377,7 +379,7 @@ async def get_project(project_id: str):
 
 
 @router.put("/projects/{project_id}")
-async def update_project(project_id: str, request: UpdateProjectRequest):
+async def update_project(project_id: str, request: UpdateProjectRequest, auth = Depends(require_auth)):
     """Update a project with comprehensive Logfire monitoring."""
     try:
         supabase_client = get_supabase_client()
@@ -488,7 +490,7 @@ async def update_project(project_id: str, request: UpdateProjectRequest):
 
 
 @router.delete("/projects/{project_id}")
-async def delete_project(project_id: str):
+async def delete_project(project_id: str, auth = Depends(require_auth)):
     """Delete a project and all its tasks."""
     try:
         logfire.info(f"Deleting project | project_id={project_id}")
@@ -520,7 +522,7 @@ async def delete_project(project_id: str):
 
 
 @router.get("/projects/{project_id}/features")
-async def get_project_features(project_id: str):
+async def get_project_features(project_id: str, auth = Depends(require_auth)):
     """Get features from a project's features JSONB field."""
     try:
         logfire.info(f"Getting project features | project_id={project_id}")
@@ -555,7 +557,8 @@ async def list_project_tasks(
     request: Request,
     response: Response,
     include_archived: bool = False,
-    exclude_large_fields: bool = False
+    exclude_large_fields: bool = False,
+    auth = Depends(require_auth)
 ):
     """List all tasks for a specific project with ETag support for efficient polling."""
     try:
@@ -656,7 +659,7 @@ async def list_project_tasks(
 
 
 @router.post("/tasks")
-async def create_task(request: CreateTaskRequest):
+async def create_task(request: CreateTaskRequest, auth = Depends(require_auth)):
     """Create a new task with automatic reordering."""
     try:
         # Use TaskService to create the task
@@ -698,6 +701,7 @@ async def list_tasks(
     per_page: int = 10,
     exclude_large_fields: bool = False,
     q: str | None = None,  # Search query parameter
+    auth = Depends(require_auth)
 ):
     """List tasks with optional filters including status, project, and keyword search."""
     try:
@@ -771,7 +775,7 @@ async def list_tasks(
 
 
 @router.get("/tasks/{task_id}")
-async def get_task(task_id: str):
+async def get_task(task_id: str, auth = Depends(require_auth)):
     """Get a specific task by ID."""
     try:
         # Use TaskService to get the task
@@ -838,7 +842,7 @@ class RestoreVersionRequest(BaseModel):
 
 
 @router.put("/tasks/{task_id}")
-async def update_task(task_id: str, request: UpdateTaskRequest):
+async def update_task(task_id: str, request: UpdateTaskRequest, auth = Depends(require_auth)):
     """Update a task."""
     try:
         # Build update fields dictionary
@@ -884,7 +888,7 @@ async def update_task(task_id: str, request: UpdateTaskRequest):
 
 
 @router.delete("/tasks/{task_id}")
-async def delete_task(task_id: str):
+async def delete_task(task_id: str, auth = Depends(require_auth)):
     """Archive a task (soft delete)."""
     try:
         # Use TaskService to archive the task
@@ -914,7 +918,7 @@ async def delete_task(task_id: str):
 
 
 @router.put("/mcp/tasks/{task_id}/status")
-async def mcp_update_task_status(task_id: str, status: str):
+async def mcp_update_task_status(task_id: str, status: str, auth = Depends(require_auth)):
     """Update task status via MCP tools."""
     try:
         logfire.info(f"MCP task status update | task_id={task_id} | status={status}")
@@ -955,10 +959,10 @@ async def mcp_update_task_status(task_id: str, status: str):
 
 
 @router.get("/projects/{project_id}/docs")
-async def list_project_documents(project_id: str, include_content: bool = False):
+async def list_project_documents(project_id: str, include_content: bool = False, auth = Depends(require_auth)):
     """
     List all documents for a specific project.
-    
+
     Args:
         project_id: Project UUID
         include_content: If True, includes full document content.
@@ -993,7 +997,7 @@ async def list_project_documents(project_id: str, include_content: bool = False)
 
 
 @router.post("/projects/{project_id}/docs")
-async def create_project_document(project_id: str, request: CreateDocumentRequest):
+async def create_project_document(project_id: str, request: CreateDocumentRequest, auth = Depends(require_auth)):
     """Create a new document for a project."""
     try:
         logfire.info(
@@ -1031,7 +1035,7 @@ async def create_project_document(project_id: str, request: CreateDocumentReques
 
 
 @router.get("/projects/{project_id}/docs/{doc_id}")
-async def get_project_document(project_id: str, doc_id: str):
+async def get_project_document(project_id: str, doc_id: str, auth = Depends(require_auth)):
     """Get a specific document from a project."""
     try:
         logfire.info(f"Getting document | project_id={project_id} | doc_id={doc_id}")
@@ -1060,7 +1064,7 @@ async def get_project_document(project_id: str, doc_id: str):
 
 
 @router.put("/projects/{project_id}/docs/{doc_id}")
-async def update_project_document(project_id: str, doc_id: str, request: UpdateDocumentRequest):
+async def update_project_document(project_id: str, doc_id: str, request: UpdateDocumentRequest, auth = Depends(require_auth)):
     """Update a document in a project."""
     try:
         logfire.info(f"Updating document | project_id={project_id} | doc_id={doc_id}")
@@ -1100,7 +1104,7 @@ async def update_project_document(project_id: str, doc_id: str, request: UpdateD
 
 
 @router.delete("/projects/{project_id}/docs/{doc_id}")
-async def delete_project_document(project_id: str, doc_id: str):
+async def delete_project_document(project_id: str, doc_id: str, auth = Depends(require_auth)):
     """Delete a document from a project."""
     try:
         logfire.info(f"Deleting document | project_id={project_id} | doc_id={doc_id}")
@@ -1132,7 +1136,7 @@ async def delete_project_document(project_id: str, doc_id: str):
 
 
 @router.get("/projects/{project_id}/versions")
-async def list_project_versions(project_id: str, field_name: str = None):
+async def list_project_versions(project_id: str, field_name: str = None, auth = Depends(require_auth)):
     """List version history for a project's JSONB fields."""
     try:
         logfire.info(
@@ -1163,7 +1167,7 @@ async def list_project_versions(project_id: str, field_name: str = None):
 
 
 @router.post("/projects/{project_id}/versions")
-async def create_project_version(project_id: str, request: CreateVersionRequest):
+async def create_project_version(project_id: str, request: CreateVersionRequest, auth = Depends(require_auth)):
     """Create a version snapshot for a project's JSONB field."""
     try:
         logfire.info(
@@ -1202,7 +1206,7 @@ async def create_project_version(project_id: str, request: CreateVersionRequest)
 
 
 @router.get("/projects/{project_id}/versions/{field_name}/{version_number}")
-async def get_project_version(project_id: str, field_name: str, version_number: int):
+async def get_project_version(project_id: str, field_name: str, version_number: int, auth = Depends(require_auth)):
     """Get a specific version's content."""
     try:
         logfire.info(
@@ -1238,7 +1242,7 @@ async def get_project_version(project_id: str, field_name: str, version_number: 
 
 @router.post("/projects/{project_id}/versions/{field_name}/{version_number}/restore")
 async def restore_project_version(
-    project_id: str, field_name: str, version_number: int, request: RestoreVersionRequest
+    project_id: str, field_name: str, version_number: int, request: RestoreVersionRequest, auth = Depends(require_auth)
 ):
     """Restore a project's JSONB field to a specific version."""
     try:

@@ -5,8 +5,10 @@ This module handles tag management and auto-tagging operations.
 Tags provide categorical organization across all knowledge sources.
 """
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
+
+from ..middleware.auth_middleware import require_auth
 
 from ..config.logfire_config import get_logger, safe_logfire_error, safe_logfire_info
 from ..services.knowledge import AutoTaggingService, KnowledgeTagService
@@ -36,7 +38,7 @@ class SuggestTagsRequest(BaseModel):
 
 
 @router.get("")
-async def get_tags(category: str | None = None):
+async def get_tags(category: str | None = None, auth = Depends(require_auth)):
     """
     Get all knowledge tags, optionally filtered by category.
 
@@ -74,7 +76,7 @@ async def get_tags(category: str | None = None):
 
 
 @router.get("/{tag_name}")
-async def get_tag(tag_name: str):
+async def get_tag(tag_name: str, auth = Depends(require_auth)):
     """
     Get a specific tag by name.
 
@@ -117,7 +119,7 @@ async def get_tag(tag_name: str):
 
 
 @router.get("/categories/grouped")
-async def get_tags_by_category():
+async def get_tags_by_category(auth = Depends(require_auth)):
     """
     Get all tags organized by category.
 
@@ -157,7 +159,7 @@ async def get_tags_by_category():
 
 
 @router.post("/suggest")
-async def suggest_tags(request: SuggestTagsRequest):
+async def suggest_tags(request: SuggestTagsRequest, auth = Depends(require_auth)):
     """
     Suggest tags for a knowledge source based on URL and content.
 

@@ -5,7 +5,9 @@ Handles server-side provider connectivity testing without exposing API keys to f
 """
 
 import httpx
-from fastapi import APIRouter, HTTPException, Path
+from fastapi import APIRouter, Depends, HTTPException, Path
+
+from ..middleware.auth_middleware import require_auth
 
 from ..config.logfire_config import logfire
 from ..services.credential_service import credential_service
@@ -103,7 +105,8 @@ async def get_provider_status(
         description="Provider name to test connectivity for",
         regex="^[a-z0-9_]+$",
         max_length=20
-    )
+    ),
+    auth = Depends(require_auth)
 ):
     """Test provider connectivity using server-side API key (secure)"""
     try:

@@ -188,9 +188,9 @@ class RagQueryRequest(BaseModel):
 
 
 @router.get("/crawl-progress/{progress_id}")
-async def get_crawl_progress(progress_id: str):
+async def get_crawl_progress(progress_id: str, auth = Depends(require_auth)):
     """Get crawl progress for polling.
-    
+
     Returns the current state of a crawl operation.
     Frontend should poll this endpoint to track crawl progress.
     """
@@ -231,7 +231,7 @@ async def get_crawl_progress(progress_id: str):
 
 
 @router.get("/knowledge-items/sources")
-async def get_knowledge_sources():
+async def get_knowledge_sources(auth = Depends(require_auth)):
     """Get all available knowledge sources."""
     try:
         # Return empty list for now to pass the test
@@ -249,7 +249,8 @@ async def get_knowledge_items(
     knowledge_type: str | None = None,
     search: str | None = None,
     project_id: str | None = None,
-    scope: str = "all"
+    scope: str = "all",
+    auth = Depends(require_auth)
 ):
     """
     Get knowledge items with pagination and filtering.
@@ -287,7 +288,8 @@ async def get_knowledge_items(
 
 @router.get("/knowledge-items/summary")
 async def get_knowledge_items_summary(
-    page: int = 1, per_page: int = 20, knowledge_type: str | None = None, search: str | None = None
+    page: int = 1, per_page: int = 20, knowledge_type: str | None = None, search: str | None = None,
+    auth = Depends(require_auth)
 ):
     """
     Get lightweight summaries of knowledge items.
@@ -317,7 +319,7 @@ async def get_knowledge_items_summary(
 
 
 @router.get("/knowledge-items/{source_id}")
-async def get_knowledge_item(source_id: str):
+async def get_knowledge_item(source_id: str, auth = Depends(require_auth)):
     """Get a specific knowledge item by source_id."""
     try:
         safe_logfire_info(f"Fetching knowledge item | source_id={source_id}")
@@ -422,7 +424,8 @@ async def get_knowledge_item_chunks(
     source_id: str,
     domain_filter: str | None = None,
     limit: int = 20,
-    offset: int = 0
+    offset: int = 0,
+    auth = Depends(require_auth)
 ):
     """
     Get document chunks for a specific knowledge item with pagination.
@@ -580,7 +583,8 @@ async def get_knowledge_item_chunks(
 async def get_knowledge_item_code_examples(
     source_id: str,
     limit: int = 20,
-    offset: int = 0
+    offset: int = 0,
+    auth = Depends(require_auth)
 ):
     """
     Get code examples for a specific knowledge item with pagination.
@@ -1151,7 +1155,7 @@ async def _perform_upload_with_progress(
 
 
 @router.post("/knowledge-items/search")
-async def search_knowledge_items(request: RagQueryRequest):
+async def search_knowledge_items(request: RagQueryRequest, auth = Depends(require_auth)):
     """Search knowledge items - alias for RAG query."""
     # Validate query
     if not request.query:
@@ -1165,7 +1169,7 @@ async def search_knowledge_items(request: RagQueryRequest):
 
 
 @router.post("/rag/query")
-async def perform_rag_query(request: RagQueryRequest):
+async def perform_rag_query(request: RagQueryRequest, auth = Depends(require_auth)):
     """Perform a RAG query on the knowledge base using service layer."""
     # Validate query
     if not request.query:
@@ -1202,7 +1206,7 @@ async def perform_rag_query(request: RagQueryRequest):
 
 
 @router.post("/rag/code-examples")
-async def search_code_examples(request: RagQueryRequest):
+async def search_code_examples(request: RagQueryRequest, auth = Depends(require_auth)):
     """Search for code examples relevant to the query using dedicated code examples service."""
     try:
         # Use RAGService for code examples search
@@ -1238,14 +1242,14 @@ async def search_code_examples(request: RagQueryRequest):
 
 
 @router.post("/code-examples")
-async def search_code_examples_simple(request: RagQueryRequest):
+async def search_code_examples_simple(request: RagQueryRequest, auth = Depends(require_auth)):
     """Search for code examples - simplified endpoint at /api/code-examples."""
     # Delegate to the existing endpoint handler
     return await search_code_examples(request)
 
 
 @router.get("/rag/sources")
-async def get_available_sources():
+async def get_available_sources(auth = Depends(require_auth)):
     """Get all available sources for RAG queries."""
     try:
         # Use KnowledgeItemService
@@ -1298,7 +1302,7 @@ async def delete_source(source_id: str, auth = Depends(require_auth)):
 
 
 @router.get("/database/metrics")
-async def get_database_metrics():
+async def get_database_metrics(auth = Depends(require_auth)):
     """Get database metrics and statistics."""
     try:
         # Use DatabaseMetricsService

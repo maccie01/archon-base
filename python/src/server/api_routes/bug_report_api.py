@@ -8,8 +8,10 @@ import os
 from typing import Any
 
 import httpx
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
+
+from ..middleware.auth_middleware import require_auth
 
 from ..config.logfire_config import get_logger
 
@@ -189,7 +191,7 @@ github_service = GitHubService()
 
 
 @router.post("/github", response_model=BugReportResponse)
-async def create_github_issue(bug_report: BugReportRequest):
+async def create_github_issue(bug_report: BugReportRequest, auth = Depends(require_auth)):
     """
     Create a GitHub issue from a bug report.
 

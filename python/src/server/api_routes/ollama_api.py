@@ -12,8 +12,10 @@ import json
 from datetime import datetime
 from typing import Any
 
-from fastapi import APIRouter, BackgroundTasks, HTTPException, Query
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
+
+from ..middleware.auth_middleware import require_auth
 
 from ..config.logfire_config import get_logger
 from ..services.llm_provider_service import validate_provider_instance
@@ -85,7 +87,8 @@ async def discover_models_endpoint(
     instance_urls: list[str] = Query(..., description="Ollama instance URLs"),
     include_capabilities: bool = Query(True, description="Include capability detection"),
     fetch_details: bool = Query(False, description="Fetch comprehensive model details via /api/show"),
-    background_tasks: BackgroundTasks = None
+    background_tasks: BackgroundTasks = None,
+    auth = Depends(require_auth)
 ) -> ModelDiscoveryResponse:
     """
     Discover models from multiple Ollama instances with capability detection.
@@ -142,7 +145,8 @@ async def discover_models_endpoint(
 @router.get("/instances/health")
 async def health_check_endpoint(
     instance_urls: list[str] = Query(..., description="Ollama instance URLs to check"),
-    include_models: bool = Query(False, description="Include model count in response")
+    include_models: bool = Query(False, description="Include model count in response"),
+    auth = Depends(require_auth)
 ) -> dict[str, Any]:
     """
     Check health status of multiple Ollama instances.
@@ -205,7 +209,7 @@ async def health_check_endpoint(
 
 
 @router.post("/validate", response_model=InstanceValidationResponse)
-async def validate_instance_endpoint(request: InstanceValidationRequest) -> InstanceValidationResponse:
+async def validate_instance_endpoint(request: InstanceValidationRequest, auth = Depends(require_auth)) -> InstanceValidationResponse:
     """
     Validate an Ollama instance with comprehensive capability testing.
     
@@ -255,7 +259,7 @@ async def validate_instance_endpoint(request: InstanceValidationRequest) -> Inst
 
 
 @router.post("/embedding/route", response_model=EmbeddingRouteResponse)
-async def analyze_embedding_route_endpoint(request: EmbeddingRouteRequest) -> EmbeddingRouteResponse:
+async def analyze_embedding_route_endpoint(request: EmbeddingRouteRequest, auth = Depends(require_auth)) -> EmbeddingRouteResponse:
     """
     Analyze optimal routing for embedding operations.
     
@@ -294,7 +298,8 @@ async def analyze_embedding_route_endpoint(request: EmbeddingRouteRequest) -> Em
 @router.get("/embedding/routes")
 async def get_available_embedding_routes_endpoint(
     instance_urls: list[str] = Query(..., description="Ollama instance URLs"),
-    sort_by_performance: bool = Query(True, description="Sort by performance score")
+    sort_by_performance: bool = Query(True, description="Sort by performance score"),
+    auth = Depends(require_auth)
 ) -> dict[str, Any]:
     """
     Get all available embedding routes across multiple instances.
@@ -348,7 +353,7 @@ async def get_available_embedding_routes_endpoint(
 
 
 @router.delete("/cache")
-async def clear_ollama_cache_endpoint() -> dict[str, str]:
+async def clear_ollama_cache_endpoint(auth = Depends(require_auth)) -> dict[str, str]:
     """
     Clear all Ollama-related caches for fresh data retrieval.
     
@@ -409,7 +414,7 @@ class ModelListResponse(BaseModel):
 
 
 @router.post("/models/discover-and-store", response_model=ModelListResponse)
-async def discover_and_store_models_endpoint(request: ModelDiscoveryAndStoreRequest) -> ModelListResponse:
+async def discover_and_store_models_endpoint(request: ModelDiscoveryAndStoreRequest, auth = Depends(require_auth)) -> ModelListResponse:
     """
     Discover models from Ollama instances, assess Archon compatibility, and store in database.
     
@@ -497,7 +502,7 @@ async def discover_and_store_models_endpoint(request: ModelDiscoveryAndStoreRequ
 
 
 @router.get("/models/stored", response_model=ModelListResponse)
-async def get_stored_models_endpoint() -> ModelListResponse:
+async def get_stored_models_endpoint(auth = Depends(require_auth)) -> ModelListResponse:
     """
     Retrieve stored Ollama models from database.
     
@@ -955,7 +960,7 @@ async def _test_structured_output_capability(model_name: str, instance_url: str)
 
 
 @router.post("/models/discover-with-details", response_model=ModelDiscoveryResponse)
-async def discover_models_with_real_details(request: ModelDiscoveryAndStoreRequest) -> ModelDiscoveryResponse:
+async def discover_models_with_real_details(request: ModelDiscoveryAndStoreRequest, auth = Depends(require_auth)) -> ModelDiscoveryResponse:
     """
     Discover models from Ollama instances with complete real details from both /api/tags and /api/show.
     Only stores actual data from Ollama API endpoints - no fabricated information.
@@ -1229,7 +1234,7 @@ class ModelCapabilityTestResponse(BaseModel):
 
 
 @router.post("/models/test-capabilities", response_model=ModelCapabilityTestResponse)
-async def test_model_capabilities_endpoint(request: ModelCapabilityTestRequest) -> ModelCapabilityTestResponse:
+async def test_model_capabilities_endpoint(request: ModelCapabilityTestRequest, auth = Depends(require_auth)) -> ModelCapabilityTestResponse:
     """
     Test real-time capabilities of a specific model to provide accurate compatibility assessment.
     

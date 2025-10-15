@@ -26,6 +26,7 @@ EXEMPT_PATHS = [
     "/health",
     "/api/health",
     "/api/auth/bootstrap",  # Initial API key creation
+    "/api/auth/status",     # Public auth status endpoint
     "/internal",  # Internal API uses IP-based auth
 ]
 

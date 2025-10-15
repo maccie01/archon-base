@@ -6,8 +6,10 @@ import logging
 import uuid
 from datetime import datetime
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
+
+from ..middleware.auth_middleware import require_auth
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +36,7 @@ class ChatMessage(BaseModel):
 
 # REST Endpoints (minimal for frontend compatibility)
 @router.post("/sessions")
-async def create_session(request: CreateSessionRequest):
+async def create_session(request: CreateSessionRequest, auth = Depends(require_auth)):
     """Create a new chat session."""
     session_id = str(uuid.uuid4())
     sessions[session_id] = {
@@ -50,7 +52,7 @@ async def create_session(request: CreateSessionRequest):
 
 
 @router.get("/sessions/{session_id}")
-async def get_session(session_id: str):
+async def get_session(session_id: str, auth = Depends(require_auth)):
     """Get session information."""
     if session_id not in sessions:
         raise HTTPException(status_code=404, detail="Session not found")
@@ -58,7 +60,7 @@ async def get_session(session_id: str):
 
 
 @router.get("/sessions/{session_id}/messages")
-async def get_messages(session_id: str):
+async def get_messages(session_id: str, auth = Depends(require_auth)):
     """Get messages for a session (for polling)."""
     if session_id not in sessions:
         raise HTTPException(status_code=404, detail="Session not found")
@@ -66,7 +68,7 @@ async def get_messages(session_id: str):
 
 
 @router.post("/sessions/{session_id}/messages")
-async def send_message(session_id: str, request: dict):
+async def send_message(session_id: str, request: dict, auth = Depends(require_auth)):
     """REST endpoint for sending messages."""
     if session_id not in sessions:
         raise HTTPException(status_code=404, detail="Session not found")

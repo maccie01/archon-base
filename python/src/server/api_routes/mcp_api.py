@@ -10,10 +10,11 @@ from typing import Any
 
 import docker
 from docker.errors import NotFound
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 
 # Import unified logging
 from ..config.logfire_config import api_logger, safe_set_attribute, safe_span
+from ..middleware.auth_middleware import require_auth
 
 router = APIRouter(prefix="/api/mcp", tags=["mcp"])
 
@@ -76,7 +77,7 @@ def get_container_status() -> dict[str, Any]:
 
 
 @router.get("/status")
-async def get_status():
+async def get_status(auth = Depends(require_auth)):
     """Get MCP server status."""
     with safe_span("api_mcp_status") as span:
         safe_set_attribute(span, "endpoint", "/api/mcp/status")
@@ -95,7 +96,7 @@ async def get_status():
 
 
 @router.get("/config")
-async def get_mcp_config():
+async def get_mcp_config(auth = Depends(require_auth)):
     """Get MCP server configuration."""
     with safe_span("api_get_mcp_config") as span:
         safe_set_attribute(span, "endpoint", "/api/mcp/config")
@@ -140,7 +141,7 @@ async def get_mcp_config():
 
 
 @router.get("/clients")
-async def get_mcp_clients():
+async def get_mcp_clients(auth = Depends(require_auth)):
     """Get connected MCP clients with type detection."""
     with safe_span("api_mcp_clients") as span:
         safe_set_attribute(span, "endpoint", "/api/mcp/clients")
@@ -166,7 +167,7 @@ async def get_mcp_clients():
 
 
 @router.get("/sessions")
-async def get_mcp_sessions():
+async def get_mcp_sessions(auth = Depends(require_auth)):
     """Get MCP session information."""
     with safe_span("api_mcp_sessions") as span:
         safe_set_attribute(span, "endpoint", "/api/mcp/sessions")

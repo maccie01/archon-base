@@ -5,8 +5,10 @@ This module handles all folder management operations for project-specific knowle
 Folders provide organizational structure for project-scoped knowledge sources.
 """
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
+
+from ..middleware.auth_middleware import require_auth
 
 from ..config.logfire_config import get_logger, safe_logfire_error, safe_logfire_info
 from ..services.knowledge import KnowledgeFolderService
@@ -58,7 +60,7 @@ class UpdateFolderRequest(BaseModel):
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)
-async def create_folder(request: CreateFolderRequest):
+async def create_folder(request: CreateFolderRequest, auth = Depends(require_auth)):
     """
     Create a new knowledge folder for a project.
 
@@ -113,7 +115,7 @@ async def create_folder(request: CreateFolderRequest):
 
 
 @router.get("/{folder_id}")
-async def get_folder(folder_id: str):
+async def get_folder(folder_id: str, auth = Depends(require_auth)):
     """
     Get a specific knowledge folder by ID.
 
@@ -156,7 +158,7 @@ async def get_folder(folder_id: str):
 
 
 @router.put("/{folder_id}")
-async def update_folder(folder_id: str, request: UpdateFolderRequest):
+async def update_folder(folder_id: str, request: UpdateFolderRequest, auth = Depends(require_auth)):
     """
     Update a knowledge folder's metadata.
 
@@ -221,7 +223,7 @@ async def update_folder(folder_id: str, request: UpdateFolderRequest):
 
 
 @router.delete("/{folder_id}")
-async def delete_folder(folder_id: str):
+async def delete_folder(folder_id: str, auth = Depends(require_auth)):
     """
     Delete a knowledge folder.
 
@@ -269,7 +271,7 @@ async def delete_folder(folder_id: str):
 
 
 @router.get("/projects/{project_id}/list")
-async def list_project_folders(project_id: str):
+async def list_project_folders(project_id: str, auth = Depends(require_auth)):
     """
     List all knowledge folders for a specific project.
 
