@@ -8,11 +8,20 @@
 
 ## Quick Start
 
+### For Deployment
+
 1. 📖 Start with [README.md](./README.md) for deployment overview
 2. 🔐 Review [CREDENTIALS.md](./CREDENTIALS.md) for all access credentials
 3. ⚙️ Check [ENVIRONMENT.md](./ENVIRONMENT.md) for configuration details
 4. 🔒 Read [AUTHENTICATION.md](./AUTHENTICATION.md) for auth system
 5. 🐳 See [DOCKER_SETUP.md](./DOCKER_SETUP.md) for container management
+
+### For Security
+
+1. ⭐ Start with [SECURITY_DEPLOYMENT_FINAL_REPORT.md](./SECURITY_DEPLOYMENT_FINAL_REPORT.md) for complete security overview
+2. 🛡️ Review [SECURITY_DEPLOYMENT_COMPLETE.md](./SECURITY_DEPLOYMENT_COMPLETE.md) for deployment summary
+3. 🔐 Check [AUTHENTICATION_AUDIT_COMPLETE.md](./AUTHENTICATION_AUDIT_COMPLETE.md) for API security
+4. 🌐 See [NGINX_SECURITY_HARDENING_COMPLETE.md](./NGINX_SECURITY_HARDENING_COMPLETE.md) for web server hardening
 
 ---
 
@@ -191,9 +200,19 @@ See [README.md](./README.md) → "Emergency Contacts & Resources"
 - [x] Troubleshooting common issues
 - [x] SSH and server access
 
+### ✅ Security Documentation (Added 2025-10-15)
+
+- [x] Security deployment final report (SECURITY_DEPLOYMENT_FINAL_REPORT.md)
+- [x] Security deployment summary (SECURITY_DEPLOYMENT_COMPLETE.md)
+- [x] Final security summary (FINAL_SECURITY_SUMMARY.md)
+- [x] Authentication audit (AUTHENTICATION_AUDIT_COMPLETE.md)
+- [x] Infrastructure audit (INFRASTRUCTURE_AUDIT_COMPLETE.md)
+- [x] Nginx security hardening (NGINX_SECURITY_HARDENING_COMPLETE.md)
+- [x] Docker port binding analysis (DOCKER_PORT_BINDING_ANALYSIS.md)
+- [x] Security fix plan (SECURITY_FIX_PLAN.md)
+
 ### 🔄 Future Documentation
 
-- [ ] Nginx configuration details (NGINX_CONFIG.md)
 - [ ] API endpoint reference (API_REFERENCE.md)
 - [ ] Monitoring and alerting setup
 - [ ] Backup and disaster recovery procedures
