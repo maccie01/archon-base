@@ -1,0 +1,931 @@
+{
+  "success": [
+    {
+      "success": true,
+      "file": "MIGRATION_READY_REPORT.md",
+      "progress_id": "d6cb926a-ee89-424e-82f5-1cfeedd39c65"
+    },
+    {
+      "success": true,
+      "file": "README.md",
+      "progress_id": "5b6b28c9-6ea7-4bc9-8677-d4e7ca96de86"
+    },
+    {
+      "success": true,
+      "file": "global/01-react-frontend/ACCESSIBILITY.md",
+      "progress_id": "98a87bbd-4be0-4789-a2d1-cdd52e6fa016"
+    },
+    {
+      "success": true,
+      "file": "global/01-react-frontend/ANTIPATTERNS.md",
+      "progress_id": "457403f0-0316-4325-8c0e-878bceb2c0fe"
+    },
+    {
+      "success": true,
+      "file": "global/01-react-frontend/COMPONENT_PATTERNS.md",
+      "progress_id": "519a3091-91a1-4a8c-8ddf-2572894a5001"
+    },
+    {
+      "success": true,
+      "file": "global/01-react-frontend/ERROR_HANDLING.md",
+      "progress_id": "06077594-d146-4e61-b6d7-d377ea4a4874"
+    },
+    {
+      "success": true,
+      "file": "global/01-react-frontend/FORMS_VALIDATION.md",
+      "progress_id": "6e5020f2-dbfe-4ed2-9dc9-19b27b863a8a"
+    },
+    {
+      "success": true,
+      "file": "global/01-react-frontend/HOOKS_PATTERNS.md",
+      "progress_id": "1bc32e5e-c605-4bf6-8ba4-c637740d6b65"
+    },
+    {
+      "success": true,
+      "file": "global/01-react-frontend/PERFORMANCE.md",
+      "progress_id": "950d5b2c-2912-43f5-ac3c-928137f88d14"
+    },
+    {
+      "success": true,
+      "file": "global/01-react-frontend/REACT_BEST_PRACTICES.md",
+      "progress_id": "00acea5e-9c99-434e-a953-341b310bb4db"
+    },
+    {
+      "success": true,
+      "file": "global/01-react-frontend/README.md",
+      "progress_id": "640253de-4da9-44cd-b3dd-13c413c38ccb"
+    },
+    {
+      "success": true,
+      "file": "global/01-react-frontend/STATE_MANAGEMENT.md",
+      "progress_id": "15e027be-35c6-4dfd-8c89-aa4228d1b02a"
+    },
+    {
+      "success": true,
+      "file": "global/01-react-frontend/TESTING_REACT.md",
+      "progress_id": "29e8bc33-0d8a-44ad-a6c7-20ff60b25738"
+    },
+    {
+      "success": true,
+      "file": "global/02-nodejs-backend/ANTIPATTERNS.md",
+      "progress_id": "ef074a98-288c-4f7d-9234-586d50dc3d6d"
+    },
+    {
+      "success": true,
+      "file": "global/02-nodejs-backend/API_DESIGN.md",
+      "progress_id": "5c503f5d-8d39-4752-a438-e5a71e3105aa"
+    },
+    {
+      "success": true,
+      "file": "global/02-nodejs-backend/ARCHITECTURE_PATTERNS.md",
+      "progress_id": "77d25bc5-2ad4-4500-93f6-3c97e0b98309"
+    },
+    {
+      "success": true,
+      "file": "global/02-nodejs-backend/ASYNC_PATTERNS.md",
+      "progress_id": "8a89639c-df86-4db1-b379-2f6d2bb74497"
+    },
+    {
+      "success": true,
+      "file": "global/02-nodejs-backend/AUTHENTICATION.md",
+      "progress_id": "ab8a90fb-4645-46a7-bdbe-3d97ab65ef5f"
+    },
+    {
+      "success": true,
+      "file": "global/02-nodejs-backend/AUTHORIZATION.md",
+      "progress_id": "b3095704-686c-4d16-8a36-8d374008d239"
+    },
+    {
+      "success": true,
+      "file": "global/02-nodejs-backend/CONTROLLER_LAYER.md",
+      "progress_id": "5f488811-5751-4b32-8842-304a09d82ac7"
+    },
+    {
+      "success": true,
+      "file": "global/02-nodejs-backend/DATABASE_PATTERNS.md",
+      "progress_id": "8c265307-a537-4ac3-b561-ce3708682904"
+    },
+    {
+      "success": true,
+      "file": "global/02-nodejs-backend/ERROR_HANDLING.md",
+      "progress_id": "f34f6337-fe88-47cd-9709-f49b59898e7b"
+    },
+    {
+      "success": true,
+      "file": "global/02-nodejs-backend/EXPRESS_BEST_PRACTICES.md",
+      "progress_id": "c5851ddb-c260-47f3-a352-8f6aec6b153f"
+    },
+    {
+      "success": true,
+      "file": "global/02-nodejs-backend/LOGGING_MONITORING.md",
+      "progress_id": "c9722c5a-844e-4f66-a147-16d2ff7f5a0f"
+    },
+    {
+      "success": true,
+      "file": "global/02-nodejs-backend/MIDDLEWARE_PATTERNS.md",
+      "progress_id": "c324af30-b8e7-4d65-bfe3-c5e8eda663a0"
+    },
+    {
+      "success": true,
+      "file": "global/02-nodejs-backend/NETZWAECHTER_PATTERNS_ANALYSIS.md",
+      "progress_id": "14abac25-9a10-4f4c-b275-fc1f14b356fa"
+    },
+    {
+      "success": true,
+      "file": "global/02-nodejs-backend/README.md",
+      "progress_id": "6f4698b6-9ed9-4687-b357-f74c7044a173"
+    },
+    {
+      "success": true,
+      "file": "global/02-nodejs-backend/REPOSITORY_LAYER.md",
+      "progress_id": "0d82bfdc-f668-4355-8eff-b147027b1b1c"
+    },
+    {
+      "success": true,
+      "file": "global/02-nodejs-backend/RESTFUL_API_DESIGN.md",
+      "progress_id": "cf57e043-1314-460c-b1ff-bb83ce3ccb8a"
+    },
+    {
+      "success": true,
+      "file": "global/02-nodejs-backend/SECURITY.md",
+      "progress_id": "68f1ad53-0d27-4738-8bdc-a0481c4b57db"
+    },
+    {
+      "success": true,
+      "file": "global/02-nodejs-backend/SERVICE_LAYER.md",
+      "progress_id": "4d7cf8df-3604-4f28-869f-9d8c7eae3804"
+    },
+    {
+      "success": true,
+      "file": "global/02-nodejs-backend/TESTING_BACKEND.md",
+      "progress_id": "b692675d-0030-4425-a996-262966729987"
+    },
+    {
+      "success": true,
+      "file": "global/02-nodejs-backend/TYPESCRIPT_BACKEND.md",
+      "progress_id": "36952758-2fb8-4b2b-a07a-c4fd2581d419"
+    },
+    {
+      "success": true,
+      "file": "global/03-database-orm/ANTIPATTERNS.md",
+      "progress_id": "a033ab4b-4ee3-4840-847f-fd4d18657f5b"
+    },
+    {
+      "success": true,
+      "file": "global/03-database-orm/AUDIT_LOGGING.md",
+      "progress_id": "a11a40a5-835c-41f0-a99b-bd3fb5848d9d"
+    },
+    {
+      "success": true,
+      "file": "global/03-database-orm/BACKUP_RECOVERY.md",
+      "progress_id": "7140f05a-039c-4582-9129-fbae480f463c"
+    },
+    {
+      "success": true,
+      "file": "global/03-database-orm/CONNECTION_POOLING.md",
+      "progress_id": "e4cc0f3a-7a87-4c0b-b9f1-2aa2678dfa0f"
+    },
+    {
+      "success": true,
+      "file": "global/03-database-orm/DATABASE_DESIGN.md",
+      "progress_id": "0bbf8d0f-890f-4b06-8972-e0dad68c0c01"
+    },
+    {
+      "success": true,
+      "file": "global/03-database-orm/DATABASE_SECURITY.md",
+      "progress_id": "cca44952-f048-41fa-a7b2-f50eef0dc1c6"
+    },
+    {
+      "success": true,
+      "file": "global/03-database-orm/DRIZZLE_PATTERNS.md",
+      "progress_id": "0d838823-c560-4aa1-907e-074053732561"
+    },
+    {
+      "success": true,
+      "file": "global/03-database-orm/DRIZZLE_QUERY_EXAMPLES.md",
+      "progress_id": "89f57432-cdd6-4895-be4d-33e770836922"
+    },
+    {
+      "success": true,
+      "file": "global/03-database-orm/INDEXING_OPTIMIZATION.md",
+      "progress_id": "d282107b-f03f-4b56-a970-18084ead80d5"
+    },
+    {
+      "success": true,
+      "file": "global/03-database-orm/JSONB_PATTERNS.md",
+      "progress_id": "e5d160eb-bad4-4d27-8cd0-11aacdc8ce71"
+    },
+    {
+      "success": true,
+      "file": "global/03-database-orm/MULTI_TENANCY.md",
+      "progress_id": "af61f750-b2c5-43c2-b136-3fcb0f74cad5"
+    },
+    {
+      "success": true,
+      "file": "global/03-database-orm/POSTGRESQL_BEST_PRACTICES.md",
+      "progress_id": "abe7ad30-ef8f-4518-970e-cdfd863c91e7"
+    },
+    {
+      "success": true,
+      "file": "global/03-database-orm/QUERY_OPTIMIZATION.md",
+      "progress_id": "8eae543c-293b-45f7-9dbd-30fe3e5cd845"
+    },
+    {
+      "success": true,
+      "file": "global/03-database-orm/README.md",
+      "progress_id": "49cd65a9-e915-4dd0-8aa5-27cfe83196b7"
+    },
+    {
+      "success": true,
+      "file": "global/03-database-orm/SCHEMA_MIGRATIONS.md",
+      "progress_id": "da71d746-5001-4021-81ae-1ddca337d43e"
+    },
+    {
+      "success": true,
+      "file": "global/03-database-orm/SOFT_DELETE.md",
+      "progress_id": "2e30a115-1991-41ac-a8ec-d96eed065c6e"
+    },
+    {
+      "success": true,
+      "file": "global/03-database-orm/TESTING_DATABASE.md",
+      "progress_id": "3d85be41-60ed-4aaf-943b-1b0e66d70fad"
+    },
+    {
+      "success": true,
+      "file": "global/03-database-orm/TRANSACTIONS.md",
+      "progress_id": "9683f5f8-173b-41c6-a907-41cb13adf7fd"
+    },
+    {
+      "success": true,
+      "file": "global/04-security-auth/ANTIPATTERNS.md",
+      "progress_id": "04d69224-71bf-4a36-ad88-ce4b42910422"
+    },
+    {
+      "success": true,
+      "file": "global/04-security-auth/AUTHENTICATION_PATTERNS.md",
+      "progress_id": "f21289ff-8cd3-4bde-bdd7-c30fa76a4c72"
+    },
+    {
+      "success": true,
+      "file": "global/04-security-auth/AUTHORIZATION_PATTERNS.md",
+      "progress_id": "84e6bddf-b3be-47a3-ac62-2cf58f6c99ed"
+    },
+    {
+      "success": true,
+      "file": "global/04-security-auth/CORS_CONFIGURATION.md",
+      "progress_id": "02848756-6fd8-46ba-b17e-7e49cac88355"
+    },
+    {
+      "success": true,
+      "file": "global/04-security-auth/CSRF_PROTECTION.md",
+      "progress_id": "19711b29-94e6-4ad2-b422-877858847522"
+    },
+    {
+      "success": true,
+      "file": "global/04-security-auth/INPUT_VALIDATION.md",
+      "progress_id": "71f7f1bf-eeaf-47f9-b543-03a906d8ef6e"
+    },
+    {
+      "success": true,
+      "file": "global/04-security-auth/JWT_PATTERNS.md",
+      "progress_id": "9f358c5e-8d5e-46ec-850d-476222d2bc2b"
+    },
+    {
+      "success": true,
+      "file": "global/04-security-auth/MFA_PATTERNS.md",
+      "progress_id": "91322ec4-901f-40c8-86af-14e544cf1401"
+    },
+    {
+      "success": true,
+      "file": "global/04-security-auth/OAUTH2_OPENID.md",
+      "progress_id": "09edc685-da8e-40f8-9fee-db22b69cb42a"
+    },
+    {
+      "success": true,
+      "file": "global/04-security-auth/PASSWORD_SECURITY.md",
+      "progress_id": "39f0d5df-1711-412f-84f7-1150350b3050"
+    },
+    {
+      "success": true,
+      "file": "global/04-security-auth/RATE_LIMITING.md",
+      "progress_id": "a29fa2cd-7547-4757-8920-83ad62d9bb30"
+    },
+    {
+      "success": true,
+      "file": "global/04-security-auth/README.md",
+      "progress_id": "a34c20ba-32df-45c4-8f3c-5e416901f8c0"
+    },
+    {
+      "success": true,
+      "file": "global/04-security-auth/RESEARCH_SUMMARY.md",
+      "progress_id": "e85920ee-252f-421f-9846-68dbd08fc0a8"
+    },
+    {
+      "success": true,
+      "file": "global/04-security-auth/SECRETS_MANAGEMENT.md",
+      "progress_id": "0d901f23-93a9-4221-92b0-06194368d719"
+    },
+    {
+      "success": true,
+      "file": "global/04-security-auth/SECURITY_HEADERS.md",
+      "progress_id": "60550c7d-afef-4ed3-b1a6-56a46885caa9"
+    },
+    {
+      "success": true,
+      "file": "global/04-security-auth/SECURITY_OVERVIEW.md",
+      "progress_id": "2ae129b4-2733-4fd8-8f18-12b878a4e837"
+    },
+    {
+      "success": true,
+      "file": "global/04-security-auth/SECURITY_TESTING.md",
+      "progress_id": "90e5c5ee-cd60-4932-8822-d2711bb0bb95"
+    },
+    {
+      "success": true,
+      "file": "global/04-security-auth/SESSION_MANAGEMENT.md",
+      "progress_id": "c116ea3f-a34e-401d-be08-4036d96001fb"
+    },
+    {
+      "success": true,
+      "file": "global/04-security-auth/SQL_INJECTION_PREVENTION.md",
+      "progress_id": "d91a9432-e946-41aa-82f2-4ec100ab49b8"
+    },
+    {
+      "success": true,
+      "file": "global/04-security-auth/SSL_TLS.md",
+      "progress_id": "d68a4d0e-5f80-4702-8db6-e573cb312317"
+    },
+    {
+      "success": true,
+      "file": "global/04-security-auth/XSS_PREVENTION.md",
+      "progress_id": "b77d6d1e-74c3-4ea4-aca1-e54eabf0831e"
+    },
+    {
+      "success": true,
+      "file": "global/05-testing-quality/CODE_QUALITY.md",
+      "progress_id": "102a975d-b526-4435-9e83-4cfa82cddafe"
+    },
+    {
+      "success": true,
+      "file": "global/05-testing-quality/E2E_TESTING.md",
+      "progress_id": "92deebd6-17fc-40da-8b7b-75d8d4a5a004"
+    },
+    {
+      "success": true,
+      "file": "global/05-testing-quality/ESLINT_CONFIG.md",
+      "progress_id": "545d5193-05f7-4b78-a7a4-83905c747f77"
+    },
+    {
+      "success": true,
+      "file": "global/05-testing-quality/INTEGRATION_TESTING.md",
+      "progress_id": "6231008b-0f01-4f0a-9f1b-94b21889ee1b"
+    },
+    {
+      "success": true,
+      "file": "global/05-testing-quality/MOCKING_PATTERNS.md",
+      "progress_id": "0cebb377-1a43-4f85-ba49-b307f5e49970"
+    },
+    {
+      "success": true,
+      "file": "global/05-testing-quality/PRETTIER_CONFIG.md",
+      "progress_id": "d7fbff79-5ac1-49e9-8a0f-745f0a1b8d09"
+    },
+    {
+      "success": true,
+      "file": "global/05-testing-quality/REACT_TESTING.md",
+      "progress_id": "f0ee3803-1b46-4401-b0d6-8d3c2c49e148"
+    },
+    {
+      "success": true,
+      "file": "global/05-testing-quality/README.md",
+      "progress_id": "aa13aa92-bcea-472b-86c2-fedc15617ab8"
+    },
+    {
+      "success": true,
+      "file": "global/05-testing-quality/TDD_PATTERNS.md",
+      "progress_id": "d1536510-35f1-4b26-9a7a-ed09ad05cb31"
+    },
+    {
+      "success": true,
+      "file": "global/05-testing-quality/TESTING_STRATEGY.md",
+      "progress_id": "fb9727fb-6e3b-45a7-8e77-9db95fe7445b"
+    },
+    {
+      "success": true,
+      "file": "global/05-testing-quality/TEST_COVERAGE.md",
+      "progress_id": "a49fc591-33cc-43f0-9ad8-85ec42d7096f"
+    },
+    {
+      "success": true,
+      "file": "global/05-testing-quality/TYPESCRIPT_CONFIG.md",
+      "progress_id": "a01b6eef-3458-42d2-a36a-b31cf1db6c4c"
+    },
+    {
+      "success": true,
+      "file": "global/05-testing-quality/UNIT_TESTING.md",
+      "progress_id": "e65b44e9-9224-44de-8097-6bfcc4db7466"
+    },
+    {
+      "success": true,
+      "file": "global/05-testing-quality/VITEST_PATTERNS.md",
+      "progress_id": "35f1d0a2-1595-4783-b567-7db9df935480"
+    },
+    {
+      "success": true,
+      "file": "global/06-configuration/BUILD_CONFIGURATION.md",
+      "progress_id": "49167657-b03b-4ecf-80e6-4b74c36ad4f9"
+    },
+    {
+      "success": true,
+      "file": "global/06-configuration/CI_CD_PATTERNS.md",
+      "progress_id": "a62045c3-9be8-433c-b458-7c3e0968d5b0"
+    },
+    {
+      "success": true,
+      "file": "global/06-configuration/CONFIG_EXTERNALIZATION.md",
+      "progress_id": "8130a3c2-9964-4022-906a-57ffa04ba107"
+    },
+    {
+      "success": true,
+      "file": "global/06-configuration/CONFIG_VALIDATION.md",
+      "progress_id": "4a42f727-1670-457f-aa57-41d402a89538"
+    },
+    {
+      "success": true,
+      "file": "global/06-configuration/DEPLOYMENT_CONFIG.md",
+      "progress_id": "45c6d498-5721-4a31-a672-6ec66ec91f82"
+    },
+    {
+      "success": true,
+      "file": "global/06-configuration/DOCKER_PATTERNS.md",
+      "progress_id": "b1ea7627-f94e-4535-9b3b-e2ccc41c174f"
+    },
+    {
+      "success": true,
+      "file": "global/06-configuration/ENVIRONMENT_VARIABLES.md",
+      "progress_id": "60ca41b8-e0d7-4859-801d-1c9f2c03dc60"
+    },
+    {
+      "success": true,
+      "file": "global/06-configuration/GIT_WORKFLOW.md",
+      "progress_id": "ee9a61aa-63c0-4f02-a6f2-c479a291bf8d"
+    },
+    {
+      "success": true,
+      "file": "global/06-configuration/MONOREPO_PATTERNS.md",
+      "progress_id": "dd8fde61-10f4-43d4-a5b9-23c77185eee4"
+    },
+    {
+      "success": true,
+      "file": "global/06-configuration/README.md",
+      "progress_id": "6a201305-d9e3-4de1-a90c-211feda5bb22"
+    },
+    {
+      "success": true,
+      "file": "global/06-configuration/SECRETS_MANAGEMENT.md",
+      "progress_id": "d8fd2df4-a212-422b-85d4-60e476f878f0"
+    },
+    {
+      "success": true,
+      "file": "global/ANALYSIS_COMPLETION_REPORT.md",
+      "progress_id": "e7502a1d-d9ad-4f5b-b842-45fa6f15b6ce"
+    },
+    {
+      "success": true,
+      "file": "global/ANALYSIS_SUMMARY.md",
+      "progress_id": "f21d3a99-70f2-4c8f-9ebe-e95a0770667c"
+    },
+    {
+      "success": true,
+      "file": "global/ARCHON_IMPROVEMENT_RECOMMENDATIONS.md",
+      "progress_id": "b92be222-0b2b-4f5f-90b1-a8cecc5278dc"
+    },
+    {
+      "success": true,
+      "file": "global/ARCHON_KNOWLEDGE_ANALYSIS.md",
+      "progress_id": "e983e3e1-ed6d-4028-bab9-cec0fbfdd315"
+    },
+    {
+      "success": true,
+      "file": "global/DOCUMENTATION_PRIORITIES.md",
+      "progress_id": "7fd8a707-2c42-492d-8a5d-c4a61c06bd29"
+    },
+    {
+      "success": true,
+      "file": "global/MASTER_INDEX.md",
+      "progress_id": "1618c268-93ec-4d45-9088-18a5440ff509"
+    },
+    {
+      "success": true,
+      "file": "global/PHASE_1_COMPLETE.md",
+      "progress_id": "1d219356-cf82-491c-b006-b8b29542db84"
+    },
+    {
+      "success": true,
+      "file": "global/QUICK_REFERENCE.md",
+      "progress_id": "1e097b6c-836f-4e1f-b88c-b835fe87bf97"
+    },
+    {
+      "success": true,
+      "file": "global/README.md",
+      "progress_id": "2471d7de-a059-4f38-bf02-29b8a9001a94"
+    },
+    {
+      "success": true,
+      "file": "global/TECHNOLOGY_ANALYSIS.md",
+      "progress_id": "67a69899-b014-4575-b6e1-ee4ffaa9a119"
+    },
+    {
+      "success": true,
+      "file": "knowledge-organization/COMPLETION_TODOS.md",
+      "progress_id": "fbf40ba1-10b2-41e1-9a45-c293b5213a6d"
+    },
+    {
+      "success": true,
+      "file": "knowledge-organization/FILE_MAPPING.md",
+      "progress_id": "e28f7d04-0003-4b54-ac65-ceee7184ac7a"
+    },
+    {
+      "success": true,
+      "file": "knowledge-organization/INDEX.md",
+      "progress_id": "f448aae2-5605-43d4-a289-4730e6429dd6"
+    },
+    {
+      "success": true,
+      "file": "knowledge-organization/QUICK_START.md",
+      "progress_id": "5691745e-714a-418d-a88f-df7c2de17de8"
+    },
+    {
+      "success": true,
+      "file": "knowledge-organization/README.md",
+      "progress_id": "3e5bf315-2202-41db-a8e5-547372f399ac"
+    },
+    {
+      "success": true,
+      "file": "knowledge-organization/SUMMARY.md",
+      "progress_id": "54da61bd-7c49-4b3e-b89d-3b3d66ceda14"
+    },
+    {
+      "success": true,
+      "file": "knowledge-organization/archive/INTEGRATION_CHECKLIST.md",
+      "progress_id": "f60753ed-7b6f-421b-9102-ce1d0ddc76c1"
+    },
+    {
+      "success": true,
+      "file": "knowledge-organization/archive/INTEGRATION_COMPLETE.md",
+      "progress_id": "9d091f57-89dc-4a52-8b72-a4b79317f012"
+    },
+    {
+      "success": true,
+      "file": "knowledge-organization/archive/INTEGRATION_PLAN.md",
+      "progress_id": "f85b42e3-f009-42fb-8a31-2b0ee44cfba1"
+    },
+    {
+      "success": true,
+      "file": "knowledge-organization/archive/INTEGRATION_README.md",
+      "progress_id": "851f63ce-ca24-46f2-8f5a-96f11cd17d4a"
+    },
+    {
+      "success": true,
+      "file": "knowledge-organization/archive/INTEGRATION_STATUS.md",
+      "progress_id": "a77e105e-2cf0-4d68-a9f2-157a0cab1dad"
+    },
+    {
+      "success": true,
+      "file": "knowledge-organization/archive/INTEGRATION_SUMMARY.md",
+      "progress_id": "700eaa10-24ae-4f0d-9b46-d40b950aeda6"
+    },
+    {
+      "success": true,
+      "file": "knowledge-organization/archive/RESEARCH_PROMPTS_COMPLETE.md",
+      "progress_id": "362acc29-3e95-4a34-a9b8-fa9c92958e45"
+    },
+    {
+      "success": true,
+      "file": "knowledge-organization/archive/SESSION_COMPLETE.md",
+      "progress_id": "51a42385-3d9c-4250-86b4-29d44ebe48c3"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/01-database/DATABASE_OVERVIEW.md",
+      "progress_id": "c17c1c54-a0e7-4505-9293-87536e19bd0e"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/01-database/INDEXES_CONSTRAINTS.md",
+      "progress_id": "68ed5b86-65d2-4309-9652-b920afe03c73"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/01-database/README.md",
+      "progress_id": "7f51ecdc-7e5b-468b-b332-01a3ab932356"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/01-database/RELATIONSHIPS.md",
+      "progress_id": "1a646bbf-29de-4b35-bfd5-30e84d9ff92a"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/01-database/SCHEMA_TABLES.md",
+      "progress_id": "23c0b7df-f59f-4db0-870a-221d08a10428"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/02-api-endpoints/API_OVERVIEW.md",
+      "progress_id": "be5fd31d-ce6d-439e-a915-2b5fd127514c"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/02-api-endpoints/ENDPOINTS_ALPHABETICAL.md",
+      "progress_id": "a1e72d76-2333-4e47-9bc8-a7f0be2243fc"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/02-api-endpoints/ENDPOINTS_BY_MODULE.md",
+      "progress_id": "01b6b62a-30f0-4fe6-911a-cb540347d0f2"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/02-api-endpoints/FRONTEND_USAGE_MAP.md",
+      "progress_id": "becdc724-8ac8-4b3a-a807-e25a06b902f6"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/02-api-endpoints/README.md",
+      "progress_id": "502800bd-a71a-4412-af80-872db5562f8b"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/02-api-endpoints/REQUEST_RESPONSE_SCHEMAS.md",
+      "progress_id": "8f4d77a3-645d-4a44-b2aa-b8f1ad02c4bf"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/03-authentication/AUTHORIZATION.md",
+      "progress_id": "e85f04a2-98f0-4e7e-9bc2-9eeeac8bcdc8"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/03-authentication/AUTH_FLOW.md",
+      "progress_id": "df5d8056-1a7d-4559-bf6a-af32baa34789"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/03-authentication/AUTH_OVERVIEW.md",
+      "progress_id": "24df4eae-fa78-4156-95aa-a48f554aa2bd"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/03-authentication/PROTECTED_ROUTES.md",
+      "progress_id": "e9d9cdc7-45ed-42f4-88fc-e384f367ef74"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/03-authentication/SECURITY_FEATURES.md",
+      "progress_id": "79de0335-4544-4d69-937d-baaa75c105b0"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/04-frontend/COMPONENT_ARCHITECTURE.md",
+      "progress_id": "2bcff26a-e730-4526-95c1-f363021e677b"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/04-frontend/DESIGN_SYSTEM_CURRENT.md",
+      "progress_id": "0190cad8-b8ec-4392-bbf6-d8be5cbce48a"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/04-frontend/FRONTEND_OVERVIEW.md",
+      "progress_id": "2b3bf461-b76c-486c-a542-af387fb6cc88"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/04-frontend/LAYOUT_PATTERNS.md",
+      "progress_id": "564cec1c-4b27-49b5-8807-fbbc0312e6e7"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/04-frontend/README.md",
+      "progress_id": "0a63aad5-448b-44bc-9c56-c2c3111a2ccd"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/04-frontend/UI_COMPONENT_INVENTORY.md",
+      "progress_id": "06642e72-307b-4b29-bac6-b5a016639e46"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/04-frontend/UI_INCONSISTENCIES.md",
+      "progress_id": "69bf62b1-c695-47da-8d03-29a45f794f5a"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/04-frontend/UI_REDESIGN_NEEDS.md",
+      "progress_id": "0eaff36b-dbf6-4fe5-85f8-8f926cae92bb"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/05-backend/ARCHITECTURE_ASSESSMENT.md",
+      "progress_id": "2c1d9bb2-d237-44f7-8f0f-e3e2972a7650"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/05-backend/ARCHITECTURE_CONSISTENCY.md",
+      "progress_id": "530b293c-368b-404a-865f-8fcd38115a5a"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/05-backend/BACKEND_OVERVIEW.md",
+      "progress_id": "9faef39e-c653-4940-9167-e56c6256d61b"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/05-backend/DATA_ACCESS_LAYER.md",
+      "progress_id": "0624b766-c9cd-4ae7-b490-07bc037a4bde"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/05-backend/MIDDLEWARE_STACK.md",
+      "progress_id": "10c3f4d9-5fbd-4ac6-8f55-f336f176387f"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/05-backend/MODULE_PATTERN_STANDARD.md",
+      "progress_id": "9d56c61a-550d-458d-b571-f38c015429a9"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/05-backend/README.md",
+      "progress_id": "e18edc5f-3262-4e4c-83c4-eaed9a794410"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/05-backend/SERVICE_LAYER.md",
+      "progress_id": "5a2334f1-2fcf-4799-b75f-a0ebd983227f"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/06-configuration/BUILD_CONFIGURATION.md",
+      "progress_id": "b85de972-90b4-4714-ada8-c8228a03872d"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/06-configuration/CONFIGURATION_OVERVIEW.md",
+      "progress_id": "417bebb9-696b-4f64-8fc9-59628a11585e"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/06-configuration/DATABASES.md",
+      "progress_id": "f9bbd89e-73b9-4783-adb3-7c13cc8b9091"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/06-configuration/DEPENDENCIES.md",
+      "progress_id": "1769d1bf-e1f4-4ec5-b8ea-9bb00195f913"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/06-configuration/DEPLOYMENT_REQUIREMENTS.md",
+      "progress_id": "b8db7840-ddf0-4fef-959a-cad9189276fb"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/06-configuration/DEVELOPMENT_SETUP.md",
+      "progress_id": "921f4fc0-400d-476a-bd14-7039dda35983"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/06-configuration/ENVIRONMENT_VARIABLES.md",
+      "progress_id": "6f4af877-2680-4336-b49b-97aaa62a9960"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/06-configuration/EXTERNAL_SERVICES.md",
+      "progress_id": "f4991b4f-bbed-4948-8e4a-9d90a9415055"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/07-standards/BACKEND_PATTERNS.md",
+      "progress_id": "116f48d6-27c4-4ca6-b1cd-7ea27f4ed430"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/07-standards/CODING_STANDARDS.md",
+      "progress_id": "5b6bf5e3-05ba-43b6-a091-411935a342d6"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/07-standards/FRONTEND_PATTERNS.md",
+      "progress_id": "6f9a4755-7459-4d18-a13e-ac6335ffbaa6"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/07-standards/LEGACY_PATTERNS_TO_AVOID.md",
+      "progress_id": "7a804869-9742-4cef-9017-a58a76c12a45"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/07-standards/README.md",
+      "progress_id": "dcd9bca3-a62e-4c9f-a258-39ac83b4cb10"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/07-standards/SECURITY_PATTERNS.md",
+      "progress_id": "2cf6ee56-79b7-4a61-a754-664b70623dfd"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/07-standards/TESTING_PATTERNS.md",
+      "progress_id": "69a23309-ba4d-4f05-a73e-6a4ae23e90b5"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/08-deployment/00-DEPLOYMENT_INDEX.md",
+      "progress_id": "bb8ac99d-d9d2-4cd7-b5e4-b79214ca1028"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/08-deployment/APPLICATION_ARCHITECTURE.md",
+      "progress_id": "f54c96b9-af49-4972-8474-42a04d40b9cd"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/08-deployment/DEPLOYMENT_CHECKLIST.md",
+      "progress_id": "cbe73b00-bcbb-4d46-bc04-a949989b0cf1"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/08-deployment/DEPLOYMENT_PROCEDURES.md",
+      "progress_id": "65047bd1-9deb-4824-a852-fedc52fef3fa"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/08-deployment/HETZNER_SETUP.md",
+      "progress_id": "b7d659d0-d87d-454c-936e-c563616b9eb4"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/08-deployment/QUICK_START.md",
+      "progress_id": "03ba44f7-1072-49d4-824e-721a4d8b65f1"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/08-deployment/README.md",
+      "progress_id": "229305ed-4237-4f62-a622-3658c18cc9d5"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/08-deployment/SERVER_INFRASTRUCTURE.md",
+      "progress_id": "bfcaeda6-9039-4669-b8c2-2db3f92fa9c6"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/08-deployment/SESSION_SUMMARY_2025-10-14.md",
+      "progress_id": "8939e591-efd2-4e97-a613-dfdb00b59046"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/08-deployment/SSH_KEY_SETUP.md",
+      "progress_id": "8cc59cf4-09dc-44b3-9f6b-654c7c222ad4"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/ARCHON_INTEGRATION_PLAN.md",
+      "progress_id": "6c455d03-7ee8-48e4-a5e3-a6f77d9b496e"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/README.md",
+      "progress_id": "80355627-b37d-4a1d-916f-06cf4b75e62e"
+    },
+    {
+      "success": true,
+      "file": "projects/netzwaechter_refactored/how-to.md",
+      "progress_id": "6f31a25c-b170-4d5a-9f4c-477b35e05a81"
+    }
+  ],
+  "failed": [
+    {
+      "success": false,
+      "file": "global/01-react-frontend/TYPESCRIPT_REACT.md",
+      "error": "HTTPSConnectionPool(host='archon.nexorithm.io', port=443): Read timed out. (read timeout=30)"
+    },
+    {
+      "success": false,
+      "file": "global/02-nodejs-backend/VALIDATION.md",
+      "error": "HTTPSConnectionPool(host='archon.nexorithm.io', port=443): Read timed out. (read timeout=30)"
+    },
+    {
+      "success": false,
+      "file": "global/04-security-auth/API_SECURITY.md",
+      "error": "HTTPSConnectionPool(host='archon.nexorithm.io', port=443): Read timed out. (read timeout=30)"
+    },
+    {
+      "success": false,
+      "file": "global/05-testing-quality/BACKEND_TESTING.md",
+      "error": "HTTPSConnectionPool(host='archon.nexorithm.io', port=443): Read timed out. (read timeout=30)"
+    }
+  ]
+}

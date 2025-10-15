@@ -1,0 +1,21 @@
+{
+  "success": [
+    {
+      "file": "global/01-react-frontend/TYPESCRIPT_REACT.md",
+      "progress_id": "0c599cf6-fb08-4038-8fcd-9ea8de856814"
+    },
+    {
+      "file": "global/02-nodejs-backend/VALIDATION.md",
+      "progress_id": "8177db77-81f1-4802-90ea-c4aa102e5a5f"
+    },
+    {
+      "file": "global/04-security-auth/API_SECURITY.md",
+      "progress_id": "27ae1de8-9414-453e-a87b-2dd725783126"
+    },
+    {
+      "file": "global/05-testing-quality/BACKEND_TESTING.md",
+      "progress_id": "c40b03ed-2556-4bdf-aeb9-157aea4699a9"
+    }
+  ],
+  "failed": []
+}

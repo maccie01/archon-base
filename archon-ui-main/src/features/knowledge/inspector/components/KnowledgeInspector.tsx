@@ -51,10 +51,17 @@ export const KnowledgeInspector: React.FC<KnowledgeInspectorProps> = ({
   const hasNextPage = paginationData.hasNextPage;
   const fetchNextPage = paginationData.fetchNextPage;
   const isFetchingNextPage = paginationData.isFetchingNextPage;
+  const paginationTotalCount = paginationData.totalCount;
 
-  // Use metadata counts like KnowledgeCard does - don't rely on loaded data length
-  const totalDocumentCount = item.document_count ?? item.metadata?.document_count ?? 0;
-  const totalCodeCount = item.code_examples_count ?? item.metadata?.code_examples_count ?? 0;
+  // Get total counts - prefer pagination data (from API response) over metadata
+  // Pagination totalCount is authoritative when available
+  const totalDocumentCount = viewMode === "documents" && paginationTotalCount > 0
+    ? paginationTotalCount
+    : (item.document_count ?? item.metadata?.document_count ?? 0);
+
+  const totalCodeCount = viewMode === "code" && paginationTotalCount > 0
+    ? paginationTotalCount
+    : (item.code_examples_count ?? item.metadata?.code_examples_count ?? 0);
 
   // Auto-select first item when data loads
   useEffect(() => {

@@ -1,0 +1,4 @@
+  File "/tmp/upload_kb.py", line 2
+    [1/185] ✓ MIGRATION_READY_REPORT.md
+            ^
+SyntaxError: invalid character '✓' (U+2713)
