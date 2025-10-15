@@ -58,6 +58,12 @@ export async function callAPIWithETag<T = unknown>(endpoint: string, options: Re
       ...((options.headers as Record<string, string>) || {}),
     };
 
+    // Add Authorization header if API key exists in localStorage
+    const apiKey = localStorage.getItem('archon_api_key');
+    if (apiKey) {
+      headers['Authorization'] = `Bearer ${apiKey}`;
+    }
+
     // Only set Content-Type for requests that have a body (POST, PUT, PATCH, etc.)
     // GET and DELETE requests should not have Content-Type header
     const method = options.method?.toUpperCase() || "GET";
@@ -79,6 +85,16 @@ export async function callAPIWithETag<T = unknown>(endpoint: string, options: Re
 
     // Handle errors
     if (!response.ok) {
+      // Handle 401 Unauthorized - clear stored API key and redirect to login
+      if (response.status === 401) {
+        localStorage.removeItem('archon_api_key');
+        // Only redirect if we're not already on the login page
+        if (window.location.pathname !== '/login') {
+          window.location.href = '/login';
+        }
+        throw new APIServiceError('Authentication required', 'AUTH_ERROR', 401);
+      }
+
       let errorMessage = `HTTP error! status: ${response.status}`;
       try {
         const errorBody = await response.text();
