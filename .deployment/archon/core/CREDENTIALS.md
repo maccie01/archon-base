@@ -56,21 +56,20 @@ Then connect with: `ssh archon-prod`
 
 **Production API Key** (Admin):
 ```
-ak_266E_qxiSRg309qhky6v_9MB5EYQ_bQWSpKch8RoJTntfhpQ
+ak_597A_U6Z6POYpv8Sae-LxSNj2qe5dFXE6qzBjXe0tikQHqkI
 ```
 
 **Key Details**:
-- **Name**: Production Master Key 2025-10-16
-- **Key ID**: `6e1a653b-aa3a-4df1-a2df-5b4d8683d58e`
-- **Key Prefix**: `ak_266E`
-- **Created**: 2025-10-16
+- **Name**: Production Master Key
+- **Key Prefix**: `ak_597A`
+- **Created**: 2025-10-15
 - **Permissions**: Full admin access (read, write, admin)
 - **Status**: Active
 - **Last Used**: Check via `/api/auth/validate`
 
 **Usage Example**:
 ```bash
-curl -H "Authorization: Bearer ak_266E_qxiSRg309qhky6v_9MB5EYQ_bQWSpKch8RoJTntfhpQ" \
+curl -H "Authorization: Bearer ak_597A_U6Z6POYpv8Sae-LxSNj2qe5dFXE6qzBjXe0tikQHqkI" \
   https://archon.nexorithm.io/api/auth/validate
 ```
 
@@ -91,62 +90,110 @@ curl -H "Authorization: Bearer ak_266E_qxiSRg309qhky6v_9MB5EYQ_bQWSpKch8RoJTntfh
 | Frontend | https://archon.nexorithm.io | Main application |
 | Backend API | https://archon.nexorithm.io/api | REST API |
 | MCP Server | https://archon.nexorithm.io/mcp | Model Context Protocol |
-| Supabase Studio | https://archon.nexorithm.io/db | Database admin (protected) |
+| Supabase Studio | https://supabase.archon.nexorithm.io | Database admin (protected) |
 
 ---
 
-## Supabase (Database)
+## Supabase (Self-Hosted Database)
+
+**Architecture**: Self-hosted Supabase stack running in Docker on single network (archon_production)
 
 ### Connection Details
 
-**Project URL**:
+**Internal Docker Network**:
+- **Kong Gateway**: http://kong:8000 (internal) → http://localhost:54321 (host)
+- **PostgreSQL**: postgres:5432 (internal) → localhost:54322 (host)
+- **Studio UI**: studio:3000 (internal) → localhost:54323 (host)
+
+**External Access**:
+- **Studio UI**: https://supabase.archon.nexorithm.io (protected by HTTP Basic Auth)
+- **API Gateway**: Accessed through archon-server (not exposed externally)
+
+### JWT Secret
+
+**Critical Configuration**:
 ```
-https://[PROJECT_ID].supabase.co
+JWT_SECRET=super-secret-jwt-token-with-at-least-32-characters-long
 ```
 
-**Connection String** (from `.env`):
-```
-postgresql://postgres.[PROJECT_ID]:[PASSWORD]@aws-0-[region].pooler.supabase.com:6543/postgres
-```
+**⚠️ CRITICAL**: This JWT secret MUST match the value stored in the database's `app.settings.jwt_secret` configuration. Mismatches cause PGRST301 JWT validation errors.
 
-### API Keys
+**Stored In**:
+- `.env` file: `JWT_SECRET` variable
+- Database: `app.settings.jwt_secret` GUC parameter
+- Kong config: Used to generate JWT tokens
 
-**Anon Key** (Client-side, safe to expose):
+### API Keys (JWT Tokens)
+
+**Anon Key** (Generated from JWT_SECRET):
 ```
-[SUPABASE_ANON_KEY from .env]
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
 ```
 - **Purpose**: Client-side queries with RLS
 - **Permissions**: Row Level Security enforced
-- **Usage**: Frontend database queries
+- **JWT Claims**: `role: "anon"`, `iss: "supabase-demo"`, `exp: 1983812996`
+- **Usage**: Frontend database queries (if needed)
 
 **Service Role Key** (Server-side only, NEVER expose):
 ```
-[SUPABASE_SERVICE_ROLE_KEY from .env]
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU
 ```
 - **Purpose**: Server-side admin operations
 - **Permissions**: Bypasses RLS, full access
+- **JWT Claims**: `role: "service_role"`, `iss: "supabase-demo"`, `exp: 1983812996`
 - **Security**: ⚠️ KEEP SECRET - Has full database access
+- **Used By**: archon-server, Kong Gateway (hardcoded in kong.yml)
+
+### Kong Gateway Configuration
+
+**JWT Transformation**:
+Kong removes all incoming `Authorization` headers and adds a hardcoded service role JWT token. This ensures all PostgREST requests use the service role, regardless of client authentication.
+
+**Location**: `volumes/api/kong.yml`
+```yaml
+plugins:
+  - name: request-transformer
+    config:
+      remove:
+        headers:
+          - Authorization
+          - authorization
+      add:
+        headers:
+          - "Authorization: Bearer eyJhbGci..."
+```
 
 ### Database Direct Access
 
-**Host**: `aws-0-[region].pooler.supabase.com`
-**Port**: `6543` (Supavisor pooler) or `5432` (direct)
-**Database**: `postgres`
-**User**: `postgres.[PROJECT_ID]`
-**Password**: [From connection string]
-
-**Connection via psql**:
+**From Host Machine**:
 ```bash
-psql "postgresql://postgres.[PROJECT_ID]:[PASSWORD]@aws-0-[region].pooler.supabase.com:6543/postgres"
+psql -h localhost -p 54322 -U postgres -d postgres
+```
+
+**Password**: `SUcWRRb52CMUPMzLA2OBhKI2spOuqOEq` (from `.env`)
+
+**From Docker Container**:
+```bash
+docker exec -it archon-postgres psql -U postgres -d postgres
+```
+
+**Connection String**:
+```
+postgresql://postgres:SUcWRRb52CMUPMzLA2OBhKI2spOuqOEq@localhost:54322/postgres
 ```
 
 ### Supabase Studio Access
 
-**URL**: https://archon.nexorithm.io/db
-**Username**: Configured via `.htpasswd-supabase`
-**Password**: [Set during nginx basic auth setup]
+**URL**: https://supabase.archon.nexorithm.io
+**Protected By**: Nginx HTTP Basic Authentication
+**Username**: Check `.htpasswd-supabase` file or Nginx config
+**Password**: Set during Nginx configuration
 
-**Note**: Protected by Nginx basic authentication
+**Alternative Local Access** (from server):
+```bash
+# Access Studio without Basic Auth
+curl http://localhost:54323
+```
 
 ---
 
@@ -380,9 +427,17 @@ Monitor:
 
 ---
 
-**Last Updated**: 2025-10-15
-**Review Needed**: 2026-01-15 (Quarterly review)
+**Last Updated**: 2025-10-16 (Consolidated Architecture v1.3.0)
+**Review Needed**: 2026-01-16 (Quarterly review)
 **Responsible**: DevOps Team
+
+### Recent Changes (v1.3.0 - 2025-10-16)
+
+- ✅ Migrated to self-hosted Supabase on single Docker network
+- ✅ Updated JWT secret to match database-stored value
+- ✅ Documented Kong JWT transformation configuration
+- ✅ Updated database connection details for Docker deployment
+- ✅ Consolidated from cloud-hosted to self-hosted architecture
 
 ---
 

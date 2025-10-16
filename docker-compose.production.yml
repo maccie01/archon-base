@@ -1,0 +1,424 @@
+version: '3.8'
+
+# ==============================================================================
+# ARCHON PRODUCTION DEPLOYMENT - Consolidated Architecture
+# Single network, minimal services, unified management
+# ==============================================================================
+
+services:
+  # ==========================================================================
+  # DATABASE LAYER - PostgreSQL 17 with pgvector
+  # ==========================================================================
+
+  postgres:
+    image: public.ecr.aws/supabase/postgres:17.6.1.017
+    container_name: archon-postgres
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:54322:5432"
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-postgres}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXP: ${JWT_EXP:-3600}
+      POSTGRES_INITDB_ARGS: >-
+        --encoding=UTF8
+        --locale=C
+        --data-checksums
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./volumes/db/init:/docker-entrypoint-initdb.d:ro
+    networks:
+      - archon_production
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    command: >
+      postgres
+      -c listen_addresses=*
+      -c shared_preload_libraries=pg_stat_statements,pgaudit
+      -c pgaudit.log=ddl,role
+      -c log_statement=mod
+      -c max_connections=200
+      -c shared_buffers=256MB
+      -c effective_cache_size=768MB
+      -c maintenance_work_mem=64MB
+      -c checkpoint_completion_target=0.9
+      -c wal_buffers=16MB
+      -c default_statistics_target=100
+      -c random_page_cost=1.1
+      -c effective_io_concurrency=200
+      -c work_mem=1310kB
+      -c min_wal_size=1GB
+      -c max_wal_size=4GB
+
+  # ==========================================================================
+  # REST API - PostgREST for auto-generated API from database schema
+  # ==========================================================================
+
+  rest:
+    image: public.ecr.aws/supabase/postgrest:v13.0.7
+    container_name: archon-rest
+    restart: unless-stopped
+    environment:
+      PGRST_DB_URI: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-postgres}
+      PGRST_DB_SCHEMAS: public,storage,graphql_public
+      PGRST_DB_ANON_ROLE: anon
+      PGRST_JWT_SECRET: ${JWT_SECRET}
+      PGRST_DB_USE_LEGACY_GUCS: "false"
+      PGRST_APP_SETTINGS_JWT_SECRET: ${JWT_SECRET}
+      PGRST_APP_SETTINGS_JWT_EXP: ${JWT_EXP:-3600}
+      PGRST_DB_EXTRA_SEARCH_PATH: public,extensions
+      PGRST_DB_MAX_ROWS: 10000
+      PGRST_DB_POOL: 10
+      PGRST_DB_POOL_TIMEOUT: 10
+      PGRST_OPENAPI_SERVER_PROXY_URI: http://127.0.0.1:54321
+    networks:
+      - archon_production
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "timeout 1s bash -c ':> /dev/tcp/127.0.0.1/3000' || exit 1"
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  # ==========================================================================
+  # API GATEWAY - Kong for routing and API key transformation
+  # ==========================================================================
+
+  kong:
+    image: public.ecr.aws/supabase/kong:2.8.1
+    container_name: archon-kong
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:54321:8000"
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /var/lib/kong/kong.yml
+      KONG_DNS_ORDER: LAST,A,CNAME
+      KONG_PLUGINS: request-transformer,cors,key-auth,acl
+      KONG_NGINX_PROXY_PROXY_BUFFER_SIZE: 160k
+      KONG_NGINX_PROXY_PROXY_BUFFERS: 64 160k
+      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
+      SUPABASE_SERVICE_KEY: ${SUPABASE_SERVICE_KEY}
+    volumes:
+      - ./volumes/api/kong.yml:/var/lib/kong/kong.yml:ro
+    networks:
+      - archon_production
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rest:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "kong", "health"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+
+  # ==========================================================================
+  # METADATA API - PostgreSQL metadata for Studio UI
+  # ==========================================================================
+
+  meta:
+    image: public.ecr.aws/supabase/postgres-meta:v0.91.7
+    container_name: archon-meta
+    restart: unless-stopped
+    environment:
+      PG_META_PORT: 8080
+      PG_META_DB_HOST: postgres
+      PG_META_DB_PORT: 5432
+      PG_META_DB_NAME: ${POSTGRES_DB:-postgres}
+      PG_META_DB_USER: ${POSTGRES_USER:-postgres}
+      PG_META_DB_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - archon_production
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "timeout 1s bash -c ':> /dev/tcp/127.0.0.1/8080' || exit 1"
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  # ==========================================================================
+  # ADMIN UI - Supabase Studio for database management
+  # ==========================================================================
+
+  studio:
+    image: public.ecr.aws/supabase/studio:2025.10.09-sha-433e578
+    container_name: archon-studio
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:54323:3000"
+    environment:
+      SUPABASE_URL: http://kong:8000
+      STUDIO_PG_META_URL: http://meta:8080
+      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
+      SUPABASE_SERVICE_KEY: ${SUPABASE_SERVICE_KEY}
+      SUPABASE_PUBLIC_URL: https://supabase.archon.nexorithm.io
+      NEXT_PUBLIC_ENABLE_LOGS: "true"
+      NEXT_ANALYTICS_BACKEND_PROVIDER: postgres
+    networks:
+      - archon_production
+    depends_on:
+      kong:
+        condition: service_healthy
+      meta:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "node -e \"require('http').get('http://'+require('os').hostname()+':3000', r => process.exit(r.statusCode === 307 ? 0 : 1)).on('error', () => process.exit(1))\""
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  # ==========================================================================
+  # ARCHON BACKEND - FastAPI + Socket.IO + Crawling
+  # ==========================================================================
+
+  archon-server:
+    build:
+      context: ./python
+      dockerfile: Dockerfile.server
+      args:
+        BUILDKIT_INLINE_CACHE: 1
+        ARCHON_SERVER_PORT: ${ARCHON_SERVER_PORT:-8181}
+    container_name: archon-server
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${ARCHON_SERVER_PORT:-8181}:${ARCHON_SERVER_PORT:-8181}"
+    environment:
+      # Database connection (via Kong Gateway)
+      SUPABASE_URL: http://kong:8000
+      SUPABASE_SERVICE_KEY: ${SUPABASE_SERVICE_KEY}
+      SUPABASE_JWT_SECRET: ${JWT_SECRET}
+      ALLOW_HTTP_SUPABASE: "true"
+
+      # OpenAI API
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+
+      # Logging
+      LOGFIRE_TOKEN: ${LOGFIRE_TOKEN:-}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+
+      # Service discovery
+      SERVICE_DISCOVERY_MODE: docker_compose
+      ARCHON_SERVER_PORT: ${ARCHON_SERVER_PORT:-8181}
+      ARCHON_MCP_PORT: ${ARCHON_MCP_PORT:-8051}
+      ARCHON_AGENTS_PORT: ${ARCHON_AGENTS_PORT:-8052}
+      AGENTS_ENABLED: ${AGENTS_ENABLED:-false}
+      ARCHON_HOST: ${HOST:-localhost}
+
+      # Security
+      ARCHON_BOOTSTRAP_SECRET: ${ARCHON_BOOTSTRAP_SECRET:-}
+    networks:
+      - archon_production
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./python/src:/app/src
+      - ./python/tests:/app/tests
+      - ./migration:/app/migration
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rest:
+        condition: service_healthy
+      kong:
+        condition: service_healthy
+    command:
+      [
+        "python",
+        "-m",
+        "uvicorn",
+        "src.server.main:app",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "${ARCHON_SERVER_PORT:-8181}",
+        "--reload",
+      ]
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "sh",
+          "-c",
+          'python -c "import urllib.request; urllib.request.urlopen(''http://localhost:${ARCHON_SERVER_PORT:-8181}/health'')"',
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # ==========================================================================
+  # MCP SERVER - Model Context Protocol for IDE integration
+  # ==========================================================================
+
+  archon-mcp:
+    build:
+      context: ./python
+      dockerfile: Dockerfile.mcp
+      args:
+        BUILDKIT_INLINE_CACHE: 1
+        ARCHON_MCP_PORT: ${ARCHON_MCP_PORT:-8051}
+    container_name: archon-mcp
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${ARCHON_MCP_PORT:-8051}:${ARCHON_MCP_PORT:-8051}"
+    environment:
+      SUPABASE_URL: http://kong:8000
+      SUPABASE_SERVICE_KEY: ${SUPABASE_SERVICE_KEY}
+      LOGFIRE_TOKEN: ${LOGFIRE_TOKEN:-}
+      SERVICE_DISCOVERY_MODE: docker_compose
+      TRANSPORT: sse
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      API_SERVICE_URL: http://archon-server:${ARCHON_SERVER_PORT:-8181}
+      AGENTS_ENABLED: ${AGENTS_ENABLED:-false}
+      AGENTS_SERVICE_URL: ${AGENTS_SERVICE_URL:-http://archon-agents:${ARCHON_AGENTS_PORT:-8052}}
+      ARCHON_MCP_PORT: ${ARCHON_MCP_PORT:-8051}
+      ARCHON_SERVER_PORT: ${ARCHON_SERVER_PORT:-8181}
+      ARCHON_AGENTS_PORT: ${ARCHON_AGENTS_PORT:-8052}
+    networks:
+      - archon_production
+    depends_on:
+      archon-server:
+        condition: service_healthy
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "sh",
+          "-c",
+          'python -c "import socket; s=socket.socket(); s.connect((''localhost'', ${ARCHON_MCP_PORT:-8051})); s.close()"',
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # ==========================================================================
+  # ARCHON FRONTEND - React/Next.js UI
+  # ==========================================================================
+
+  archon-ui:
+    build:
+      context: ./archon-ui-main
+      dockerfile: Dockerfile
+    container_name: archon-ui
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${ARCHON_UI_PORT:-3737}:3737"
+    environment:
+      # API connection (uses relative URLs, proxied by Nginx)
+      VITE_ARCHON_SERVER_PORT: ${ARCHON_SERVER_PORT:-8181}
+      ARCHON_SERVER_PORT: ${ARCHON_SERVER_PORT:-8181}
+      HOST: ${HOST:-localhost}
+      PROD: ${PROD:-true}
+      VITE_ALLOWED_HOSTS: ${VITE_ALLOWED_HOSTS:-}
+      VITE_SHOW_DEVTOOLS: ${VITE_SHOW_DEVTOOLS:-false}
+      DOCKER_ENV: true
+    networks:
+      - archon_production
+    volumes:
+      - ./archon-ui-main/src:/app/src
+      - ./archon-ui-main/public:/app/public
+    depends_on:
+      archon-server:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:3737"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+
+  # ==========================================================================
+  # ARCHON AGENTS - AI Agents (Optional, with profile)
+  # ==========================================================================
+
+  archon-agents:
+    profiles:
+      - agents
+    build:
+      context: ./python
+      dockerfile: Dockerfile.agents
+      args:
+        BUILDKIT_INLINE_CACHE: 1
+        ARCHON_AGENTS_PORT: ${ARCHON_AGENTS_PORT:-8052}
+    container_name: archon-agents
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${ARCHON_AGENTS_PORT:-8052}:${ARCHON_AGENTS_PORT:-8052}"
+    environment:
+      SUPABASE_URL: http://kong:8000
+      SUPABASE_SERVICE_KEY: ${SUPABASE_SERVICE_KEY}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      LOGFIRE_TOKEN: ${LOGFIRE_TOKEN:-}
+      SERVICE_DISCOVERY_MODE: docker_compose
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      ARCHON_AGENTS_PORT: ${ARCHON_AGENTS_PORT:-8052}
+      ARCHON_SERVER_PORT: ${ARCHON_SERVER_PORT:-8181}
+    networks:
+      - archon_production
+    depends_on:
+      archon-server:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "sh",
+          "-c",
+          'python -c "import urllib.request; urllib.request.urlopen(''http://localhost:${ARCHON_AGENTS_PORT:-8052}/health'')"',
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+# ==============================================================================
+# NETWORKS
+# ==============================================================================
+
+networks:
+  archon_production:
+    name: archon_production
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16
+
+# ==============================================================================
+# VOLUMES
+# ==============================================================================
+
+volumes:
+  postgres-data:
+    name: archon_postgres_data

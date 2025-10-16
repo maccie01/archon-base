@@ -1,8 +1,10 @@
 # Archon Docker Setup
 
 **Created**: 2025-10-15
+**Updated**: 2025-10-16
 **Docker Compose Version**: 2.x
 **Status**: Production Ready
+**Architecture**: Consolidated Single-Network (v1.3.0)
 
 ---
 
@@ -10,16 +12,29 @@
 
 ### File Location
 
-`/opt/archon/docker-compose.yml`
+`/opt/archon/docker-compose.yml` (single compose file for all services)
 
 ### Services Overview
 
+**Total Services**: 8 containers on single network (archon_production 172.21.0.0/16)
+
 ```yaml
+# Archon Application Services (3)
 services:
   archon-server:      # FastAPI backend
   archon-mcp:         # Model Context Protocol server
-  archon-frontend:    # React UI (production build with nginx)
+  archon-ui:          # React UI (production build with nginx)
+
+# Supabase Self-Hosted Services (5)
+  supabase-db:        # PostgreSQL 17.6 with pgvector
+  supabase-rest:      # PostgREST automatic REST API
+  supabase-kong:      # Kong API Gateway (JWT transformation)
+  supabase-meta:      # PostgreSQL metadata service
+  supabase-studio:    # Web-based database admin UI
 ```
+
+**Network**: Single Docker bridge network (archon_production 172.21.0.0/16)
+**Management**: Simple `docker compose` commands (no Supabase CLI needed)
 
 ---
 
@@ -67,6 +82,10 @@ archon-server:
 - Interval: Every 30 seconds
 - Timeout: 10 seconds
 - Healthy when returns 200 OK
+
+**Network Connectivity**:
+- Connects to supabase-kong on internal network
+- Uses SUPABASE_URL=http://supabase-kong:54321
 
 ### 2. archon-mcp (MCP Server)
 
@@ -131,6 +150,60 @@ archon-frontend:
 - Nginx serves static files from `/usr/share/nginx/html`
 - API requests proxied to archon-server via Nginx config
 - No Vite dev server in production
+
+### 4. supabase-db (PostgreSQL Database)
+
+**Image**: `supabase/postgres:17.6.1`
+**Port**: 54322 (internal and external)
+**Purpose**: Primary database with pgvector extension
+
+**Configuration**:
+- PostgreSQL 17.6 with pgvector for embeddings
+- JWT Secret: `super-secret-jwt-token-with-at-least-32-characters-long`
+- Healthcheck: PostgreSQL ready check
+
+### 5. supabase-kong (API Gateway)
+
+**Image**: `kong:latest`
+**Port**: 54321 (internal and external)
+**Purpose**: API gateway with JWT transformation
+
+**Key Features**:
+- Removes Authorization headers from client requests
+- Adds hardcoded service JWT for PostgREST authentication
+- Routes traffic to PostgREST (port 3000 internally)
+- Critical for PGRST301 error prevention
+
+### 6. supabase-rest (PostgREST)
+
+**Image**: `postgrest:latest`
+**Port**: 3000 (internal only, accessed via Kong)
+**Purpose**: Automatic REST API generation from PostgreSQL schema
+
+**Configuration**:
+- Connects to PostgreSQL on port 5432
+- Requires JWT secret matching database configuration
+- Provides automatic CRUD operations for all tables
+
+### 7. supabase-meta (PostgreSQL Metadata)
+
+**Image**: `supabase/postgres-meta`
+**Purpose**: PostgreSQL metadata service for Studio UI
+
+**Configuration**:
+- Provides schema introspection for Studio
+- Internal use only (no external port)
+
+### 8. supabase-studio (Admin UI)
+
+**Image**: `supabase/studio`
+**Port**: 54323 (internal and external)
+**Purpose**: Web-based database management interface
+
+**Healthcheck**:
+- Uses Node.js with `os.hostname()` check
+- Interval: 30 seconds
+- Accessible at https://supabase.archon.nexorithm.io
 
 ---
 
@@ -228,19 +301,35 @@ CMD ["nginx", "-g", "daemon off;"]
 
 ## Docker Networks
 
-### Default Bridge Network
+### Single Production Network
 
-**Name**: `archon_default` (auto-created by Docker Compose)
+**Name**: `archon_production`
 **Type**: bridge
-**Services**: All three containers
+**Subnet**: 172.21.0.0/16
+**Services**: All 8 containers on same network
 
 **Service DNS Resolution**:
-- `archon-server` → resolves to backend container
-- `archon-mcp` → resolves to MCP container
-- `archon-ui` → resolves to frontend container
+- `archon-server` → Archon backend container
+- `archon-mcp` → MCP container
+- `archon-ui` → Frontend container
+- `supabase-db` → PostgreSQL database
+- `supabase-kong` → Kong API Gateway
+- `supabase-rest` → PostgREST service
+- `supabase-meta` → Metadata service
+- `supabase-studio` → Studio UI
+
+**Network Benefits**:
+- Simplified topology (single network vs. multiple external networks)
+- Clear service boundaries
+- Easier troubleshooting
+- Better isolation
+- No need for external network management
 
 **Example**:
 ```bash
+# From within archon-server container
+curl http://supabase-kong:54321/rest/v1/
+
 # From within archon-ui container
 curl http://archon-server:8181/health
 ```
@@ -278,7 +367,7 @@ services:
 ### Build Services
 
 ```bash
-# Build all services
+# Build all services (Archon services only - Supabase uses official images)
 docker compose build
 
 # Build specific service
@@ -291,21 +380,31 @@ docker compose build --no-cache
 docker compose build --progress=plain
 ```
 
+**Note**: Supabase services (db, kong, rest, meta, studio) use official images and don't need building.
+
 ### Start Services
 
 ```bash
-# Start all services
+# Start all services (recommended)
 docker compose up -d
+
+# Check status
+docker compose ps
+
+# View logs
+docker compose logs -f
 
 # Start specific service
 docker compose up -d archon-server
 
-# Start with logs
+# Start with logs (foreground)
 docker compose up
 
-# Start and rebuild
+# Start and rebuild (if code changed)
 docker compose up -d --build
 ```
+
+**Important**: All 8 services must be healthy for Archon to function properly.
 
 ### Stop Services
 

@@ -1,25 +1,36 @@
 # Supabase Service Documentation
 
 Created: 2025-10-16
-Last Updated: 2025-10-16
+Last Updated: 2025-10-16 (Consolidated Architecture)
 
 ## Overview
 
-Supabase provides PostgreSQL database with REST API, authentication, real-time subscriptions, and admin interface for the Archon platform.
+Supabase provides PostgreSQL database with REST API and admin interface for the Archon platform. This is a **consolidated single-network architecture** with 5 core Supabase services.
 
 ## Service Configuration
 
+**Architecture**: Consolidated Single-Network (archon_production 172.21.0.0/16)
 **Domain**: https://supabase.archon.nexorithm.io
-**Backend**: Self-hosted Supabase (Docker)
-**Database**: PostgreSQL 15 with pgvector extension
+**Backend**: Self-hosted Supabase (Docker Compose)
+**Database**: PostgreSQL 17.6 with pgvector extension
+**Management**: Simple `docker compose` commands (no Supabase CLI)
 
-### Ports
+### Services
 
-| Service | Internal Port | External Access |
-|---------|--------------|-----------------|
-| Kong Gateway (API) | 54321 | Via Nginx at `/rest/v1/`, `/auth/v1/`, etc. |
-| Studio UI | 54323 | Via Nginx at `/` (root path) |
-| PostgreSQL | 5432 | Localhost only |
+| Service | Container | Port | Purpose |
+|---------|-----------|------|---------|
+| PostgreSQL | supabase-db | 54322 | Primary database with pgvector |
+| Kong Gateway | supabase-kong | 54321 | API gateway with JWT transformation |
+| PostgREST | supabase-rest | 3000 (internal) | Automatic REST API generation |
+| pg_meta | supabase-meta | Internal | PostgreSQL metadata service |
+| Studio UI | supabase-studio | 54323 | Web-based database admin |
+
+**Removed Services** (from v1.3.0 consolidation):
+- ❌ GoTrue (Auth) - Not used (custom API keys)
+- ❌ Storage API - Not used (no file storage)
+- ❌ Realtime - Not used (HTTP polling instead)
+- ❌ Analytics - Optional monitoring
+- ❌ Inbucket - Dev tool only
 
 ## Access Methods
 
@@ -41,13 +52,28 @@ Supabase provides PostgreSQL database with REST API, authentication, real-time s
 
 ### 2. API Access (Your Application)
 
-**Base URL**: https://supabase.archon.nexorithm.io
+**Internal URL** (from Archon containers): `http://supabase-kong:54321`
+**External URL**: https://supabase.archon.nexorithm.io (if exposed via Nginx)
 
-**Endpoints** (no HTTP Basic Auth - use API keys):
+**Endpoints** (no HTTP Basic Auth):
 - `/rest/v1/` - Database REST API (PostgREST)
-- `/auth/v1/` - Authentication API (GoTrue)
-- `/storage/v1/` - File storage API
-- `/realtime/v1/` - WebSocket real-time subscriptions
+
+**Note**: Auth, Storage, and Realtime endpoints are NOT available in consolidated architecture.
+
+### Kong Gateway Configuration
+
+**Critical Feature**: JWT Transformation
+- **Removes** Authorization headers from client requests
+- **Adds** hardcoded service JWT for PostgREST authentication
+- **Prevents** PGRST301 errors (JWT secret mismatch)
+
+**Flow**:
+```
+Client Request → Kong Gateway
+  ├─ Remove: Authorization header
+  ├─ Add: Hardcoded service JWT
+  └─ Forward → PostgREST (port 3000)
+```
 
 **Example (JavaScript)**:
 ```javascript
@@ -80,33 +106,39 @@ response = supabase.table("your_table").select("*").execute()
 
 ```bash
 # From server (localhost)
-psql -h 127.0.0.1 -p 5432 -U postgres -d postgres
+psql -h 127.0.0.1 -p 54322 -U postgres -d postgres
 
-# Connection string
-postgresql://postgres:YOUR_POSTGRES_PASSWORD@127.0.0.1:5432/postgres
+# Connection string (consolidated architecture)
+postgresql://postgres:postgres@supabase-db:5432/postgres  # Internal
+postgresql://postgres:postgres@127.0.0.1:54322/postgres   # External
+
+# JWT Secret (must match PostgREST configuration)
+JWT_SECRET=super-secret-jwt-token-with-at-least-32-characters-long
 ```
 
 ## Common Operations
 
 ### View Logs
 ```bash
-# Studio UI logs
-ssh netzwaechter-prod "docker logs -f supabase_studio_supabase"
+# All Supabase services (consolidated architecture)
+docker compose logs -f supabase-db supabase-kong supabase-rest supabase-meta supabase-studio
 
-# Kong Gateway logs
-ssh netzwaechter-prod "docker logs -f supabase_kong_supabase"
-
-# PostgreSQL logs
-ssh netzwaechter-prod "docker logs -f supabase_db_supabase"
+# Specific service
+docker compose logs -f supabase-kong
+docker compose logs -f supabase-db
+docker compose logs -f supabase-studio
 ```
 
 ### Restart Services
 ```bash
-# Restart all Supabase services
-ssh netzwaechter-prod "cd /opt/supabase && docker compose restart"
+# Restart all services (from /opt/archon)
+cd /opt/archon
+docker compose restart
 
-# Restart specific service
-ssh netzwaechter-prod "cd /opt/supabase && docker compose restart studio"
+# Restart specific Supabase service
+docker compose restart supabase-kong
+docker compose restart supabase-db
+docker compose restart supabase-studio
 ```
 
 ### Database Backup
@@ -137,83 +169,147 @@ ssh netzwaechter-prod "docker exec -i supabase_db_supabase psql -U postgres -d p
 ### Studio UI Not Loading
 ```bash
 # Check Studio container
-ssh netzwaechter-prod "docker ps | grep studio"
-ssh netzwaechter-prod "docker logs supabase_studio_supabase"
+docker ps | grep supabase-studio
+docker logs supabase-studio
 
 # Check Nginx proxy
-ssh netzwaechter-prod "tail -f /var/log/nginx/supabase-archon-ssl-error.log"
+tail -f /var/log/nginx/supabase-archon-ssl-error.log
 
 # Restart Studio
-ssh netzwaechter-prod "cd /opt/supabase && docker compose restart studio"
+docker compose restart supabase-studio
 ```
+
+### PGRST301 Error (JWT Secret Mismatch)
+
+**Symptoms**: PostgREST returns PGRST301 error
+
+**Cause**: JWT secret mismatch between database and PostgREST
+
+**Solution**:
+```bash
+# 1. Verify JWT_SECRET in environment
+cat /opt/archon/.env | grep SUPABASE_JWT_SECRET
+# Should be: super-secret-jwt-token-with-at-least-32-characters-long
+
+# 2. Verify database JWT secret matches
+docker exec supabase-db psql -U postgres -c \
+  "SHOW app.settings.jwt_secret;"
+
+# 3. If mismatch, update database configuration
+# (Restart required for changes to take effect)
+
+# 4. Restart services
+docker compose restart supabase-db supabase-rest supabase-kong
+```
+
+**Kong Gateway Fix**:
+- Kong removes Authorization headers to prevent client JWT conflicts
+- Kong adds hardcoded service JWT configured with correct secret
+- This prevents PGRST301 errors from client-side JWT tokens
 
 ### API Returning Errors
 ```bash
 # Check Kong Gateway
-ssh netzwaechter-prod "docker logs supabase_kong_supabase | tail -50"
+docker logs supabase-kong | tail -50
 
-# Test API directly
-curl -H "apikey: YOUR_SUPABASE_ANON_KEY" \
-  "https://supabase.archon.nexorithm.io/rest/v1/"
+# Test API directly (internal)
+docker exec archon-server curl -H "apikey: $SUPABASE_ANON_KEY" \
+  "http://supabase-kong:54321/rest/v1/"
 
 # Restart Kong
-ssh netzwaechter-prod "cd /opt/supabase && docker compose restart kong"
+docker compose restart supabase-kong
 ```
 
 ### Database Connection Issues
 ```bash
 # Check PostgreSQL
-ssh netzwaechter-prod "docker ps | grep db_supabase"
-ssh netzwaechter-prod "docker logs supabase_db_supabase | tail -50"
+docker ps | grep supabase-db
+docker logs supabase-db | tail -50
 
 # Test connection
-ssh netzwaechter-prod "docker exec supabase_db_supabase psql -U postgres -c 'SELECT version();'"
+docker exec supabase-db psql -U postgres -c 'SELECT version();'
 
 # Restart database (WARNING: Will disconnect all clients)
-ssh netzwaechter-prod "cd /opt/supabase && docker compose restart db"
+docker compose restart supabase-db
 ```
 
-### Authentication Not Working
+### Healthcheck Failures
+
+**Studio Healthcheck** (uses Node.js with os.hostname()):
 ```bash
-# Check auth service
-ssh netzwaechter-prod "docker logs supabase_auth_supabase | tail -50"
+# Check Studio health manually
+docker exec supabase-studio node -e "console.log(require('os').hostname())"
 
-# Verify JWT secret configured
-ssh netzwaechter-prod "cd /opt/supabase && cat .env | grep JWT_SECRET"
+# If failing, check container network
+docker inspect supabase-studio | grep NetworkMode
+```
 
-# Restart auth service
-ssh netzwaechter-prod "cd /opt/supabase && docker compose restart auth"
+**UI Healthcheck** (uses curl):
+```bash
+# Check UI health manually
+docker exec archon-ui curl -f http://localhost:3737
+
+# If failing, check nginx configuration
+docker exec archon-ui cat /etc/nginx/conf.d/default.conf
 ```
 
 ## Configuration Files
 
+**Consolidated Architecture** (v1.3.0):
+
 | File | Purpose |
 |------|---------|
-| `/opt/supabase/docker-compose.yml` | Service orchestration |
-| `/opt/supabase/.env` | Environment variables |
+| `/opt/archon/docker-compose.yml` | Single compose file for all services |
+| `/opt/archon/.env` | Environment variables for all services |
 | `/etc/nginx/sites-available/archon` | Nginx proxy config |
 | `/etc/nginx/.htpasswd-supabase` | HTTP Basic Auth credentials |
+
+**Removed** (from consolidation):
+- `/opt/supabase/` directory - No longer needed (Supabase CLI removed)
+- Rebind scripts - Port binding now handled by Docker Compose
+- External network definitions - Single network architecture
 
 ## Security Notes
 
 - Studio UI protected by HTTP Basic Authentication
 - API endpoints use Supabase API keys (no HTTP Basic Auth)
-- PostgreSQL bound to localhost only (127.0.0.1)
+- PostgreSQL accessible on port 54322 (internal network and localhost)
+- All services on single isolated network (172.21.0.0/16)
+- Kong Gateway handles JWT transformation (prevents PGRST301 errors)
 - All external traffic through Nginx reverse proxy
 - Rate limiting: 30 req/min per IP (exceptions for static assets)
 - SSL/TLS via Cloudflare + Let's Encrypt
 
-## Issue Resolution History
+**JWT Secret Security**:
+- Hardcoded in database configuration: `super-secret-jwt-token-with-at-least-32-characters-long`
+- Must match across all services (database, PostgREST, Kong)
+- Kong removes client Authorization headers to prevent conflicts
+- Kong adds service JWT for internal authentication
 
-All critical Supabase issues resolved on 2025-10-15:
+## Migration History
 
-1. DNS configuration fixed
-2. Browser access enabled (Studio UI)
-3. CSS/JavaScript loading fixed
-4. Authentication implemented (HTTP Basic Auth)
-5. Rate limiting optimized
+### v1.3.0 Consolidation (2025-10-16)
 
-See [SUPABASE_ALL_ISSUES_RESOLVED.md](./SUPABASE_ALL_ISSUES_RESOLVED.md) for complete details.
+**Changes**:
+- Migrated from multi-network (11 containers) to single-network (5 containers)
+- Removed unused services: Auth, Storage, Realtime, Analytics, Inbucket
+- Cleaned up supabase volumes and rebind scripts
+- Standardized JWT secret across all services
+- Fixed Kong Gateway JWT transformation
+- All healthchecks now passing
+
+**Benefits**:
+- 40-50% memory reduction
+- Simpler network topology
+- Faster startup times
+- Cleaner troubleshooting
+- No external network dependencies
+
+### v1.2.0 and Earlier (2025-10-15)
+
+See archived documentation:
+- [SUPABASE_ALL_ISSUES_RESOLVED.md](./SUPABASE_ALL_ISSUES_RESOLVED.md) - DNS and access fixes
+- [../../archive/supabase-fixes/](../../archive/supabase-fixes/) - Historical fixes
 
 ## Resources
 

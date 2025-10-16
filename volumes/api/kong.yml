@@ -1,0 +1,143 @@
+_format_version: "1.1"
+
+# ==============================================================================
+# KONG API GATEWAY CONFIGURATION - Minimal Archon Setup
+# Only routes REST API traffic (PostgREST)
+# Auth, Storage, and Realtime services removed
+# ==============================================================================
+
+services:
+  # ==========================================================================
+  # REST API - PostgREST endpoint for database access
+  # ==========================================================================
+
+  - name: rest-v1
+    _comment: "PostgREST: /rest/v1/* -> http://rest:3000/*"
+    url: http://archon-rest:3000/
+    routes:
+      - name: rest-v1-all
+        strip_path: true
+        paths:
+          - /rest/v1/
+    plugins:
+      - name: cors
+        config:
+          origins:
+            - "*"
+          methods:
+            - GET
+            - HEAD
+            - PUT
+            - PATCH
+            - POST
+            - DELETE
+            - OPTIONS
+          headers:
+            - Accept
+            - Accept-Language
+            - Content-Language
+            - Content-Type
+            - Authorization
+            - X-Client-Info
+            - apikey
+            - X-Requested-With
+          exposed_headers:
+            - X-Total-Count
+            - Content-Range
+          credentials: true
+          max_age: 3600
+      - name: request-transformer
+        config:
+          add:
+            headers:
+              # Transform API keys to JWT Bearer tokens for PostgREST
+              # Checks authorization header first, then apikey header
+              # Service role key gets service_role JWT, anon key gets anon JWT
+              - "Authorization: Bearer $(
+                  (headers.authorization ~= nil and headers.authorization:sub(1, 10) ~= 'Bearer sb_' and headers.authorization) or
+                  (headers.apikey == '${SUPABASE_SERVICE_KEY}' and 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU') or
+                  (headers.apikey == '${SUPABASE_ANON_KEY}' and 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0') or
+                  headers.apikey
+                )"
+          replace:
+            headers:
+              - "Authorization: Bearer $(
+                  (headers.authorization ~= nil and headers.authorization:sub(1, 10) ~= 'Bearer sb_' and headers.authorization) or
+                  (headers.apikey == '${SUPABASE_SERVICE_KEY}' and 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU') or
+                  (headers.apikey == '${SUPABASE_ANON_KEY}' and 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0') or
+                  headers.apikey
+                )"
+
+  # ==========================================================================
+  # GRAPHQL API - PostgREST GraphQL endpoint
+  # ==========================================================================
+
+  - name: graphql-v1
+    _comment: "PostgREST: /graphql/v1 -> http://rest:3000/rpc/graphql"
+    url: http://archon-rest:3000/rpc/graphql
+    routes:
+      - name: graphql-v1-all
+        strip_path: true
+        paths:
+          - /graphql/v1
+    plugins:
+      - name: cors
+        config:
+          origins:
+            - "*"
+          methods:
+            - GET
+            - HEAD
+            - PUT
+            - PATCH
+            - POST
+            - DELETE
+            - OPTIONS
+          headers:
+            - Accept
+            - Accept-Language
+            - Content-Language
+            - Content-Type
+            - Authorization
+            - X-Client-Info
+            - apikey
+          exposed_headers:
+            - X-Total-Count
+          credentials: true
+          max_age: 3600
+      - name: request-transformer
+        config:
+          add:
+            headers:
+              - "Content-Profile: graphql_public"
+              - "Authorization: Bearer $(
+                  (headers.authorization ~= nil and headers.authorization:sub(1, 10) ~= 'Bearer sb_' and headers.authorization) or
+                  (headers.apikey == '${SUPABASE_SERVICE_KEY}' and 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU') or
+                  (headers.apikey == '${SUPABASE_ANON_KEY}' and 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0') or
+                  headers.apikey
+                )"
+          replace:
+            headers:
+              - "Authorization: Bearer $(
+                  (headers.authorization ~= nil and headers.authorization:sub(1, 10) ~= 'Bearer sb_' and headers.authorization) or
+                  (headers.apikey == '${SUPABASE_SERVICE_KEY}' and 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU') or
+                  (headers.apikey == '${SUPABASE_ANON_KEY}' and 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0') or
+                  headers.apikey
+                )"
+
+# ==============================================================================
+# CONSUMERS (For API key authentication - not currently used by Archon)
+# ==============================================================================
+# Archon uses custom API key authentication via FastAPI middleware
+# Kong only transforms Supabase API keys to JWT tokens for PostgREST
+
+consumers: []
+
+# ==============================================================================
+# NOTES:
+# - Auth service routes removed (Archon uses custom API keys)
+# - Storage service routes removed (not used by Archon)
+# - Realtime service routes removed (Archon uses HTTP polling)
+# - Only REST and GraphQL endpoints remain
+# - Kong transforms Supabase keys to JWT for PostgREST authorization
+# ==============================================================================

@@ -1,6 +1,7 @@
 # Archon Environment Configuration
 
 **Created**: 2025-10-15
+**Updated**: 2025-10-16 (Consolidated Architecture)
 **File Location**: `/opt/archon/.env` (on server)
 
 ---
@@ -9,14 +10,18 @@
 
 ```bash
 # ============================================
-# SUPABASE CONFIGURATION (LOCAL)
+# SUPABASE CONFIGURATION (CONSOLIDATED)
 # ============================================
-# Using supabase kong IP address on Docker network
-SUPABASE_URL=http://supabase_kong_archon:8000
+# Consolidated single-network architecture (172.21.0.0/16)
+# All services on archon_production network
+SUPABASE_URL=http://supabase-kong:54321
 SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
 SUPABASE_SERVICE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU
 SUPABASE_JWT_SECRET=super-secret-jwt-token-with-at-least-32-characters-long
-SUPABASE_DB_URL=postgresql://postgres:postgres@supabase_db_archon:5432/postgres
+SUPABASE_DB_URL=postgresql://postgres:postgres@supabase-db:5432/postgres
+
+# IMPORTANT: JWT_SECRET must match the database configuration
+# Kong Gateway removes Authorization headers and adds hardcoded service JWT
 
 # ============================================
 # OLLAMA CONFIGURATION
@@ -77,16 +82,18 @@ ALLOWED_ORIGINS=https://archon.nexorithm.io
 
 | Variable | Value | Description |
 |----------|-------|-------------|
-| `SUPABASE_URL` | `http://supabase_kong_archon:8000` | Internal Docker network URL to Supabase Kong gateway |
+| `SUPABASE_URL` | `http://supabase-kong:54321` | Kong Gateway on archon_production network (consolidated) |
 | `SUPABASE_ANON_KEY` | JWT token | Public anon key for client-side queries (RLS enforced) |
 | `SUPABASE_SERVICE_KEY` | JWT token | Admin service role key (bypasses RLS) - KEEP SECRET |
-| `SUPABASE_JWT_SECRET` | Secret string | JWT signing secret (must match Supabase config) |
-| `SUPABASE_DB_URL` | PostgreSQL connection string | Direct database connection URL for internal use |
+| `SUPABASE_JWT_SECRET` | `super-secret-jwt-token-with-at-least-32-characters-long` | JWT signing secret - MUST match database configuration |
+| `SUPABASE_DB_URL` | `postgresql://postgres:postgres@supabase-db:5432/postgres` | Direct database connection (consolidated network) |
 
 **Notes**:
-- Supabase runs as separate Docker containers in the same network
-- Kong gateway handles routing and authentication
+- All services run on single `archon_production` network (172.21.0.0/16)
+- Kong gateway removes Authorization headers and adds hardcoded service JWT
+- JWT_SECRET value must exactly match database configuration
 - Service key has full database access - never expose to client
+- Consolidated architecture eliminates need for multiple external networks
 
 ### Ollama Configuration
 
@@ -111,12 +118,24 @@ ALLOWED_ORIGINS=https://archon.nexorithm.io
 | `ARCHON_UI_PORT` | `3737` | Frontend React application |
 | `ARCHON_DOCS_PORT` | `3838` | Documentation site (if enabled) |
 
+**Supabase Ports** (Consolidated Architecture):
+| Port | Service | Description |
+|------|---------|-------------|
+| `54321` | Kong Gateway | API gateway (internal + external) |
+| `54322` | PostgreSQL | Database (internal + external) |
+| `54323` | Studio UI | Web admin interface (external only) |
+| `3000` | PostgREST | REST API (internal only, via Kong) |
+
 **Port Mapping**:
 ```
 External (via Nginx):
 / → archon-ui (3737)
 /api → archon-server (8181)
 /mcp → archon-mcp (8051)
+
+Supabase Access:
+supabase.archon.nexorithm.io → studio (54323)
+Internal: supabase-kong:54321 → Kong → PostgREST
 ```
 
 ### Frontend Configuration

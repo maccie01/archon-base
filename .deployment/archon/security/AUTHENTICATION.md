@@ -1,7 +1,8 @@
 # Archon Authentication System
 
 **Created**: 2025-10-15
-**Version**: 1.1.0
+**Updated**: 2025-10-16 (Kong JWT Flow)
+**Version**: 1.3.0
 **Status**: ✅ Production Ready
 
 ---
@@ -15,6 +16,7 @@ Archon uses API key-based authentication to secure all endpoints. The system pro
 - ✅ Fine-grained permissions (read, write, admin)
 - ✅ Bootstrap mechanism for initial setup
 - ✅ Automatic key validation and rotation support
+- ✅ Kong Gateway JWT transformation (v1.3.0)
 
 ---
 
@@ -46,6 +48,88 @@ Archon uses API key-based authentication to secure all endpoints. The system pro
 │   (requires auth = Depends(...)) │
 └──────────────────────────────────┘
 ```
+
+---
+
+## Kong Gateway JWT Transformation (v1.3.0)
+
+### Overview
+
+In the consolidated architecture, Kong Gateway sits between clients and PostgREST, handling JWT authentication transformation to prevent PGRST301 errors (JWT secret mismatch).
+
+### Authentication Flow
+
+```
+Client Request (with Archon API key)
+       │
+       ▼
+┌──────────────────────────────┐
+│  APIKeyAuthMiddleware         │
+│  (Archon Server)             │
+├──────────────────────────────┤
+│ 1. Validate Bearer token     │
+│ 2. Check bcrypt hash         │
+│ 3. Verify is_active          │
+│ 4. Check permissions         │
+└──────┬───────────────────────┘
+       │ ✅ Valid → Continue
+       ▼
+┌──────────────────────────────┐
+│  Supabase Client Request     │
+│  (Internal to Kong)          │
+└──────┬───────────────────────┘
+       │
+       ▼
+┌──────────────────────────────┐
+│  Kong Gateway                │
+│  (supabase-kong:54321)       │
+├──────────────────────────────┤
+│ 1. Remove Authorization      │
+│    header (if present)       │
+│ 2. Add hardcoded service JWT │
+│    (configured with correct  │
+│     JWT secret)              │
+│ 3. Forward to PostgREST      │
+└──────┬───────────────────────┘
+       │
+       ▼
+┌──────────────────────────────┐
+│  PostgREST                   │
+│  (port 3000, internal)       │
+├──────────────────────────────┤
+│ 1. Validate service JWT      │
+│ 2. Execute database query    │
+│ 3. Return results            │
+└──────────────────────────────┘
+```
+
+### Why This Is Needed
+
+**Problem**: PGRST301 errors occur when JWT secret in client request doesn't match database configuration.
+
+**Solution**: Kong Gateway removes any client Authorization headers and adds a hardcoded service JWT that matches the database's JWT secret.
+
+**Configuration**:
+- **Database JWT Secret**: `super-secret-jwt-token-with-at-least-32-characters-long`
+- **Kong Service JWT**: Hardcoded with same secret
+- **Client Authorization**: Removed by Kong before forwarding to PostgREST
+
+### Database JWT Configuration
+
+The PostgreSQL database is configured with the JWT secret:
+
+```sql
+-- Database configuration (set at startup)
+ALTER DATABASE postgres SET app.settings.jwt_secret TO 'super-secret-jwt-token-with-at-least-32-characters-long';
+
+-- Verify configuration
+SHOW app.settings.jwt_secret;
+```
+
+This secret **must match**:
+1. `SUPABASE_JWT_SECRET` environment variable
+2. Kong Gateway service JWT configuration
+3. PostgREST JWT secret configuration
 
 ---
 

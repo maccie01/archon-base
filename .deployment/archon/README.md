@@ -1,9 +1,11 @@
 # Archon Production Deployment Documentation
 
 **Created**: 2025-10-15
+**Updated**: 2025-10-16 (Consolidated Architecture)
 **Server**: Hetzner Cloud (91.98.156.158)
 **Domain**: archon.nexorithm.io
 **Status**: ✅ Production Ready
+**Architecture**: v1.3.0 (Single-Network Consolidated)
 
 ---
 
@@ -21,13 +23,28 @@
 
 ## Overview
 
-Archon is a knowledge management and AI automation platform deployed on Hetzner Cloud infrastructure. The system consists of three main components:
+Archon is a knowledge management and AI automation platform deployed on Hetzner Cloud infrastructure using a **consolidated single-network architecture** (v1.3.0).
 
+### Core Services (8 containers)
+
+**Archon Application** (3 services):
 - **archon-server**: FastAPI backend (Python)
 - **archon-mcp**: MCP (Model Context Protocol) server
 - **archon-ui**: React frontend (TypeScript)
 
-All services run in Docker containers orchestrated via Docker Compose, with Nginx as reverse proxy and Cloudflare as CDN.
+**Supabase Self-Hosted** (5 services):
+- **supabase-db**: PostgreSQL 17.6 with pgvector
+- **supabase-kong**: Kong API Gateway (JWT transformation)
+- **supabase-rest**: PostgREST automatic REST API
+- **supabase-meta**: PostgreSQL metadata service
+- **supabase-studio**: Web-based database admin
+
+**Architecture**:
+- Single Docker network: `archon_production` (172.21.0.0/16)
+- Single docker-compose.yml for all services
+- No Supabase CLI (direct Docker Compose management)
+- All healthchecks passing
+- 40-50% resource reduction vs. previous multi-network architecture
 
 ---
 
@@ -68,53 +85,84 @@ ssh netzwaechter-prod
 
 ## Architecture
 
-### System Components
+### System Components (Consolidated Architecture v1.3.0)
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                     Cloudflare CDN                       │
-│              archon.nexorithm.io (443)                   │
-└─────────────────────────┬───────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                     Cloudflare CDN                           │
+│         archon.nexorithm.io + supabase.archon.nexorithm.io  │
+└─────────────────────────┬───────────────────────────────────┘
                           │
                           ▼
-┌─────────────────────────────────────────────────────────┐
-│                   Nginx Reverse Proxy                    │
-│                      (80, 443)                           │
-├──────────────┬──────────────┬──────────────┬────────────┤
-│ / → 3737     │ /api → 8181  │ /mcp → 8051  │ /db → 54323│
-└──────┬───────┴──────┬───────┴──────┬───────┴──────┬─────┘
+┌─────────────────────────────────────────────────────────────┐
+│                   Nginx Reverse Proxy (80, 443)              │
+├──────────────┬──────────────┬──────────────┬────────────────┤
+│ / → 3737     │ /api → 8181  │ /mcp → 8051  │subdomain→54323 │
+└──────┬───────┴──────┬───────┴──────┬───────┴──────┬─────────┘
+       │              │               │              │
+       │              │               │              │
+       │    ┌─────────┴───────────────┴──────────────┴─────────┐
+       │    │  archon_production network (172.21.0.0/16)       │
+       │    │  Single Docker Compose (8 containers)            │
+       │    └──────────────────────────────────────────────────┘
        │              │               │              │
        ▼              ▼               ▼              ▼
-┌─────────────┐ ┌──────────┐  ┌──────────┐  ┌───────────┐
-│ archon-ui   │ │ archon-  │  │ archon-  │  │ Supabase  │
-│ (React)     │ │ server   │  │ mcp      │  │ Studio    │
-│ Port: 3737  │ │ (FastAPI)│  │ Port:8051│  │ Port:54323│
-│             │ │ Port:8181│  │          │  │           │
-└─────────────┘ └─────┬────┘  └──────────┘  └───────────┘
+┌─────────────┐ ┌──────────┐  ┌──────────┐  ┌───────────────┐
+│ archon-ui   │ │ archon-  │  │ archon-  │  │ supabase-     │
+│ (React)     │ │ server   │  │ mcp      │  │ studio        │
+│ Port: 3737  │ │ (FastAPI)│  │ Port:8051│  │ Port: 54323   │
+└─────────────┘ └─────┬────┘  └──────────┘  └───────────────┘
                       │
-                      ▼
-              ┌──────────────┐
-              │  Supabase    │
-              │  PostgreSQL  │
-              │ (External)   │
-              └──────────────┘
+       ┌──────────────┴─────────────────────┐
+       │    Supabase Services (5 containers) │
+       │    Single Network (no external)     │
+       └──────────────┬─────────────────────┘
+                      │
+       ┌──────────────┴─────────────────────┐
+       │                                     │
+       ▼                                     ▼
+┌──────────────┐  ┌──────────────┐  ┌──────────────┐
+│ supabase-db  │  │ supabase-    │  │ supabase-    │
+│ PostgreSQL   │  │ kong         │  │ rest         │
+│ Port: 54322  │  │ (Gateway)    │  │ (PostgREST)  │
+│              │  │ Port: 54321  │  │ Port: 3000   │
+└──────────────┘  └──────────────┘  └──────────────┘
+                         │
+                         ├─ Removes Authorization headers
+                         ├─ Adds service JWT (hardcoded)
+                         └─ Prevents PGRST301 errors
 ```
 
-### Port Mapping
+### Port Mapping (Consolidated Architecture)
 
+**Archon Services**:
 | Service | Internal Port | External Access | Purpose |
 |---------|--------------|-----------------|---------|
 | archon-ui | 3737 | via Nginx (/) | Frontend application |
 | archon-server | 8181 | via Nginx (/api) | Backend API |
 | archon-mcp | 8051 | via Nginx (/mcp) | MCP server |
-| Supabase Studio | 54323 | via Nginx (/db) | Database admin |
 
-### Docker Network
+**Supabase Services**:
+| Service | Internal Port | External Access | Purpose |
+|---------|--------------|-----------------|---------|
+| supabase-kong | 54321 | Internal only | API Gateway (JWT transform) |
+| supabase-db | 54322 | Internal + localhost | PostgreSQL database |
+| supabase-rest | 3000 | via Kong only | PostgREST API |
+| supabase-meta | Internal | Internal only | Metadata service |
+| supabase-studio | 54323 | via Nginx (subdomain) | Database admin UI |
 
-- **Network Name**: `archon_default`
+### Docker Network (Consolidated)
+
+- **Network Name**: `archon_production`
 - **Type**: Bridge network
-- **Services**: archon-ui, archon-server, archon-mcp
+- **Subnet**: 172.21.0.0/16
+- **Services**: All 8 containers on same network
 - **Internal DNS**: Services resolve by container name
+- **Benefits**:
+  - Single network topology (no external networks)
+  - Simplified service discovery
+  - Easier troubleshooting
+  - Better isolation
 
 ---
 
@@ -511,9 +559,12 @@ rm -f /var/log/nginx/*.log.*.gz
 
 | Date | Version | Changes | By |
 |------|---------|---------|-----|
-| 2025-10-15 | v1.1.0 | Implemented API key authentication system | Claude Code |
-| 2025-10-15 | v1.1.1 | Fixed Authorization header in API client | Claude Code |
+| 2025-10-16 | v1.3.0 | Consolidated single-network architecture (8 services) | Claude Code |
+| 2025-10-16 | v1.3.0 | Removed unused Supabase services (11→5 containers) | Claude Code |
+| 2025-10-16 | v1.3.0 | Kong JWT transformation configured | Claude Code |
 | 2025-10-15 | v1.2.0 | Deployed production build with Nginx | Claude Code |
+| 2025-10-15 | v1.1.1 | Fixed Authorization header in API client | Claude Code |
+| 2025-10-15 | v1.1.0 | Implemented API key authentication system | Claude Code |
 | 2025-10-14 | v1.0.0 | Initial production deployment | Team |
 
 ---
