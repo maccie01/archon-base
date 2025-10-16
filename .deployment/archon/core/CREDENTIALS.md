@@ -56,21 +56,25 @@ Then connect with: `ssh archon-prod`
 
 **Production API Key** (Admin):
 ```
-ak_597A_U6Z6POYpv8Sae-LxSNj2qe5dFXE6qzBjXe0tikQHqkI
+ak_266E_qxiSRg309qhky6v_9MB5EYQ_bQWSpKch8RoJTntfhpQ
 ```
 
 **Key Details**:
-- **Name**: Production Admin Key
-- **Created**: 2025-10-15
+- **Name**: Production Master Key 2025-10-16
+- **Key ID**: `6e1a653b-aa3a-4df1-a2df-5b4d8683d58e`
+- **Key Prefix**: `ak_266E`
+- **Created**: 2025-10-16
 - **Permissions**: Full admin access (read, write, admin)
 - **Status**: Active
 - **Last Used**: Check via `/api/auth/validate`
 
 **Usage Example**:
 ```bash
-curl -H "Authorization: Bearer ak_597A_U6Z6POYpv8Sae-LxSNj2qe5dFXE6qzBjXe0tikQHqkI" \
-  https://archon.nexorithm.io/api/knowledge-items/summary
+curl -H "Authorization: Bearer ak_266E_qxiSRg309qhky6v_9MB5EYQ_bQWSpKch8RoJTntfhpQ" \
+  https://archon.nexorithm.io/api/auth/validate
 ```
+
+**⚠️ Security Note**: This is the ONLY copy of this API key. Store it securely in a password manager immediately!
 
 **Bootstrap Secret**:
 ```
@@ -304,7 +308,7 @@ Complete `.env` file is documented in [ENVIRONMENT.md](./ENVIRONMENT.md)
 
 | Credential Type | Recommended Frequency | Last Rotated | Next Due |
 |----------------|---------------------|-------------|---------|
-| API Keys | Quarterly | 2025-10-15 | 2026-01-15 |
+| API Keys | Quarterly | 2025-10-16 | 2026-01-16 |
 | Database Password | Annually | [Check Supabase] | [+1 year] |
 | SSH Keys | Annually | 2025-10-14 | 2026-10-14 |
 | AI Provider Keys | As needed | [Check provider] | [As needed] |
