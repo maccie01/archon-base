@@ -1,8 +1,8 @@
 # Archon Deployment Documentation Index
 
 **Created**: 2025-10-15
-**Last Updated**: 2025-10-15
-**Status**: Complete ✅
+**Last Updated**: 2025-10-16
+**Status**: Complete ✅ - Reorganized and Consolidated
 
 ---
 
@@ -11,31 +11,69 @@
 ### For Deployment
 
 1. 📖 Start with [README.md](./README.md) for deployment overview
-2. 🔐 Review [CREDENTIALS.md](./CREDENTIALS.md) for all access credentials
-3. ⚙️ Check [ENVIRONMENT.md](./ENVIRONMENT.md) for configuration details
-4. 🔒 Read [AUTHENTICATION.md](./AUTHENTICATION.md) for auth system
-5. 🐳 See [DOCKER_SETUP.md](./DOCKER_SETUP.md) for container management
+2. ⚡ See [QUICK_START.md](./QUICK_START.md) for common operations (5-minute guide)
+3. 🔐 Review [core/CREDENTIALS.md](./core/CREDENTIALS.md) for all access credentials
+4. ⚙️ Check [core/ENVIRONMENT.md](./core/ENVIRONMENT.md) for configuration details
+5. 🔒 Read [security/AUTHENTICATION.md](./security/AUTHENTICATION.md) for auth system
+6. 🐳 See [core/DOCKER_SETUP.md](./core/DOCKER_SETUP.md) for container management
 
 ### For Security
 
-1. ⭐ Start with [SECURITY_DEPLOYMENT_FINAL_REPORT.md](./SECURITY_DEPLOYMENT_FINAL_REPORT.md) for complete security overview
-2. 🛡️ Review [SECURITY_DEPLOYMENT_COMPLETE.md](./SECURITY_DEPLOYMENT_COMPLETE.md) for deployment summary
-3. 🔐 Check [AUTHENTICATION_AUDIT_COMPLETE.md](./AUTHENTICATION_AUDIT_COMPLETE.md) for API security
-4. 🌐 See [NGINX_SECURITY_HARDENING_COMPLETE.md](./NGINX_SECURITY_HARDENING_COMPLETE.md) for web server hardening
+1. ⭐ Start with [security/README.md](./security/README.md) for security overview
+2. 🔐 Review [security/AUTHENTICATION.md](./security/AUTHENTICATION.md) for authentication details
+3. 📋 See [archive/security-audits/](./archive/security-audits/) for complete audit history
 
 ---
 
 ## Documentation Structure
+
+```
+.deployment/archon/
+├── README.md                    # Main deployment guide
+├── QUICK_START.md               # 5-minute quick reference
+├── INDEX.md                     # This file
+├── ORGANIZATION_PLAN.md         # Reorganization details
+│
+├── core/                        # Essential operational docs
+│   ├── CREDENTIALS.md
+│   ├── ENVIRONMENT.md
+│   ├── DOCKER_SETUP.md
+│   └── DEPLOYMENT_SUMMARY.md
+│
+├── security/                    # Security documentation
+│   ├── README.md
+│   └── AUTHENTICATION.md
+│
+├── services/                    # Service-specific guides
+│   ├── supabase/
+│   │   ├── README.md
+│   │   └── SUPABASE_ALL_ISSUES_RESOLVED.md
+│   ├── arcane/
+│   │   ├── README.md
+│   │   ├── ARCANE_DEPLOYMENT_COMPLETE.md
+│   │   ├── ARCANE_CLOUDFLARE_DNS_SETUP.md
+│   │   └── ARCANE_WEBSOCKET_FIX.md
+│   └── mcp/
+│       ├── MCP_SETUP_GUIDE.md
+│       └── MCP_SETUP_TEST_RESULTS.md
+│
+└── archive/                     # Historical documentation
+    ├── cleanup/                 # Cleanup phase reports
+    ├── security-audits/         # Security audit history
+    ├── agent-work/              # Agent coordination docs
+    └── supabase-fixes/          # Supabase fix history
+```
 
 ### Core Documentation
 
 | File | Description | When to Use |
 |------|-------------|-------------|
 | [README.md](./README.md) | Main deployment guide with architecture, setup, and maintenance | Starting point for all deployment tasks |
-| [CREDENTIALS.md](./CREDENTIALS.md) | All passwords, API keys, and access credentials | Need credentials for any service |
-| [ENVIRONMENT.md](./ENVIRONMENT.md) | Complete .env file reference and configuration | Setting up or troubleshooting environment |
-| [AUTHENTICATION.md](./AUTHENTICATION.md) | API key authentication system guide | Managing API keys, troubleshooting auth |
-| [DOCKER_SETUP.md](./DOCKER_SETUP.md) | Docker Compose and container management | Working with containers and services |
+| [QUICK_START.md](./QUICK_START.md) | 5-minute quick reference guide | Common operations and quick access |
+| [core/CREDENTIALS.md](./core/CREDENTIALS.md) | All passwords, API keys, and access credentials | Need credentials for any service |
+| [core/ENVIRONMENT.md](./core/ENVIRONMENT.md) | Complete .env file reference and configuration | Setting up or troubleshooting environment |
+| [security/AUTHENTICATION.md](./security/AUTHENTICATION.md) | API key authentication system guide | Managing API keys, troubleshooting auth |
+| [core/DOCKER_SETUP.md](./core/DOCKER_SETUP.md) | Docker Compose and container management | Working with containers and services |
 
 ---
 
